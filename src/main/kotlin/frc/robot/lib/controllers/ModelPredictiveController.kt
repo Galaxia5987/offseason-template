@@ -14,6 +14,7 @@ import edu.wpi.first.units.Units.*
 import frc.robot.LOOP_TIME
 import frc.robot.subsystems.drive.Drive
 import frc.robot.subsystems.drive.TunerConstants.*
+import org.littletonrobotics.junction.Logger
 
 data class PoseState(
     val pose: Pose2d,
@@ -35,11 +36,9 @@ private const val m = 50.0 // Robot mass in kg
 private const val Izz =
     2.5 // Moment of inertia, tuned based on turn performance
 
-// Friction and damping factors
-private const val b =
-    0.5 // Linear velocity damping (higher means more friction)
-private const val b_theta =
-    0.2 // Rotational damping (higher means more resistance to turning)
+
+private const val MAT_B_LINEAR_SCALING = 2000
+private const val MAT_B_ANGULAR_SCALING = 500
 
 // Default traction values
 private const val tractionFactor = 0.9 // Less than 1.0 accounts for wheel slip
@@ -62,23 +61,22 @@ class ModelPredictiveController(private val drive: Drive) {
             this[2, 5] = LOOP_TIME
 
             // Velocity damping due to friction
-            this[3, 3] = 1.0 - (LOOP_TIME * b / m) // X velocity damping
-            this[4, 4] = 1.0 - (LOOP_TIME * b / m) // Y velocity damping
-            this[5, 5] =
-                1.0 - (LOOP_TIME * b_theta / Izz) // Theta velocity damping
+            this[3, 3] = 0.8 // X velocity damping
+            this[4, 4] = 0.8 // Y velocity damping
+            this[5, 5] = 0.8 // Theta velocity damping
         }
 
     // Adjusted B Matrix
     private val matB: Matrix<N6, N3> =
         Matrix(N6.instance, N3.instance).apply {
             // X acceleration input (affected by mass and traction)
-            this[3, 0] = LOOP_TIME / (m * tractionFactor)
+            this[3, 0] = LOOP_TIME / (m * tractionFactor) * MAT_B_LINEAR_SCALING
 
             // Y acceleration input (affected by mass and traction)
-            this[4, 1] = LOOP_TIME / (m * tractionFactor)
+            this[4, 1] = LOOP_TIME / (m * tractionFactor) * MAT_B_LINEAR_SCALING
 
             // Theta acceleration input (affected by moment of inertia)
-            this[5, 2] = LOOP_TIME / (Izz * rotationTractionFactor)
+            this[5, 2] = LOOP_TIME / (Izz * rotationTractionFactor) * MAT_B_ANGULAR_SCALING
         }
 
     private val matC: Matrix<N3, N6> =
@@ -90,7 +88,7 @@ class ModelPredictiveController(private val drive: Drive) {
 
     private val matD: Matrix<N3, N3> =
         Matrix(N3.instance, N3.instance).apply {
-            // Since this is aor a swerve drivetrain the output doesn't have an immediate effect on
+            // Since this is a swerve drivetrain the output doesn't have an immediate effect on
             // the input, hence this matrix is empty.
         }
 
@@ -103,9 +101,9 @@ class ModelPredictiveController(private val drive: Drive) {
             this[0, 0] = 1.0 // x position cost
             this[1, 0] = 1.0 // y position cost
             this[2, 0] = 1.0 // theta position cost
-            this[3, 0] = 0.1 // x velocity cost
-            this[4, 0] = 0.1 // y velocity cost
-            this[5, 0] = 0.1 // theta velocity cost
+            this[3, 0] = 1.0 // x velocity cost
+            this[4, 0] = 1.0 // y velocity cost
+            this[5, 0] = 1.0 // theta velocity cost
         }
 
     // Create the control cost matrix for N3 dimensions
@@ -174,6 +172,8 @@ class ModelPredictiveController(private val drive: Drive) {
                 goalState.theta()
             )
 
+        println("matB values: ${matB.storage}")
+
         // Compute error states
         val errorState: Matrix<N6, N1> =
             Matrix(N6.instance, N1.instance).apply {
@@ -196,6 +196,7 @@ class ModelPredictiveController(private val drive: Drive) {
 
         // Compute optimal control input using the LQR
         val controlInput: Matrix<N3, N1> = lqr.calculate(errorState)
+        println("LQR Gain Matrix K: ${lqr.k}")
 
         // Return the calculated output
         val chassisSpeeds =
@@ -204,6 +205,7 @@ class ModelPredictiveController(private val drive: Drive) {
                 controlInput[1, 0],
                 controlInput[2, 0]
             )
+        Logger.recordOutput("StateSpace/DesiredSpeeds", chassisSpeeds)
         return chassisSpeeds
     }
 }
