@@ -25,7 +25,7 @@ private fun Double.toTrapezoidState(speed: Double) =
 
 private fun PoseState.x() = pose.x.toTrapezoidState(speeds.vxMetersPerSecond)
 
-private fun PoseState.y() = pose.y.toTrapezoidState(speeds.vxMetersPerSecond)
+private fun PoseState.y() = pose.y.toTrapezoidState(speeds.vyMetersPerSecond)
 
 private fun PoseState.theta() =
     pose.rotation.radians.toTrapezoidState(speeds.omegaRadiansPerSecond)
