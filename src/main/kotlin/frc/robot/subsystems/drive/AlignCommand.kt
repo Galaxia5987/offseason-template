@@ -71,5 +71,5 @@ fun alignToPose(
                 )
             })
         }
-        .until { controller.atReference() }
+        .until(controller::atReference)
         .withName("Drive/AlignToPose")
