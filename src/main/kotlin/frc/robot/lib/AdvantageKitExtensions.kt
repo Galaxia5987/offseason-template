@@ -17,14 +17,19 @@ import org.littletonrobotics.junction.inputs.LoggableInputs
 abstract class AutoLogInputs : LoggableInputs {
     fun log(value: Double, key: String? = null) =
         LoggedInput(value, key, LogTable::put, LogTable::get)
+
     fun log(value: Int, key: String? = null) =
         LoggedInput(value, key, LogTable::put, LogTable::get)
+
     fun log(value: String, key: String? = null) =
         LoggedInput(value, key, LogTable::put, LogTable::get)
+
     fun log(value: Boolean, key: String? = null) =
         LoggedInput(value, key, LogTable::put, LogTable::get)
+
     fun log(value: Long, key: String? = null) =
         LoggedInput(value, key, LogTable::put, LogTable::get)
+
     fun <T : StructSerializable> log(value: T, key: String? = null) =
         LoggedInput(value, key, LogTable::put, LogTable::get)
 
@@ -40,21 +45,27 @@ abstract class AutoLogInputs : LoggableInputs {
         LoggedInput(value, key, LogTable::put, LogTable::get)
 
     fun <
-        U : WPIUnit,
-        Base : Measure<WPIUnit>,
-        M : MutableMeasure<U, Base, M>> log(value: M, key: String? = null) =
+            U : WPIUnit,
+            Base : Measure<WPIUnit>,
+            M : MutableMeasure<U, Base, M>,
+            > log(value: M, key: String? = null) =
         LoggedInput(value, key, LogTable::put, LogTable::get)
 
     fun log(value: DoubleArray, key: String? = null) =
         LoggedInput(value, key, LogTable::put, LogTable::get)
+
     fun log(value: IntArray, key: String? = null) =
         LoggedInput(value, key, LogTable::put, LogTable::get)
+
     fun log(value: Array<String>, key: String? = null) =
         LoggedInput(value, key, LogTable::put, LogTable::get)
+
     fun log(value: BooleanArray, key: String? = null) =
         LoggedInput(value, key, LogTable::put, LogTable::get)
+
     fun log(value: LongArray, key: String? = null) =
         LoggedInput(value, key, LogTable::put, LogTable::get)
+
     fun <T : StructSerializable> log(value: Array<T>, key: String? = null) =
         LoggedInput(value, key, LogTable::put, LogTable::get)
 
@@ -65,7 +76,7 @@ abstract class AutoLogInputs : LoggableInputs {
         private var value: T,
         private val name: String? = null,
         private val toLog: LogTable.(String, T) -> Unit,
-        private val fromLog: LogTable.(String, T) -> T
+        private val fromLog: LogTable.(String, T) -> T,
     ) {
         operator fun getValue(thisRef: Any, property: KProperty<*>) = value
         operator fun setValue(thisRef: Any, property: KProperty<*>, value: T) {
@@ -74,7 +85,7 @@ abstract class AutoLogInputs : LoggableInputs {
 
         operator fun provideDelegate(
             thisRef: Any,
-            property: KProperty<*>
+            property: KProperty<*>,
         ): LoggedInput<T> {
             val namespace = this.name ?: property.name
             toLogRunners.add { logTable ->
@@ -117,16 +128,13 @@ fun PIDController.log(loggingName: String) {
 fun ProfiledPIDController.log(loggingName: String) {
     val loggingLocation = "Alignment/Controllers/$loggingName"
 
-    val valuesToLog =
-        mapOf(
-            "goal" to goal.position,
-            "positionSetpoint" to setpoint.position,
-            "error" to positionError,
-            "velocitySetpoint" to setpoint.velocity,
-            "velocityError" to velocityError,
-        )
-
-    valuesToLog.forEach { (key, value) ->
+    mapOf(
+        "goal" to goal.position,
+        "positionSetpoint" to setpoint.position,
+        "error" to positionError,
+        "velocitySetpoint" to setpoint.velocity,
+        "velocityError" to velocityError,
+    ).forEach { (key, value) ->
         Logger.recordOutput("$loggingLocation/$key", value)
     }
 
