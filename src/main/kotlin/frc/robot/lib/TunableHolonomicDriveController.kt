@@ -35,7 +35,7 @@ const val ROTATION_LOGGING_PATH = "$LOGGING_PATH/Rotation"
  * @param thetaController The [ProfiledPIDController] for controlling rotational
  * alignment.
  */
-class LoggedHolonomicDriveController(
+class TunableHolonomicDriveController(
     translationController: PIDController,
     thetaController: ProfiledPIDController,
 ) :
