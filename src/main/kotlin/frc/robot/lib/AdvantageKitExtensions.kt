@@ -1,5 +1,8 @@
 package frc.robot.lib
 
+import edu.wpi.first.math.controller.HolonomicDriveController
+import edu.wpi.first.math.controller.PIDController
+import edu.wpi.first.math.controller.ProfiledPIDController
 import edu.wpi.first.units.Measure
 import edu.wpi.first.units.MutableMeasure
 import edu.wpi.first.units.Unit as WPIUnit
@@ -8,6 +11,7 @@ import edu.wpi.first.util.struct.StructSerializable
 import kotlin.reflect.KProperty
 import org.littletonrobotics.junction.AutoLogOutputManager
 import org.littletonrobotics.junction.LogTable
+import org.littletonrobotics.junction.Logger
 import org.littletonrobotics.junction.inputs.LoggableInputs
 
 abstract class AutoLogInputs : LoggableInputs {
@@ -101,6 +105,32 @@ fun enableAutoLogOutputFor(vararg roots: Any) {
         method.isAccessible = true
         method.invoke(null, root)
     }
+}
+
+fun PIDController.log(loggingName: String) {
+    val loggingLocation = "Alignment/Controllers/$loggingName"
+    Logger.recordOutput("$loggingLocation/goal", setpoint)
+    Logger.recordOutput("$loggingLocation/error", error)
+    Logger.recordOutput("$loggingLocation/atGoal", atSetpoint())
+}
+
+fun ProfiledPIDController.log(loggingName: String) {
+    val loggingLocation = "Alignment/Controllers/$loggingName"
+    Logger.recordOutput("$loggingLocation/goal", goal.position)
+    Logger.recordOutput("$loggingLocation/positionSetpoint", setpoint.position)
+    Logger.recordOutput("$loggingLocation/error", positionError)
+    Logger.recordOutput("$loggingLocation/velocitySetpoint", setpoint.velocity)
+    Logger.recordOutput("$loggingLocation/velocityError", velocityError)
+
+    Logger.recordOutput("$loggingLocation/atGoal", atGoal())
+    Logger.recordOutput("$loggingLocation/atSetpoint", atSetpoint())
+}
+
+fun HolonomicDriveController.log() {
+    xController.log("XController")
+    yController.log("YController")
+    thetaController.log("ThetaController")
+    Logger.recordOutput("Alignment/Controllers/AtGoal", atReference())
 }
 
 // ```
