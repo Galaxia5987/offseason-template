@@ -19,7 +19,7 @@ val MAX_ANGULAR_VELOCITY: AngularVelocity = DegreesPerSecond.of(360.0)
 val MAX_ANGULAR_ACCELERATION: AngularAcceleration =
     DegreesPerSecondPerSecond.of(280.0)
 
-val ANGLE_CONSTRAINTS =
+val ANGULAR_CONSTRAINTS =
     TrapezoidProfile.Constraints(
         MAX_ANGULAR_VELOCITY.`in`(RadiansPerSecond),
         MAX_ANGULAR_ACCELERATION.`in`(RadiansPerSecondPerSecond)

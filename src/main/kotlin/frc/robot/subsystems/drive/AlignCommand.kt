@@ -14,7 +14,7 @@ private val translationController =
     PIDController(LINEAR_KP, LINEAR_KI, LINEAR_KD)
 
 private val angularController =
-    ProfiledPIDController(ANGULAR_KP, ANGULAR_KI, ANGULAR_KD, ANGLE_CONSTRAINTS)
+    ProfiledPIDController(ANGULAR_KP, ANGULAR_KI, ANGULAR_KD, ANGULAR_CONSTRAINTS)
 
 val controller =
     LoggedHolonomicDriveController(translationController, angularController)
