@@ -116,11 +116,18 @@ fun PIDController.log(loggingName: String) {
 
 fun ProfiledPIDController.log(loggingName: String) {
     val loggingLocation = "Alignment/Controllers/$loggingName"
-    Logger.recordOutput("$loggingLocation/goal", goal.position)
-    Logger.recordOutput("$loggingLocation/positionSetpoint", setpoint.position)
-    Logger.recordOutput("$loggingLocation/error", positionError)
-    Logger.recordOutput("$loggingLocation/velocitySetpoint", setpoint.velocity)
-    Logger.recordOutput("$loggingLocation/velocityError", velocityError)
+
+    val valuesToLog = mapOf(
+        "goal" to goal.position,
+        "positionSetpoint" to setpoint.position,
+        "error" to positionError,
+        "velocitySetpoint" to setpoint.velocity,
+        "velocityError" to velocityError,
+    )
+
+    valuesToLog.forEach { (key, value) ->
+        Logger.recordOutput("$loggingLocation/$key", value)
+    }
 
     Logger.recordOutput("$loggingLocation/atGoal", atGoal())
     Logger.recordOutput("$loggingLocation/atSetpoint", atSetpoint())
