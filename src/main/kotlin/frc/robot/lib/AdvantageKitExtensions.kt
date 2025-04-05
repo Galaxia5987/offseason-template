@@ -3,20 +3,19 @@ package frc.robot.lib
 import edu.wpi.first.math.controller.HolonomicDriveController
 import edu.wpi.first.math.controller.PIDController
 import edu.wpi.first.math.controller.ProfiledPIDController
-import edu.wpi.first.math.geometry.Pose2d
-import edu.wpi.first.math.geometry.Rotation2d
-import edu.wpi.first.math.geometry.Transform2d
-import edu.wpi.first.math.geometry.Translation2d
+import edu.wpi.first.math.geometry.*
 import edu.wpi.first.units.Measure
 import edu.wpi.first.units.MutableMeasure
 import edu.wpi.first.units.Unit as WPIUnit
 import edu.wpi.first.util.struct.Struct
 import edu.wpi.first.util.struct.StructSerializable
+import edu.wpi.first.wpilibj2.command.button.Trigger
 import kotlin.reflect.KProperty
 import org.littletonrobotics.junction.AutoLogOutputManager
 import org.littletonrobotics.junction.LogTable
 import org.littletonrobotics.junction.Logger
 import org.littletonrobotics.junction.inputs.LoggableInputs
+import org.littletonrobotics.junction.mechanism.LoggedMechanism2d
 
 abstract class AutoLogInputs : LoggableInputs {
     fun log(value: Double, key: String? = null) =
@@ -134,6 +133,12 @@ fun Map<String, Any>.log(loggingPath: String = "") {
             is Pose2d -> Logger.recordOutput(fullLoggingPath, value)
             is Translation2d -> Logger.recordOutput(fullLoggingPath, value)
             is Transform2d -> Logger.recordOutput(fullLoggingPath, value)
+            is Rotation3d -> Logger.recordOutput(fullLoggingPath, value)
+            is Pose3d -> Logger.recordOutput(fullLoggingPath, value)
+            is Translation3d -> Logger.recordOutput(fullLoggingPath, value)
+            is Transform3d -> Logger.recordOutput(fullLoggingPath, value)
+            is LoggedMechanism2d -> Logger.recordOutput(fullLoggingPath, value)
+            is Trigger -> Logger.recordOutput(fullLoggingPath, value)
             else -> Logger.recordOutput(fullLoggingPath, value.toString())
         }
     }
