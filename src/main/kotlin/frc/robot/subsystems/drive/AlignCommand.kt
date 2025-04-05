@@ -14,7 +14,12 @@ private val translationController =
     PIDController(LINEAR_KP, LINEAR_KI, LINEAR_KD)
 
 private val angularController =
-    ProfiledPIDController(ANGULAR_KP, ANGULAR_KI, ANGULAR_KD, ANGULAR_CONSTRAINTS)
+    ProfiledPIDController(
+        ANGULAR_KP,
+        ANGULAR_KI,
+        ANGULAR_KD,
+        ANGULAR_CONSTRAINTS
+    )
 
 val controller =
     TunableHolonomicDriveController(translationController, angularController)
@@ -59,21 +64,17 @@ fun alignToPose(
     tolerance: Pose2d = TOLERANCE,
     holonomicController: TunableHolonomicDriveController = controller
 ): Command =
-    drive
-        .defer {
-            run({
-                drive.runVelocity(
-                    holonomicController
-                        .apply { setTolerance(tolerance) }
-                        .calculate(
-                            drive.pose,
-                            goalPose,
-                            linearVelocity.`in`(MetersPerSecond),
-                            goalPose.rotation
-                        )
-                )
-            })
-        }
+    run({
+            drive.runVelocity(
+                holonomicController
+                    .apply { setTolerance(tolerance) }
+                    .calculate(
+                        drive.pose,
+                        goalPose,
+                        linearVelocity.`in`(MetersPerSecond),
+                        goalPose.rotation
+                    )
+            )
+        })
         .until(controller::atReference)
         .withName("Drive/AlignToPose")
-
