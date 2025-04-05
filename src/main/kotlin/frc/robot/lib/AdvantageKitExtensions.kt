@@ -1,26 +1,40 @@
 package frc.robot.lib
 
+import edu.wpi.first.math.controller.HolonomicDriveController
+import edu.wpi.first.math.controller.PIDController
+import edu.wpi.first.math.controller.ProfiledPIDController
+import edu.wpi.first.math.geometry.Pose2d
+import edu.wpi.first.math.geometry.Rotation2d
+import edu.wpi.first.math.geometry.Transform2d
+import edu.wpi.first.math.geometry.Translation2d
 import edu.wpi.first.units.Measure
 import edu.wpi.first.units.MutableMeasure
 import edu.wpi.first.units.Unit as WPIUnit
 import edu.wpi.first.util.struct.Struct
 import edu.wpi.first.util.struct.StructSerializable
+import org.dyn4j.geometry.Rotation
 import kotlin.reflect.KProperty
 import org.littletonrobotics.junction.AutoLogOutputManager
 import org.littletonrobotics.junction.LogTable
+import org.littletonrobotics.junction.Logger
 import org.littletonrobotics.junction.inputs.LoggableInputs
 
 abstract class AutoLogInputs : LoggableInputs {
     fun log(value: Double, key: String? = null) =
         LoggedInput(value, key, LogTable::put, LogTable::get)
+
     fun log(value: Int, key: String? = null) =
         LoggedInput(value, key, LogTable::put, LogTable::get)
+
     fun log(value: String, key: String? = null) =
         LoggedInput(value, key, LogTable::put, LogTable::get)
+
     fun log(value: Boolean, key: String? = null) =
         LoggedInput(value, key, LogTable::put, LogTable::get)
+
     fun log(value: Long, key: String? = null) =
         LoggedInput(value, key, LogTable::put, LogTable::get)
+
     fun <T : StructSerializable> log(value: T, key: String? = null) =
         LoggedInput(value, key, LogTable::put, LogTable::get)
 
@@ -36,21 +50,27 @@ abstract class AutoLogInputs : LoggableInputs {
         LoggedInput(value, key, LogTable::put, LogTable::get)
 
     fun <
-        U : WPIUnit,
-        Base : Measure<WPIUnit>,
-        M : MutableMeasure<U, Base, M>> log(value: M, key: String? = null) =
+            U : WPIUnit,
+            Base : Measure<WPIUnit>,
+            M : MutableMeasure<U, Base, M>,
+            > log(value: M, key: String? = null) =
         LoggedInput(value, key, LogTable::put, LogTable::get)
 
     fun log(value: DoubleArray, key: String? = null) =
         LoggedInput(value, key, LogTable::put, LogTable::get)
+
     fun log(value: IntArray, key: String? = null) =
         LoggedInput(value, key, LogTable::put, LogTable::get)
+
     fun log(value: Array<String>, key: String? = null) =
         LoggedInput(value, key, LogTable::put, LogTable::get)
+
     fun log(value: BooleanArray, key: String? = null) =
         LoggedInput(value, key, LogTable::put, LogTable::get)
+
     fun log(value: LongArray, key: String? = null) =
         LoggedInput(value, key, LogTable::put, LogTable::get)
+
     fun <T : StructSerializable> log(value: Array<T>, key: String? = null) =
         LoggedInput(value, key, LogTable::put, LogTable::get)
 
@@ -61,7 +81,7 @@ abstract class AutoLogInputs : LoggableInputs {
         private var value: T,
         private val name: String? = null,
         private val toLog: LogTable.(String, T) -> Unit,
-        private val fromLog: LogTable.(String, T) -> T
+        private val fromLog: LogTable.(String, T) -> T,
     ) {
         operator fun getValue(thisRef: Any, property: KProperty<*>) = value
         operator fun setValue(thisRef: Any, property: KProperty<*>, value: T) {
@@ -70,7 +90,7 @@ abstract class AutoLogInputs : LoggableInputs {
 
         operator fun provideDelegate(
             thisRef: Any,
-            property: KProperty<*>
+            property: KProperty<*>,
         ): LoggedInput<T> {
             val namespace = this.name ?: property.name
             toLogRunners.add { logTable ->
@@ -101,6 +121,52 @@ fun enableAutoLogOutputFor(vararg roots: Any) {
         method.isAccessible = true
         method.invoke(null, root)
     }
+}
+
+fun Map<String, Any>.log(loggingPath: String = "") {
+    forEach { (key, value) ->
+        val fullLoggingPath = "$loggingPath/$key"
+        when (value) {
+            is String -> Logger.recordOutput(fullLoggingPath, value)
+            is Int -> Logger.recordOutput(fullLoggingPath, value)
+            is Double -> Logger.recordOutput(fullLoggingPath, value)
+            is Measure<*> -> Logger.recordOutput(fullLoggingPath, value)
+            is Rotation2d -> Logger.recordOutput(fullLoggingPath, value)
+            is Pose2d -> Logger.recordOutput(fullLoggingPath, value)
+            is Translation2d -> Logger.recordOutput(fullLoggingPath, value)
+            is Transform2d -> Logger.recordOutput(fullLoggingPath, value)
+            else -> Logger.recordOutput(fullLoggingPath, value.toString())
+        }
+    }
+}
+
+fun PIDController.log(loggingName: String) {
+    val loggingPath = "Alignment/Controllers/$loggingName"
+    Logger.recordOutput("$loggingPath/goal", setpoint)
+    Logger.recordOutput("$loggingPath/error", error)
+    Logger.recordOutput("$loggingPath/atGoal", atSetpoint())
+}
+
+fun ProfiledPIDController.log(loggingName: String) {
+    val loggingPath = "Alignment/Controllers/$loggingName"
+
+    mapOf(
+        "goal" to goal.position,
+        "positionSetpoint" to setpoint.position,
+        "error" to positionError,
+        "velocitySetpoint" to setpoint.velocity,
+        "velocityError" to velocityError,
+    ).log(loggingPath)
+
+    Logger.recordOutput("$loggingPath/atGoal", atGoal())
+    Logger.recordOutput("$loggingPath/atSetpoint", atSetpoint())
+}
+
+fun HolonomicDriveController.log() {
+    xController.log("XController")
+    yController.log("YController")
+    thetaController.log("ThetaController")
+    Logger.recordOutput("Alignment/Controllers/AtGoal", atReference())
 }
 
 // ```
