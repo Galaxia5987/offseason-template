@@ -7,6 +7,10 @@ import edu.wpi.first.math.geometry.Pose2d
 import edu.wpi.first.math.geometry.Rotation2d
 import edu.wpi.first.math.kinematics.ChassisSpeeds
 import edu.wpi.first.math.trajectory.Trajectory
+import edu.wpi.first.units.Units.MetersPerSecond
+import edu.wpi.first.units.Units.Radians
+import edu.wpi.first.units.measure.Angle
+import edu.wpi.first.units.measure.LinearVelocity
 import frc.robot.subsystems.drive.controller
 import org.littletonrobotics.junction.networktables.LoggedNetworkNumber
 
@@ -80,6 +84,19 @@ class LoggedHolonomicDriveController(
             desiredHeading
         )
     }
+
+    fun calculate(
+        currentPose: Pose2d,
+        trajectoryPose: Pose2d,
+        desiredLinearVelocity: LinearVelocity,
+        desiredHeading: Angle,
+    ): ChassisSpeeds =
+        calculate(
+            currentPose,
+            trajectoryPose,
+            desiredLinearVelocity.`in`(MetersPerSecond),
+            Rotation2d.fromRadians(desiredHeading.`in`(Radians))
+        )
 
     /**
      * Overloaded version of [calculate] that uses a full [Trajectory.State] for
