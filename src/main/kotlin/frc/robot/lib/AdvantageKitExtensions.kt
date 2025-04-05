@@ -3,11 +3,16 @@ package frc.robot.lib
 import edu.wpi.first.math.controller.HolonomicDriveController
 import edu.wpi.first.math.controller.PIDController
 import edu.wpi.first.math.controller.ProfiledPIDController
+import edu.wpi.first.math.geometry.Pose2d
+import edu.wpi.first.math.geometry.Rotation2d
+import edu.wpi.first.math.geometry.Transform2d
+import edu.wpi.first.math.geometry.Translation2d
 import edu.wpi.first.units.Measure
 import edu.wpi.first.units.MutableMeasure
 import edu.wpi.first.units.Unit as WPIUnit
 import edu.wpi.first.util.struct.Struct
 import edu.wpi.first.util.struct.StructSerializable
+import org.dyn4j.geometry.Rotation
 import kotlin.reflect.KProperty
 import org.littletonrobotics.junction.AutoLogOutputManager
 import org.littletonrobotics.junction.LogTable
@@ -118,15 +123,32 @@ fun enableAutoLogOutputFor(vararg roots: Any) {
     }
 }
 
+fun Map<String, Any>.log(loggingPath: String = "") {
+    forEach { (key, value) ->
+        val fullLoggingPath = "$loggingPath/$key"
+        when (value) {
+            is String -> Logger.recordOutput(fullLoggingPath, value)
+            is Int -> Logger.recordOutput(fullLoggingPath, value)
+            is Double -> Logger.recordOutput(fullLoggingPath, value)
+            is Measure<*> -> Logger.recordOutput(fullLoggingPath, value)
+            is Rotation2d -> Logger.recordOutput(fullLoggingPath, value)
+            is Pose2d -> Logger.recordOutput(fullLoggingPath, value)
+            is Translation2d -> Logger.recordOutput(fullLoggingPath, value)
+            is Transform2d -> Logger.recordOutput(fullLoggingPath, value)
+            else -> Logger.recordOutput(fullLoggingPath, value.toString())
+        }
+    }
+}
+
 fun PIDController.log(loggingName: String) {
-    val loggingLocation = "Alignment/Controllers/$loggingName"
-    Logger.recordOutput("$loggingLocation/goal", setpoint)
-    Logger.recordOutput("$loggingLocation/error", error)
-    Logger.recordOutput("$loggingLocation/atGoal", atSetpoint())
+    val loggingPath = "Alignment/Controllers/$loggingName"
+    Logger.recordOutput("$loggingPath/goal", setpoint)
+    Logger.recordOutput("$loggingPath/error", error)
+    Logger.recordOutput("$loggingPath/atGoal", atSetpoint())
 }
 
 fun ProfiledPIDController.log(loggingName: String) {
-    val loggingLocation = "Alignment/Controllers/$loggingName"
+    val loggingPath = "Alignment/Controllers/$loggingName"
 
     mapOf(
         "goal" to goal.position,
@@ -134,12 +156,10 @@ fun ProfiledPIDController.log(loggingName: String) {
         "error" to positionError,
         "velocitySetpoint" to setpoint.velocity,
         "velocityError" to velocityError,
-    ).forEach { (key, value) ->
-        Logger.recordOutput("$loggingLocation/$key", value)
-    }
+    ).log(loggingPath)
 
-    Logger.recordOutput("$loggingLocation/atGoal", atGoal())
-    Logger.recordOutput("$loggingLocation/atSetpoint", atSetpoint())
+    Logger.recordOutput("$loggingPath/atGoal", atGoal())
+    Logger.recordOutput("$loggingPath/atSetpoint", atSetpoint())
 }
 
 fun HolonomicDriveController.log() {
