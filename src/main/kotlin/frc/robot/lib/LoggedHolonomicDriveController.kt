@@ -15,32 +15,48 @@ const val TRANSLATION_LOGGING_LOCATION = "$LOGGING_LOCATION/Translation"
 const val ROTATION_LOGGING_LOCATION = "$LOGGING_LOCATION/Rotation"
 
 /**
- * A subclass of [HolonomicDriveController] that allows runtime tuning of PID values using
- * [LoggedNetworkNumber] and logs them to NetworkTables along with the error, position, goal etc...
+ * A subclass of [HolonomicDriveController] that allows runtime tuning of PID
+ * values using [LoggedNetworkNumber] and logs them to NetworkTables along with
+ * the error, position, goal etc...
  *
  * This controller:
  * - Shares the same PID controller for both X and Y translations.
- * - Logs and updates PID gains on every `calculate()` call based on NetworkTables values.
- * - Keeps tuning parameters under `/Tuning/Alignment/Translation` and `/Tuning/Alignment/Rotation`.
+ * - Logs and updates PID gains on every `calculate()` call based on
+ * NetworkTables values.
+ * - Keeps tuning parameters under `/Tuning/Alignment/Translation` and
+ * `/Tuning/Alignment/Rotation`.
  *
- * @param translationController The [PIDController] to use for both X and Y field-relative control.
- * @param thetaController The [ProfiledPIDController] for controlling rotational alignment.
+ * @param translationController The [PIDController] to use for both X and Y
+ * field-relative control.
+ * @param thetaController The [ProfiledPIDController] for controlling rotational
+ * alignment.
  */
 class LoggedHolonomicDriveController(
     translationController: PIDController,
     thetaController: ProfiledPIDController,
-) : HolonomicDriveController(translationController, translationController, thetaController) {
-    private val translationKP = LoggedNetworkNumber("$TRANSLATION_LOGGING_LOCATION/kP", xController.p)
-    private val translationKI = LoggedNetworkNumber("$TRANSLATION_LOGGING_LOCATION/kI", xController.i)
-    private val translationKD = LoggedNetworkNumber("$TRANSLATION_LOGGING_LOCATION/kD", xController.d)
-    
-    private val rotationKP = LoggedNetworkNumber("$ROTATION_LOGGING_LOCATION/kP", thetaController.p)
-    private val rotationKI = LoggedNetworkNumber("$ROTATION_LOGGING_LOCATION/kI", thetaController.i)
-    private val rotationKD = LoggedNetworkNumber("$ROTATION_LOGGING_LOCATION/kD", thetaController.d)
+) :
+    HolonomicDriveController(
+        translationController,
+        translationController,
+        thetaController
+    ) {
+    private val translationKP =
+        LoggedNetworkNumber("$TRANSLATION_LOGGING_LOCATION/kP", xController.p)
+    private val translationKI =
+        LoggedNetworkNumber("$TRANSLATION_LOGGING_LOCATION/kI", xController.i)
+    private val translationKD =
+        LoggedNetworkNumber("$TRANSLATION_LOGGING_LOCATION/kD", xController.d)
+
+    private val rotationKP =
+        LoggedNetworkNumber("$ROTATION_LOGGING_LOCATION/kP", thetaController.p)
+    private val rotationKI =
+        LoggedNetworkNumber("$ROTATION_LOGGING_LOCATION/kI", thetaController.i)
+    private val rotationKD =
+        LoggedNetworkNumber("$ROTATION_LOGGING_LOCATION/kD", thetaController.d)
 
     /**
-     * Calculates the next chassis speeds using the current and target poses, while updating
-     * PID coefficients from NetworkTables.
+     * Calculates the next chassis speeds using the current and target poses,
+     * while updating PID coefficients from NetworkTables.
      *
      * @param currentPose The current estimated pose of the robot.
      * @param trajectoryPose The desired pose from the trajectory.
@@ -57,11 +73,17 @@ class LoggedHolonomicDriveController(
         updatePIDCoefficients()
         controller.log()
 
-        return super.calculate(currentPose, trajectoryPose, desiredLinearVelocityMetersPerSecond, desiredHeading)
+        return super.calculate(
+            currentPose,
+            trajectoryPose,
+            desiredLinearVelocityMetersPerSecond,
+            desiredHeading
+        )
     }
 
     /**
-     * Overloaded version of [calculate] that uses a full [Trajectory.State] for input.
+     * Overloaded version of [calculate] that uses a full [Trajectory.State] for
+     * input.
      *
      * @param currentPose The current estimated pose of the robot.
      * @param desiredState The desired trajectory state.
@@ -69,10 +91,15 @@ class LoggedHolonomicDriveController(
      * @return The chassis speeds to drive the robot.
      */
     override fun calculate(
-        currentPose: Pose2d, desiredState: Trajectory.State, desiredHeading: Rotation2d,
+        currentPose: Pose2d,
+        desiredState: Trajectory.State,
+        desiredHeading: Rotation2d,
     ): ChassisSpeeds {
         return calculate(
-            currentPose, desiredState.poseMeters, desiredState.velocityMetersPerSecond, desiredHeading
+            currentPose,
+            desiredState.poseMeters,
+            desiredState.velocityMetersPerSecond,
+            desiredHeading
         )
     }
 
@@ -82,8 +109,20 @@ class LoggedHolonomicDriveController(
      * This allows real-time tuning of PID constants while the robot is running.
      */
     private fun updatePIDCoefficients() {
-        xController.setPID(translationKP.get(), translationKI.get(), translationKD.get())
-        yController.setPID(translationKP.get(), translationKI.get(), translationKD.get())
-        thetaController.setPID(rotationKP.get(), rotationKI.get(), rotationKD.get())
+        xController.setPID(
+            translationKP.get(),
+            translationKI.get(),
+            translationKD.get()
+        )
+        yController.setPID(
+            translationKP.get(),
+            translationKI.get(),
+            translationKD.get()
+        )
+        thetaController.setPID(
+            rotationKP.get(),
+            rotationKI.get(),
+            rotationKD.get()
+        )
     }
 }

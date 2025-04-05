@@ -10,31 +10,27 @@ import edu.wpi.first.wpilibj2.command.Commands.*
 import frc.robot.drive
 import frc.robot.lib.LoggedHolonomicDriveController
 
-private val translationController = PIDController(LINEAR_KP, LINEAR_KI, LINEAR_KD)
+private val translationController =
+    PIDController(LINEAR_KP, LINEAR_KI, LINEAR_KD)
 
-private val angularController = ProfiledPIDController(
-    ANGULAR_KP,
-    ANGULAR_KI,
-    ANGULAR_KD,
-    ANGLE_CONSTRAINTS
-)
+private val angularController =
+    ProfiledPIDController(ANGULAR_KP, ANGULAR_KI, ANGULAR_KD, ANGLE_CONSTRAINTS)
 
 val controller =
-    LoggedHolonomicDriveController(
-        translationController,
-        angularController
-    )
+    LoggedHolonomicDriveController(translationController, angularController)
         .apply { setTolerance(TOLERANCE) }
 
 /**
- * Creates a command that aligns the robot to a given goal pose using a holonomic drive controller.
+ * Creates a command that aligns the robot to a given goal pose using a
+ * holonomic drive controller.
  *
  * This command will:
- * - Continuously update the robot's chassis speeds using the provided goal pose and desired linear velocity.
+ * - Continuously update the robot's chassis speeds using the provided goal pose
+ * and desired linear velocity.
  * - Stop when the robot's pose is within the specified tolerance of the goal.
  *
- * This is useful for aligning the robot to a specific point on the field, often before performing
- * an action like shooting or intaking.
+ * This is useful for aligning the robot to a specific point on the field, often
+ * before performing an action like shooting or intaking.
  *
  * ### Example Usage:
  * ```kotlin
@@ -44,34 +40,39 @@ val controller =
  *     )
  * )
  * ```
- * This will continuously align the robot to the pose (2.0, 2.0) while the "circle" button is held.
+ * This will continuously align the robot to the pose (2.0, 2.0) while the
+ * "circle" button is held.
  *
  * @param goalPose The target pose that the robot should align to.
- * @param linearVelocity The desired linear velocity when driving to the pose. Defaults to 0 m/s.
- * @param tolerance The acceptable tolerance around the goal pose to consider alignment complete.
+ * @param linearVelocity The desired linear velocity when driving to the pose.
+ * Defaults to 0 m/s.
+ * @param tolerance The acceptable tolerance around the goal pose to consider
+ * alignment complete.
+ * ```
  *                  Defaults to [TOLERANCE] in alignment constants.
- * @return A [Command] that aligns the robot to the specified [goalPose].
+ * @return
+ * ```
+ * A [Command] that aligns the robot to the specified [goalPose].
  */
 fun alignToPose(
     goalPose: Pose2d,
     linearVelocity: LinearVelocity = MetersPerSecond.zero(),
     tolerance: Pose2d = TOLERANCE,
 ): Command =
-        drive
-            .defer {
-                run({
-                    drive.runVelocity(
-                        controller.apply {
-                            setTolerance(tolerance)
-                        }.calculate(
+    drive
+        .defer {
+            run({
+                drive.runVelocity(
+                    controller
+                        .apply { setTolerance(tolerance) }
+                        .calculate(
                             drive.pose,
                             goalPose,
                             linearVelocity.`in`(MetersPerSecond),
                             goalPose.rotation
                         )
-                    )
-                })
-
-            }
+                )
+            })
+        }
         .until { controller.atReference() }
         .withName("Drive/AlignToPose")
