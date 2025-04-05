@@ -24,6 +24,8 @@ val controller =
  * Creates a command that aligns the robot to a given goal pose using a
  * holonomic drive controller.
  *
+ * A [Command] that aligns the robot to the specified [goalPose].
+ *
  * This command will:
  * - Continuously update the robot's chassis speeds using the provided goal pose
  * and desired linear velocity.
@@ -47,12 +49,7 @@ val controller =
  * @param linearVelocity The desired linear velocity when driving to the pose.
  * Defaults to 0 m/s.
  * @param tolerance The acceptable tolerance around the goal pose to consider
- * alignment complete.
- * ```
- *                  Defaults to [TOLERANCE] in alignment constants.
- * @return
- * ```
- * A [Command] that aligns the robot to the specified [goalPose].
+ * alignment complete. Defaults to [TOLERANCE].
  */
 fun alignToPose(
     goalPose: Pose2d,
