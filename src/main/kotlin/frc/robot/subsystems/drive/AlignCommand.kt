@@ -8,7 +8,7 @@ import edu.wpi.first.units.measure.LinearVelocity
 import edu.wpi.first.wpilibj2.command.Command
 import edu.wpi.first.wpilibj2.command.Commands.*
 import frc.robot.drive
-import frc.robot.lib.TunableHolonomicDriveController
+import frc.robot.lib.controllers.TunableHolonomicDriveController
 
 private val translationController =
     PIDController(LINEAR_KP, LINEAR_KI, LINEAR_KD)
