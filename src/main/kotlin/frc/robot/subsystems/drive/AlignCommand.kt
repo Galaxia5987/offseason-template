@@ -1,5 +1,6 @@
 package frc.robot.subsystems.drive
 
+import edu.wpi.first.math.controller.HolonomicDriveController
 import edu.wpi.first.math.controller.PIDController
 import edu.wpi.first.math.controller.ProfiledPIDController
 import edu.wpi.first.math.geometry.Pose2d
@@ -55,12 +56,13 @@ fun alignToPose(
     goalPose: Pose2d,
     linearVelocity: LinearVelocity = MetersPerSecond.zero(),
     tolerance: Pose2d = TOLERANCE,
+    holonomicController: LoggedHolonomicDriveController = controller
 ): Command =
     drive
         .defer {
             run({
                 drive.runVelocity(
-                    controller
+                    holonomicController
                         .apply { setTolerance(tolerance) }
                         .calculate(
                             drive.pose,
@@ -73,3 +75,4 @@ fun alignToPose(
         }
         .until(controller::atReference)
         .withName("Drive/AlignToPose")
+
