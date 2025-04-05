@@ -14,9 +14,9 @@ import edu.wpi.first.units.measure.LinearVelocity
 import frc.robot.subsystems.drive.controller
 import org.littletonrobotics.junction.networktables.LoggedNetworkNumber
 
-const val LOGGING_LOCATION = "/Tuning/Alignment"
-const val TRANSLATION_LOGGING_LOCATION = "$LOGGING_LOCATION/Translation"
-const val ROTATION_LOGGING_LOCATION = "$LOGGING_LOCATION/Rotation"
+const val LOGGING_PATH = "/Tuning/Alignment"
+const val TRANSLATION_LOGGING_PATH = "$LOGGING_PATH/Translation"
+const val ROTATION_LOGGING_PATH = "$LOGGING_PATH/Rotation"
 
 /**
  * A subclass of [HolonomicDriveController] that allows runtime tuning of PID
@@ -45,18 +45,18 @@ class LoggedHolonomicDriveController(
         thetaController
     ) {
     private val translationKP =
-        LoggedNetworkNumber("$TRANSLATION_LOGGING_LOCATION/kP", xController.p)
+        LoggedNetworkNumber("$TRANSLATION_LOGGING_PATH/kP", xController.p)
     private val translationKI =
-        LoggedNetworkNumber("$TRANSLATION_LOGGING_LOCATION/kI", xController.i)
+        LoggedNetworkNumber("$TRANSLATION_LOGGING_PATH/kI", xController.i)
     private val translationKD =
-        LoggedNetworkNumber("$TRANSLATION_LOGGING_LOCATION/kD", xController.d)
+        LoggedNetworkNumber("$TRANSLATION_LOGGING_PATH/kD", xController.d)
 
     private val rotationKP =
-        LoggedNetworkNumber("$ROTATION_LOGGING_LOCATION/kP", thetaController.p)
+        LoggedNetworkNumber("$ROTATION_LOGGING_PATH/kP", thetaController.p)
     private val rotationKI =
-        LoggedNetworkNumber("$ROTATION_LOGGING_LOCATION/kI", thetaController.i)
+        LoggedNetworkNumber("$ROTATION_LOGGING_PATH/kI", thetaController.i)
     private val rotationKD =
-        LoggedNetworkNumber("$ROTATION_LOGGING_LOCATION/kD", thetaController.d)
+        LoggedNetworkNumber("$ROTATION_LOGGING_PATH/kD", thetaController.d)
 
     /**
      * Calculates the next chassis speeds using the current and target poses,
