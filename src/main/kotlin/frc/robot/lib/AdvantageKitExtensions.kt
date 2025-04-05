@@ -142,7 +142,7 @@ fun Map<String, Any>.log(loggingPath: String = "") {
 
 fun PIDController.log(loggingName: String) {
     val loggingPath = "Alignment/Controllers/$loggingName"
-    Logger.recordOutput("$loggingPath/goal", setpoint)
+    Logger.recordOutput("$loggingPath/setpoint", setpoint)
     Logger.recordOutput("$loggingPath/error", error)
     Logger.recordOutput("$loggingPath/atGoal", atSetpoint())
 }
