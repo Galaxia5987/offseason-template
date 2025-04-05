@@ -12,7 +12,6 @@ import edu.wpi.first.units.MutableMeasure
 import edu.wpi.first.units.Unit as WPIUnit
 import edu.wpi.first.util.struct.Struct
 import edu.wpi.first.util.struct.StructSerializable
-import org.dyn4j.geometry.Rotation
 import kotlin.reflect.KProperty
 import org.littletonrobotics.junction.AutoLogOutputManager
 import org.littletonrobotics.junction.LogTable
@@ -50,10 +49,10 @@ abstract class AutoLogInputs : LoggableInputs {
         LoggedInput(value, key, LogTable::put, LogTable::get)
 
     fun <
-            U : WPIUnit,
-            Base : Measure<WPIUnit>,
-            M : MutableMeasure<U, Base, M>,
-            > log(value: M, key: String? = null) =
+        U : WPIUnit,
+        Base : Measure<WPIUnit>,
+        M : MutableMeasure<U, Base, M>,
+    > log(value: M, key: String? = null) =
         LoggedInput(value, key, LogTable::put, LogTable::get)
 
     fun log(value: DoubleArray, key: String? = null) =
@@ -151,12 +150,16 @@ fun ProfiledPIDController.log(loggingName: String) {
     val loggingPath = "Alignment/Controllers/$loggingName"
 
     mapOf(
-        "goal" to goal.position,
-        "positionSetpoint" to setpoint.position,
-        "error" to positionError,
-        "velocitySetpoint" to setpoint.velocity,
-        "velocityError" to velocityError,
-    ).log(loggingPath)
+            "goal" to goal.position,
+            "positionSetpoint" to setpoint.position,
+            "error" to positionError,
+            "velocitySetpoint" to setpoint.velocity,
+            "velocityError" to velocityError,
+            "goalVelocity" to goal.velocity,
+            "positionTolerance" to positionTolerance,
+            "velocityTolerance" to velocityTolerance,
+        )
+        .log(loggingPath)
 
     Logger.recordOutput("$loggingPath/atGoal", atGoal())
     Logger.recordOutput("$loggingPath/atSetpoint", atSetpoint())
