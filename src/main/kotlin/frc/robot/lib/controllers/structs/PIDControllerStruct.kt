@@ -1,12 +1,13 @@
-package frc.robot.lib
+package frc.robot.lib.controllers.structs
 
 import edu.wpi.first.util.struct.Struct
 import edu.wpi.first.util.struct.Struct.kSizeBool
 import edu.wpi.first.util.struct.Struct.kSizeDouble
-import edu.wpi.first.wpilibj2.command.button.Trigger
+import frc.robot.lib.controllers.LoggablePIDController
 import java.nio.ByteBuffer
 
 class PIDControllerStruct : Struct<LoggablePIDController> {
+
     override fun getTypeClass(): Class<LoggablePIDController> =
         LoggablePIDController::class.java
 
@@ -24,15 +25,8 @@ class PIDControllerStruct : Struct<LoggablePIDController> {
         val ki = bb.getDouble()
         val kd = bb.getDouble()
 
-        val iZone = bb.getDouble()
-        val period = bb.getDouble()
-        val errorTolerance = bb.getDouble()
-        val errorDerivativeTolerance = bb.getDouble()
-        val accumulatedError = bb.getDouble()
-        val setpoint = bb.getDouble()
-        val atSetpoint = bb.get()
-        val error = bb.getDouble()
-        val errorDerivative = bb.getDouble()
+        bb.position(bb.position() + kSizeBool + kSizeDouble * 8)
+
         return LoggablePIDController(kp, ki, kd)
     }
 
