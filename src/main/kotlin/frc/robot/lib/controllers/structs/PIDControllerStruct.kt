@@ -25,6 +25,7 @@ class PIDControllerStruct : Struct<LoggablePIDController> {
         val ki = bb.getDouble()
         val kd = bb.getDouble()
 
+        // Move the buffer forward
         bb.position(bb.position() + kSizeBool + kSizeDouble * 8)
 
         return LoggablePIDController(kp, ki, kd)
