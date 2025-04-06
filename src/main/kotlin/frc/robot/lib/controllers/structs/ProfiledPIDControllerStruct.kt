@@ -7,8 +7,9 @@ import edu.wpi.first.util.struct.Struct.kSizeDouble
 import frc.robot.lib.controllers.LoggableProfiledPIDController
 import java.nio.ByteBuffer
 
-class ProfiledPIDControllerStruct: Struct<LoggableProfiledPIDController> {
-    override fun getTypeClass(): Class<LoggableProfiledPIDController> = LoggableProfiledPIDController::class.java
+class ProfiledPIDControllerStruct : Struct<LoggableProfiledPIDController> {
+    override fun getTypeClass(): Class<LoggableProfiledPIDController> =
+        LoggableProfiledPIDController::class.java
 
     override fun getTypeName(): String = "ProfiledPIDController"
 
@@ -27,7 +28,12 @@ class ProfiledPIDControllerStruct: Struct<LoggableProfiledPIDController> {
         // Move the buffer forward
         bb.position(bb.position() + kSizeBool * 11 + kSizeBool * 2)
 
-        return LoggableProfiledPIDController(kp, ki, kd, TrapezoidProfile.Constraints(maxVelocity, maxAcceleration))
+        return LoggableProfiledPIDController(
+            kp,
+            ki,
+            kd,
+            TrapezoidProfile.Constraints(maxVelocity, maxAcceleration)
+        )
     }
 
     override fun pack(bb: ByteBuffer, value: LoggableProfiledPIDController) {
