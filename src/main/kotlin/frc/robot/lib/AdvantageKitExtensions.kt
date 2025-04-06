@@ -171,6 +171,8 @@ fun ProfiledPIDController.log(loggingName: String) {
             "goalVelocity" to goal.velocity,
             "positionTolerance" to positionTolerance,
             "velocityTolerance" to velocityTolerance,
+            "maxVelocity" to constraints.maxVelocity,
+            "maxAcceleration" to constraints.maxAcceleration,
             "atGoal" to atSetpoint(),
             "atSetpoint" to atGoal()
         )
