@@ -62,14 +62,15 @@ fun alignToPose(
     goalPose: Pose2d,
     linearVelocity: LinearVelocity = MetersPerSecond.zero(),
     tolerance: Pose2d = TOLERANCE,
-    holonomicController: TunableHolonomicDriveController = controller
+    holonomicController: TunableHolonomicDriveController = controller,
+    poseSupplier: () -> Pose2d = { drive.pose }
 ): Command =
     run({
             drive.runVelocity(
                 holonomicController
                     .apply { setTolerance(tolerance) }
                     .calculate(
-                        drive.pose,
+                        poseSupplier.invoke(),
                         goalPose,
                         linearVelocity.`in`(MetersPerSecond),
                         goalPose.rotation
