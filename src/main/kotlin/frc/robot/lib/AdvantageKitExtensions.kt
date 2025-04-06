@@ -155,7 +155,7 @@ fun PIDController.log(loggingName: String) {
     mapOf(
         "setpoint" to setpoint,
         "error" to error,
-        "atGoal" to atSetpoint()
+        "atSetpoint" to atSetpoint()
     ).log(loggingPath)
 }
 
