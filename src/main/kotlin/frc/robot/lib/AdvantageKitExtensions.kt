@@ -14,6 +14,7 @@ import kotlin.reflect.KProperty
 import org.littletonrobotics.junction.AutoLogOutputManager
 import org.littletonrobotics.junction.LogTable
 import org.littletonrobotics.junction.Logger
+import org.littletonrobotics.junction.Logger.recordOutput
 import org.littletonrobotics.junction.inputs.LoggableInputs
 import org.littletonrobotics.junction.mechanism.LoggedMechanism2d
 
@@ -121,34 +122,41 @@ fun enableAutoLogOutputFor(vararg roots: Any) {
     }
 }
 
+fun Any.log(prefix: String, key: String) {
+    val fullLoggingPath = "$prefix/$key"
+    when (this) {
+        is String -> recordOutput(fullLoggingPath, this)
+        is Int -> recordOutput(fullLoggingPath, this)
+        is Double -> recordOutput(fullLoggingPath, this)
+        is Boolean -> recordOutput(fullLoggingPath, this)
+        is Measure<*> -> recordOutput(fullLoggingPath, this)
+        is Rotation2d -> recordOutput(fullLoggingPath, this)
+        is Pose2d -> recordOutput(fullLoggingPath, this)
+        is Translation2d -> recordOutput(fullLoggingPath, this)
+        is Transform2d -> recordOutput(fullLoggingPath, this)
+        is Rotation3d -> recordOutput(fullLoggingPath, this)
+        is Pose3d -> recordOutput(fullLoggingPath, this)
+        is Translation3d -> recordOutput(fullLoggingPath, this)
+        is Transform3d -> recordOutput(fullLoggingPath, this)
+        is LoggedMechanism2d -> recordOutput(fullLoggingPath, this)
+        is Trigger -> recordOutput(fullLoggingPath, this)
+        else -> recordOutput(fullLoggingPath, this.toString())
+    }
+}
+
 fun Map<String, Any>.log(loggingPath: String = "") {
-    forEach { (key, value) ->
-        val fullLoggingPath = "$loggingPath/$key"
-        when (value) {
-            is String -> Logger.recordOutput(fullLoggingPath, value)
-            is Int -> Logger.recordOutput(fullLoggingPath, value)
-            is Double -> Logger.recordOutput(fullLoggingPath, value)
-            is Measure<*> -> Logger.recordOutput(fullLoggingPath, value)
-            is Rotation2d -> Logger.recordOutput(fullLoggingPath, value)
-            is Pose2d -> Logger.recordOutput(fullLoggingPath, value)
-            is Translation2d -> Logger.recordOutput(fullLoggingPath, value)
-            is Transform2d -> Logger.recordOutput(fullLoggingPath, value)
-            is Rotation3d -> Logger.recordOutput(fullLoggingPath, value)
-            is Pose3d -> Logger.recordOutput(fullLoggingPath, value)
-            is Translation3d -> Logger.recordOutput(fullLoggingPath, value)
-            is Transform3d -> Logger.recordOutput(fullLoggingPath, value)
-            is LoggedMechanism2d -> Logger.recordOutput(fullLoggingPath, value)
-            is Trigger -> Logger.recordOutput(fullLoggingPath, value)
-            else -> Logger.recordOutput(fullLoggingPath, value.toString())
-        }
+    forEach {
+        (key, value) -> value.log(loggingPath, key)
     }
 }
 
 fun PIDController.log(loggingName: String) {
     val loggingPath = "Alignment/Controllers/$loggingName"
-    Logger.recordOutput("$loggingPath/setpoint", setpoint)
-    Logger.recordOutput("$loggingPath/error", error)
-    Logger.recordOutput("$loggingPath/atGoal", atSetpoint())
+    mapOf(
+        "setpoint" to setpoint,
+        "error" to error,
+        "atGoal" to atSetpoint()
+    ).log(loggingPath)
 }
 
 fun ProfiledPIDController.log(loggingName: String) {
@@ -163,18 +171,17 @@ fun ProfiledPIDController.log(loggingName: String) {
             "goalVelocity" to goal.velocity,
             "positionTolerance" to positionTolerance,
             "velocityTolerance" to velocityTolerance,
+            "atGoal" to atSetpoint(),
+            "atSetpoint" to atGoal()
         )
         .log(loggingPath)
-
-    Logger.recordOutput("$loggingPath/atGoal", atGoal())
-    Logger.recordOutput("$loggingPath/atSetpoint", atSetpoint())
 }
 
 fun HolonomicDriveController.log() {
     xController.log("XController")
     yController.log("YController")
     thetaController.log("ThetaController")
-    Logger.recordOutput("Alignment/Controllers/AtGoal", atReference())
+    recordOutput("Alignment/Controllers/AtGoal", atReference())
 }
 
 // ```
