@@ -7,6 +7,7 @@ import edu.wpi.first.units.Units.*
 import edu.wpi.first.units.measure.AngularAcceleration
 import edu.wpi.first.units.measure.AngularVelocity
 
+const val DEFAULT_CONTROLLER_NAME = "RegularAlign"
 const val LINEAR_KP = 5.0
 const val LINEAR_KI = 0.0
 const val LINEAR_KD = 0.0

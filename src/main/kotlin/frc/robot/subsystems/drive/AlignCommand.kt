@@ -9,6 +9,7 @@ import edu.wpi.first.wpilibj2.command.Command
 import edu.wpi.first.wpilibj2.command.Commands.*
 import frc.robot.drive
 import frc.robot.lib.controllers.TunableHolonomicDriveController
+import org.littletonrobotics.junction.Logger
 
 private val translationController =
     PIDController(LINEAR_KP, LINEAR_KI, LINEAR_KD)
@@ -62,14 +63,17 @@ fun alignToPose(
     goalPose: Pose2d,
     linearVelocity: LinearVelocity = MetersPerSecond.zero(),
     tolerance: Pose2d = TOLERANCE,
-    holonomicController: TunableHolonomicDriveController = controller,
-    poseSupplier: () -> Pose2d = { drive.pose }
+    poseSupplier: () -> Pose2d = { drive.pose },
+    holonomicController: Pair<TunableHolonomicDriveController, String> = Pair(controller, DEFAULT_CONTROLLER_NAME),
 ): Command =
-    runOnce({ controller.setTolerance(tolerance) }).andThen(
+    runOnce({
+        controller.setTolerance(tolerance)
+        Logger.recordOutput("Alignment/Controllers/CurrentRunningController", holonomicController.second)
+    }).andThen(
     run({
             drive.runVelocity(
                 holonomicController
-                    .calculate(
+                    .first.calculate(
                         poseSupplier.invoke(),
                         goalPose,
                         linearVelocity.`in`(MetersPerSecond),
