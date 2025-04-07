@@ -24,7 +24,8 @@ class PIDControllerStruct : Struct<LoggablePIDController> {
         val kd = bb.getDouble()
 
         // Skip the following fields:
-        // iZone, period, errorTolerance, errorDerivativeTolerance, accumulatedError, setpoint, error, errorDerivative, atSetpoint
+        // iZone, period, errorTolerance, errorDerivativeTolerance, accumulatedError, setpoint,
+        // error, errorDerivative, atSetpoint
         bb.position(bb.position() + kSizeBool + kSizeDouble * 8)
 
         return LoggablePIDController(kp, ki, kd)
@@ -32,20 +33,21 @@ class PIDControllerStruct : Struct<LoggablePIDController> {
 
     override fun pack(bb: ByteBuffer, value: LoggablePIDController) {
         listOf(
-            value.p,
-            value.i,
-            value.d,
-            value.iZone,
-            value.period,
-            value.errorTolerance,
-            value.errorDerivativeTolerance,
-            value.accumulatedError,
-            value.setpoint,
-            value.error,
-            value.errorDerivativeTolerance,
-            value.error,
-            value.errorDerivativeTolerance
-        ).forEach(bb::putDouble)
+                value.p,
+                value.i,
+                value.d,
+                value.iZone,
+                value.period,
+                value.errorTolerance,
+                value.errorDerivativeTolerance,
+                value.accumulatedError,
+                value.setpoint,
+                value.error,
+                value.errorDerivativeTolerance,
+                value.error,
+                value.errorDerivativeTolerance
+            )
+            .forEach(bb::putDouble)
 
         bb.put(if (value.atSetpoint()) 1 else 0)
     }
