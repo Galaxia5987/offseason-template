@@ -6,5 +6,7 @@ import frc.robot.lib.controllers.structs.PIDControllerStruct
 
 class LoggablePIDController(kp: Double, ki: Double, kd: Double) :
     PIDController(kp, ki, kd), StructSerializable {
-    val struct: PIDControllerStruct = PIDControllerStruct()
+    companion object {
+        val struct: PIDControllerStruct = PIDControllerStruct()
+    }
 }

@@ -11,5 +11,7 @@ class LoggableProfiledPIDController(
     kd: Double,
     constraints: TrapezoidProfile.Constraints?
 ) : ProfiledPIDController(kp, ki, kd, constraints), StructSerializable {
-    val struct: ProfiledPIDControllerStruct = ProfiledPIDControllerStruct()
+    companion object {
+        val struct: ProfiledPIDControllerStruct = ProfiledPIDControllerStruct()
+    }
 }
