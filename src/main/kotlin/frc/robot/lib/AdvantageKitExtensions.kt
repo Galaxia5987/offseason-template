@@ -13,7 +13,6 @@ import edu.wpi.first.wpilibj2.command.button.Trigger
 import kotlin.reflect.KProperty
 import org.littletonrobotics.junction.AutoLogOutputManager
 import org.littletonrobotics.junction.LogTable
-import org.littletonrobotics.junction.Logger
 import org.littletonrobotics.junction.Logger.recordOutput
 import org.littletonrobotics.junction.inputs.LoggableInputs
 import org.littletonrobotics.junction.mechanism.LoggedMechanism2d
@@ -138,18 +137,17 @@ fun Any.log(prefix: String, key: String) {
 }
 
 fun Map<String, Any>.log(loggingPath: String = "") {
-    forEach {
-        (key, value) -> value.log(loggingPath, key)
-    }
+    forEach { (key, value) -> value.log(loggingPath, key) }
 }
 
 fun PIDController.log(loggingName: String) {
     val loggingPath = "Alignment/Controllers/$loggingName"
     mapOf(
-        "setpoint" to setpoint,
-        "error" to error,
-        "atSetpoint" to atSetpoint()
-    ).log(loggingPath)
+            "setpoint" to setpoint,
+            "error" to error,
+            "atSetpoint" to atSetpoint()
+        )
+        .log(loggingPath)
 }
 
 fun ProfiledPIDController.log(loggingName: String) {
