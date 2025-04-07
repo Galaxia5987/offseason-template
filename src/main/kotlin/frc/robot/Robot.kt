@@ -7,6 +7,7 @@ import com.pathplanner.lib.commands.PathfindingCommand
 import edu.wpi.first.hal.FRCNetComm.tInstances
 import edu.wpi.first.hal.FRCNetComm.tResourceType
 import edu.wpi.first.hal.HAL
+import edu.wpi.first.math.controller.PIDController
 import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints
 import edu.wpi.first.wpilibj.DriverStation
 import edu.wpi.first.wpilibj.PowerDistribution
@@ -139,10 +140,10 @@ object Robot : LoggedRobot() {
         CommandScheduler.getInstance().run()
 
         // TODO: REMOVE BEFORE MERGING!!!
-        Logger.recordOutput("PIDControllerTest", controller.struct, controller)
+        Logger.recordOutput("PIDControllerTest", LoggablePIDController.struct, controller)
         Logger.recordOutput(
             "ProfiledPIDControllerTest",
-            profiledController.struct,
+            LoggableProfiledPIDController.struct,
             profiledController
         )
         controller.calculate(Random.nextInt().toDouble())
