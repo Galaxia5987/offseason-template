@@ -16,7 +16,7 @@ class ProfiledPIDControllerStruct : Struct<LoggableProfiledPIDController> {
     override fun getSize(): Int = kSizeDouble * 16 + kSizeBool * 2
 
     override fun getSchema(): String =
-        "double kp;double ki;double kd;double maxVelocity;double maxAcceleration;double iZone;double period;double positionTolerance;double velocityTolerance;double accumulatedError;double goalPosition;double goalVelocity;bool atGoal;double setpointPosition;double setpointVelocity;bool atSetpoint;double positionError;double velocityError;"
+        "double kp;double ki;double kd;double maxVelocity;double maxAcceleration;double iZone;double period;double positionTolerance;double velocityTolerance;double accumulatedError;double goalPosition;double goalVelocity;double setpointPosition;double setpointVelocity;double positionError;double velocityError;;bool atSetpoint;bool atGoal;"
 
     override fun unpack(bb: ByteBuffer): LoggableProfiledPIDController {
         val kp = bb.getDouble()
@@ -37,23 +37,26 @@ class ProfiledPIDControllerStruct : Struct<LoggableProfiledPIDController> {
     }
 
     override fun pack(bb: ByteBuffer, value: LoggableProfiledPIDController) {
-        bb.putDouble(value.p)
-        bb.putDouble(value.i)
-        bb.putDouble(value.d)
-        bb.putDouble(value.constraints.maxVelocity)
-        bb.putDouble(value.constraints.maxAcceleration)
-        bb.putDouble(value.iZone)
-        bb.putDouble(value.period)
-        bb.putDouble(value.positionTolerance)
-        bb.putDouble(value.velocityTolerance)
-        bb.putDouble(value.accumulatedError)
-        bb.putDouble(value.goal.position)
-        bb.putDouble(value.goal.velocity)
+        listOf(
+            value.p,
+            value.i,
+            value.d,
+            value.constraints.maxVelocity,
+            value.constraints.maxAcceleration,
+            value.iZone,
+            value.period,
+            value.positionTolerance,
+            value.velocityTolerance,
+            value.accumulatedError,
+            value.goal.position,
+            value.goal.velocity,
+            value.setpoint.position,
+            value.setpoint.velocity,
+            value.positionError,
+            value.velocityError,
+        ).forEach { bb.putDouble(it) }
+
+        bb.put(if (value.atSetpoint()) 1 else 0)
         bb.put(if (value.atGoal()) 1 else 0)
-        bb.putDouble(value.setpoint.position)
-        bb.putDouble(value.setpoint.velocity)
-        bb.put(if (value.atGoal()) 1 else 0)
-        bb.putDouble(value.positionError)
-        bb.putDouble(value.velocityError)
     }
 }
