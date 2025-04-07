@@ -11,9 +11,7 @@ class PIDControllerStruct : Struct<LoggablePIDController> {
     override fun getTypeClass(): Class<LoggablePIDController> =
         LoggablePIDController::class.java
 
-    override fun getTypeName(): String {
-        return "PIDController"
-    }
+    override fun getTypeName() = "PIDController"
 
     override fun getSize(): Int = kSizeDouble * 11 + kSizeBool
 
