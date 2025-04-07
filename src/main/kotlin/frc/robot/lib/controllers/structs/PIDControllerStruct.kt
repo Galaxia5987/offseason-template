@@ -23,7 +23,8 @@ class PIDControllerStruct : Struct<LoggablePIDController> {
         val ki = bb.getDouble()
         val kd = bb.getDouble()
 
-        // Move the buffer forward
+        // Skip the following fields:
+        // iZone, period, errorTolerance, errorDerivativeTolerance, accumulatedError, setpoint, atSetpoint, error, errorDerivative
         bb.position(bb.position() + kSizeBool + kSizeDouble * 8)
 
         return LoggablePIDController(kp, ki, kd)
