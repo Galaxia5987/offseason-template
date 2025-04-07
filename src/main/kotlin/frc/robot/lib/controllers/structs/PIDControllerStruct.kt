@@ -16,7 +16,7 @@ class PIDControllerStruct : Struct<LoggablePIDController> {
     override fun getSize(): Int = kSizeDouble * 11 + kSizeBool
 
     override fun getSchema(): String =
-        "double kp;double ki;double kd;double iZone;double period;double errorTolerance;double errorDerivativeTolerance;double accumulatedError;double setpoint;bool atSetpoint;double error;double errorDerivative"
+        "double kp;double ki;double kd;double iZone;double period;double errorTolerance;double errorDerivativeTolerance;double accumulatedError;double setpoint;double error;double errorDerivative;bool atSetpoint"
 
     override fun unpack(bb: ByteBuffer): LoggablePIDController {
         val kp = bb.getDouble()
@@ -24,25 +24,29 @@ class PIDControllerStruct : Struct<LoggablePIDController> {
         val kd = bb.getDouble()
 
         // Skip the following fields:
-        // iZone, period, errorTolerance, errorDerivativeTolerance, accumulatedError, setpoint, atSetpoint, error, errorDerivative
+        // iZone, period, errorTolerance, errorDerivativeTolerance, accumulatedError, setpoint, error, errorDerivative, atSetpoint
         bb.position(bb.position() + kSizeBool + kSizeDouble * 8)
 
         return LoggablePIDController(kp, ki, kd)
     }
 
     override fun pack(bb: ByteBuffer, value: LoggablePIDController) {
-        bb.putDouble(value.p)
-        bb.putDouble(value.i)
-        bb.putDouble(value.d)
+        listOf(
+            value.p,
+            value.i,
+            value.d,
+            value.iZone,
+            value.period,
+            value.errorTolerance,
+            value.errorDerivativeTolerance,
+            value.accumulatedError,
+            value.setpoint,
+            value.error,
+            value.errorDerivativeTolerance,
+            value.error,
+            value.errorDerivativeTolerance
+        ).forEach(bb::putDouble)
 
-        bb.putDouble(value.iZone)
-        bb.putDouble(value.period)
-        bb.putDouble(value.errorTolerance)
-        bb.putDouble(value.errorDerivativeTolerance)
-        bb.putDouble(value.accumulatedError)
-        bb.putDouble(value.setpoint)
         bb.put(if (value.atSetpoint()) 1 else 0)
-        bb.putDouble(value.error)
-        bb.putDouble(value.errorDerivativeTolerance)
     }
 }
