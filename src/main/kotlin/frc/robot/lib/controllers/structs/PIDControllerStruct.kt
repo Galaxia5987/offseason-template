@@ -13,7 +13,7 @@ class PIDControllerStruct : Struct<LoggablePIDController> {
 
     override fun getTypeName() = "PIDController"
 
-    override fun getSize(): Int = kSizeDouble * 11 + kSizeBool
+    override fun getSize(): Int = kSizeDouble * 13 + kSizeBool
 
     override fun getSchema(): String =
         "double kp;double ki;double kd;double iZone;double period;double errorTolerance;double errorDerivativeTolerance;double accumulatedError;double setpoint;double error;double errorDerivative;bool atSetpoint"
@@ -26,7 +26,7 @@ class PIDControllerStruct : Struct<LoggablePIDController> {
         // Skip the following fields:
         // iZone, period, errorTolerance, errorDerivativeTolerance, accumulatedError, setpoint,
         // error, errorDerivative, atSetpoint
-        bb.position(bb.position() + kSizeBool + kSizeDouble * 8)
+        bb.position(bb.position() + kSizeBool + kSizeDouble * 10)
 
         return LoggablePIDController(kp, ki, kd)
     }
