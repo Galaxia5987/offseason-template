@@ -1,5 +1,7 @@
 package frc.robot.lib
 
+import edu.wpi.first.math.controller.PIDController
+import edu.wpi.first.math.controller.ProfiledPIDController
 import edu.wpi.first.math.kinematics.ChassisSpeeds
 import edu.wpi.first.units.Units
 import edu.wpi.first.units.measure.Angle
@@ -11,9 +13,12 @@ import edu.wpi.first.wpilibj2.command.Command
 import edu.wpi.first.wpilibj2.command.Commands
 import edu.wpi.first.wpilibj2.command.WrapperCommand
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController
+import frc.robot.lib.controllers.structs.PIDControllerStruct
+import frc.robot.lib.controllers.structs.ProfiledPIDControllerStruct
 import kotlin.math.PI
 import kotlin.math.hypot
 import org.littletonrobotics.junction.LogTable
+import org.littletonrobotics.junction.Logger
 
 fun ChassisSpeeds.getSpeed() = hypot(vxMetersPerSecond, vyMetersPerSecond)
 
@@ -28,6 +33,11 @@ fun List<Any>.toIntArray(): IntArray {
 fun List<Any>.toBooleanArray(): BooleanArray {
     return this.map { it as Boolean }.toTypedArray().toBooleanArray()
 }
+
+private val pidStruct: PIDControllerStruct = PIDControllerStruct()
+fun PIDController.log(key: String) = Logger.recordOutput(key, pidStruct, this)
+private val profiledPidStruct: ProfiledPIDControllerStruct = ProfiledPIDControllerStruct()
+fun ProfiledPIDController.log(key: String) = Logger.recordOutput(key, profiledPidStruct, this)
 
 fun LogTable.put(key: String, defaultValue: List<Any>) {
     when {
