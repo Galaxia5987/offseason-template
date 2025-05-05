@@ -7,6 +7,9 @@ import com.pathplanner.lib.commands.PathfindingCommand
 import edu.wpi.first.hal.FRCNetComm.tInstances
 import edu.wpi.first.hal.FRCNetComm.tResourceType
 import edu.wpi.first.hal.HAL
+import edu.wpi.first.math.controller.PIDController
+import edu.wpi.first.math.controller.ProfiledPIDController
+import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints
 import edu.wpi.first.wpilibj.DriverStation
 import edu.wpi.first.wpilibj.PowerDistribution
 import edu.wpi.first.wpilibj2.command.Command
@@ -15,6 +18,8 @@ import frc.robot.Mode.REAL
 import frc.robot.Mode.REPLAY
 import frc.robot.Mode.SIM
 import frc.robot.lib.enableAutoLogOutputFor
+import frc.robot.lib.log
+import kotlin.random.Random
 import org.ironmaple.simulation.SimulatedArena
 import org.littletonrobotics.junction.LogFileUtil
 import org.littletonrobotics.junction.LoggedRobot
@@ -33,6 +38,9 @@ import org.littletonrobotics.junction.wpilog.WPILOGWriter
  */
 object Robot : LoggedRobot() {
     private lateinit var autonomousCommand: Command
+    val controller = PIDController(1.0, 2.0, 3.0)
+    val profiledController =
+        ProfiledPIDController(1.0, 2.0, 3.0, Constraints(5.0, 3.0))
 
     /**
      * This function is run when the robot is first started up and should be
@@ -130,6 +138,14 @@ object Robot : LoggedRobot() {
      */
     override fun robotPeriodic() {
         CommandScheduler.getInstance().run()
+
+        // TODO: REMOVE BEFORE MERGING!!!
+        val measurement = Random.nextInt().toDouble()
+        controller.calculate(measurement)
+        profiledController.calculate(measurement)
+
+        controller.log("Controllers/PID")
+        profiledController.log("Controllers/Profiled")
     }
 
     /**
