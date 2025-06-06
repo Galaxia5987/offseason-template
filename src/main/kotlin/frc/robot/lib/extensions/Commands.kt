@@ -21,7 +21,7 @@ infix fun Command.withTimeout(seconds: Double): Command = withTimeout(seconds)
 infix fun Command.withTimeout(seconds: Time): Command = withTimeout(seconds)
 
 /**
- * Automatically add the subsystem's name if this a single-subsystem command.
+ * Automatically add the subsystem's name if this is a single-subsystem command.
  * For single-subsystem commands, use [SubsystemBase.withName].
  */
 infix fun Command.named(commandName: String): Command {
