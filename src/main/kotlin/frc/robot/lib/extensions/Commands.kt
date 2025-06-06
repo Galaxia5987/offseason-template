@@ -25,7 +25,7 @@ infix fun Command.withTimeout(seconds: Time): Command = withTimeout(seconds)
  * For single-subsystem commands, use [SubsystemBase.withName].
  */
 infix fun Command.named(commandName: String): Command {
-    val prefix = if (requirements.count() == 1) "${requirements.first().name}/" else ""
+    val prefix = if (requirements.size == 1) "${requirements.first().name}/" else ""
     return withName(prefix + commandName)
 }
 
