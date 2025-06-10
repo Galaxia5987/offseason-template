@@ -1,6 +1,8 @@
 package frc.robot.lib.motors;
 
+import com.ctre.phoenix6.StatusCode;
 import com.ctre.phoenix6.controls.*;
+import com.ctre.phoenix6.controls.compound.*;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N2;
 import edu.wpi.first.math.system.LinearSystem;
@@ -89,6 +91,49 @@ public class TalonFXSim extends SimMotor {
                 () ->
                         profiledController.calculate(getPosition(), request.Position)
                                 + request.FeedForward;
+    }
+
+    public void setControl2(ControlRequest request)
+    {
+        if (request instanceof DutyCycleOut reqDutyCycleOut)
+            setControl(reqDutyCycleOut);
+        if (request instanceof TorqueCurrentFOC reqTorqueCurrentFOC)
+            setControl(reqTorqueCurrentFOC);
+        if (request instanceof VoltageOut reqVoltageOut)
+            setControl(reqVoltageOut);
+        if (request instanceof PositionDutyCycle reqPositionDutyCycle)
+            setControl(reqPositionDutyCycle);
+        if (request instanceof PositionVoltage reqPositionVoltage)
+            setControl(reqPositionVoltage);
+        if (request instanceof PositionTorqueCurrentFOC reqPositionTorqueCurrentFOC)
+            setControl(reqPositionTorqueCurrentFOC);
+        if (request instanceof VelocityDutyCycle reqVelocityDutyCycle)
+            setControl(reqVelocityDutyCycle);
+        if (request instanceof VelocityVoltage reqVelocityVoltage)
+            setControl(reqVelocityVoltage);
+        if (request instanceof VelocityTorqueCurrentFOC reqVelocityTorqueCurrentFOC)
+            setControl(reqVelocityTorqueCurrentFOC);
+        if (request instanceof MotionMagicDutyCycle reqMotionMagicDutyCycle)
+            setControl(reqMotionMagicDutyCycle);
+        if (request instanceof MotionMagicVoltage reqMotionMagicVoltage)
+            setControl(reqMotionMagicVoltage);
+        if (request instanceof MotionMagicTorqueCurrentFOC reqMotionMagicTorqueCurrentFOC)
+            setControl(reqMotionMagicTorqueCurrentFOC);
+        if (request instanceof Follower reqFollower)
+            setControl(reqFollower);
+        if (request instanceof MotionMagicVelocityDutyCycle reqMotionMagicVelocityDutyCycle)
+            setControl(reqMotionMagicVelocityDutyCycle);
+        if (request instanceof MotionMagicVelocityTorqueCurrentFOC reqMotionMagicVelocityTorqueCurrentFOC)
+            setControl(reqMotionMagicVelocityTorqueCurrentFOC);
+        if (request instanceof MotionMagicVelocityVoltage reqMotionMagicVelocityVoltage)
+            setControl(reqMotionMagicVelocityVoltage);
+        if (request instanceof MotionMagicExpoDutyCycle reqMotionMagicExpoDutyCycle)
+            setControl(reqMotionMagicExpoDutyCycle);
+        if (request instanceof MotionMagicExpoVoltage reqMotionMagicExpoVoltage)
+            setControl(reqMotionMagicExpoVoltage);
+        if (request instanceof MotionMagicExpoTorqueCurrentFOC reqMotionMagicExpoTorqueCurrentFOC)
+            setControl(reqMotionMagicExpoTorqueCurrentFOC);
+        throw new IllegalArgumentException("Unsupported Control Request!");
     }
 
     public AngularVelocity getVelocity() {
