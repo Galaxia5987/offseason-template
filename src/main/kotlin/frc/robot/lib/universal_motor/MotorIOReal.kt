@@ -11,8 +11,8 @@ class MotorIOReal(
     private val port: Int,
     private val canBus: String,
     override val config: TalonFXConfiguration,
-    private val gearRatio: Double = 1.0,
-    private val radius: Distance = Meters.zero()
+    private val gearRatio: Double,
+    private val radius: Distance
 ) : MotorIO {
     override val inputs = LoggedMotorInputs()
     private val motor = TalonFX(port, canBus)

@@ -16,8 +16,8 @@ class MotorIOSim(
     private val momentOfInertia: MomentOfInertia,
     override val config: TalonFXConfiguration,
     private val controller: PIDController,
-    private val gearRatio: Double = 1.0,
-    private val radius: Distance = Units.Meters.zero()
+    private val gearRatio: Double,
+    private val radius: Distance
 ) : MotorIO {
     override val inputs = LoggedMotorInputs()
     private val motor =
