@@ -2,6 +2,7 @@ package frc.robot.lib.universal_motor
 
 import com.ctre.phoenix6.configs.Slot0Configs
 import com.ctre.phoenix6.configs.TalonFXConfiguration
+import com.ctre.phoenix6.controls.ControlRequest
 import edu.wpi.first.math.controller.PIDController
 import edu.wpi.first.units.Units.Meters
 import edu.wpi.first.units.measure.Distance
@@ -19,6 +20,8 @@ class UniversalMotor(
     radius: Distance = Meters.zero()
 ) {
     private val motorIO: MotorIO
+    val inputs: LoggedMotorInputs
+        get() = motorIO.inputs
 
     init {
         motorIO = if (CURRENT_MODE == Mode.REAL) MotorIOReal(
@@ -34,4 +37,6 @@ class UniversalMotor(
             MotorIOSim(momentOfInertia, config, controller, gearRatio, radius)
         }
     }
+
+    fun setControl(control: ControlRequest) = motorIO.setRequest(control)
 }
