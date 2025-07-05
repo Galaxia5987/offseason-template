@@ -9,10 +9,6 @@ import edu.wpi.first.units.measure.Distance
 import edu.wpi.first.units.measure.MomentOfInertia
 import frc.robot.CURRENT_MODE
 import frc.robot.Mode
-import frc.robot.lib.universal_motor.LoggedMotorInputs
-import frc.robot.lib.universal_motor.MotorIO
-import frc.robot.lib.universal_motor.MotorIOReal
-import frc.robot.lib.universal_motor.MotorIOSim
 
 // If Motor is not a linearSubsystem (For example Elevator) No need for radius
 class UniversalMotor(
@@ -28,18 +24,26 @@ class UniversalMotor(
         get() = motorIO.inputs
 
     init {
-        motorIO = if (CURRENT_MODE == Mode.REAL) MotorIOReal(
-            port = port,
-            canbus,
-            config,
-            gearRatio,
-            radius
-        ) else {
-            val slot0Config: Slot0Configs = config.Slot0
-            val controller = PIDController(slot0Config.kP, slot0Config.kI, slot0Config.kD)
+        motorIO =
+            if (CURRENT_MODE == Mode.REAL)
+                MotorIOReal(port = port, canbus, config, gearRatio, radius)
+            else {
+                val slot0Config: Slot0Configs = config.Slot0
+                val controller =
+                    PIDController(
+                        slot0Config.kP,
+                        slot0Config.kI,
+                        slot0Config.kD
+                    )
 
-            MotorIOSim(momentOfInertia, config, controller, gearRatio, radius)
-        }
+                MotorIOSim(
+                    momentOfInertia,
+                    config,
+                    controller,
+                    gearRatio,
+                    radius
+                )
+            }
     }
 
     fun setControl(control: ControlRequest) = motorIO.setRequest(control)
