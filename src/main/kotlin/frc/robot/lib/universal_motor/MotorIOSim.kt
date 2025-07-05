@@ -8,9 +8,9 @@ import edu.wpi.first.units.Units.Rotations
 import edu.wpi.first.units.measure.Distance
 import edu.wpi.first.units.measure.MomentOfInertia
 import edu.wpi.first.wpilibj.Timer
+import frc.robot.lib.extensions.toDistance
 import frc.robot.lib.motors.TalonFXSim
 import frc.robot.lib.motors.TalonType
-import frc.robot.lib.extensions.toDistance
 
 class MotorIOSim(
     private val momentOfInertia: MomentOfInertia,
@@ -42,6 +42,7 @@ class MotorIOSim(
         inputs.current = motor.appliedCurrent
         inputs.position = Rotations.of(motor.position)
         inputs.voltage = motor.appliedVoltage
-        inputs.distance = Rotations.of(motor.position).toDistance(radius, gearRatio)
+        inputs.distance =
+            Rotations.of(motor.position).toDistance(radius, gearRatio)
     }
 }
