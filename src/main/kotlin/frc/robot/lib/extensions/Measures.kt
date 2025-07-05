@@ -94,15 +94,15 @@ fun LinearVelocity.toAngular(
             .of(1.0 / (diameter[m] * gearRatio * PI))
     )
 
-fun Distance.toAngle(diameter: Distance, gearRatio: Double): Angle =
+fun Distance.toAngle(radius: Distance, gearRatio: Double): Angle =
     timesConversionFactor(
         Units.Rotations.per(Units.Meters)
-            .of(1.0 / (diameter[m] * gearRatio * PI))
+            .of(1.0 / (radius[m] * 2 * gearRatio * PI))
     )
 
-fun Angle.toDistance(diameter: Distance, gearRatio: Double): Distance =
+fun Angle.toDistance(radius: Distance, gearRatio: Double): Distance =
     timesConversionFactor(
-        Units.Meters.per(Units.Rotations).of(diameter[m] * gearRatio * PI)
+        Units.Meters.per(Units.Rotations).of(radius[m] * 2 * gearRatio * PI)
     )
 
 fun AngularVelocity.toLinear(
