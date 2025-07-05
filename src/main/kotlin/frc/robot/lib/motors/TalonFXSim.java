@@ -1,6 +1,5 @@
 package frc.robot.lib.motors;
 
-import com.ctre.phoenix6.StatusCode;
 import com.ctre.phoenix6.controls.*;
 import com.ctre.phoenix6.controls.compound.*;
 import edu.wpi.first.math.numbers.N1;
@@ -94,11 +93,12 @@ public class TalonFXSim extends SimMotor {
     }
 
     public void setControl(VelocityTorqueCurrentFOC request) {
-        voltageRequest = () ->
-                controller.calculate(
-                        getVelocity().in(Units.RotationsPerSecond),
-                        request.Velocity)
-                        + (request.FeedForward * 12);
+        voltageRequest =
+                () ->
+                        controller.calculate(
+                                        getVelocity().in(Units.RotationsPerSecond),
+                                        request.Velocity)
+                                + (request.FeedForward * 12);
     }
 
     public void setControl(TorqueCurrentFOC request) {
@@ -106,49 +106,50 @@ public class TalonFXSim extends SimMotor {
     }
 
     public void setControl(PositionTorqueCurrentFOC request) {
-        voltageRequest = () ->
-                controller.calculate(getPosition(), request.Position)
-                        + request.FeedForward * 12;
+        voltageRequest =
+                () ->
+                        controller.calculate(getPosition(), request.Position)
+                                + request.FeedForward * 12;
     }
 
     public void setControl(MotionMagicTorqueCurrentFOC request) {
-        voltageRequest = () ->
-                profiledController.calculate(getPosition(), request.Position)
-                        + request.FeedForward * 12;
+        voltageRequest =
+                () ->
+                        profiledController.calculate(getPosition(), request.Position)
+                                + request.FeedForward * 12;
     }
 
     public void setControl(MotionMagicVelocityDutyCycle request) {
-        voltageRequest = () ->
-                profiledController.calculate(
-                        getVelocity().in(Units.RotationsPerSecond), request.Velocity)
-                        + request.FeedForward * 12;
+        voltageRequest =
+                () ->
+                        profiledController.calculate(
+                                        getVelocity().in(Units.RotationsPerSecond),
+                                        request.Velocity)
+                                + request.FeedForward * 12;
     }
 
     public void setControl(MotionMagicVelocityTorqueCurrentFOC request) {
-        voltageRequest = () ->
-                profiledController.calculate(
-                        getVelocity().in(Units.RotationsPerSecond), request.Velocity)
-                        + request.FeedForward * 12;
+        voltageRequest =
+                () ->
+                        profiledController.calculate(
+                                        getVelocity().in(Units.RotationsPerSecond),
+                                        request.Velocity)
+                                + request.FeedForward * 12;
     }
 
-    public void setControl(ControlRequest request)
-    {
-        if (request instanceof DutyCycleOut reqDutyCycleOut)
-            setControl(reqDutyCycleOut);
+    public void setControl(ControlRequest request) {
+        if (request instanceof DutyCycleOut reqDutyCycleOut) setControl(reqDutyCycleOut);
         if (request instanceof TorqueCurrentFOC reqTorqueCurrentFOC)
             setControl(reqTorqueCurrentFOC);
-        if (request instanceof VoltageOut reqVoltageOut)
-            setControl(reqVoltageOut);
+        if (request instanceof VoltageOut reqVoltageOut) setControl(reqVoltageOut);
         if (request instanceof PositionDutyCycle reqPositionDutyCycle)
             setControl(reqPositionDutyCycle);
-        if (request instanceof PositionVoltage reqPositionVoltage)
-            setControl(reqPositionVoltage);
+        if (request instanceof PositionVoltage reqPositionVoltage) setControl(reqPositionVoltage);
         if (request instanceof PositionTorqueCurrentFOC reqPositionTorqueCurrentFOC)
             setControl(reqPositionTorqueCurrentFOC);
         if (request instanceof VelocityDutyCycle reqVelocityDutyCycle)
             setControl(reqVelocityDutyCycle);
-        if (request instanceof VelocityVoltage reqVelocityVoltage)
-            setControl(reqVelocityVoltage);
+        if (request instanceof VelocityVoltage reqVelocityVoltage) setControl(reqVelocityVoltage);
         if (request instanceof VelocityTorqueCurrentFOC reqVelocityTorqueCurrentFOC)
             setControl(reqVelocityTorqueCurrentFOC);
         if (request instanceof MotionMagicDutyCycle reqMotionMagicDutyCycle)
@@ -159,7 +160,10 @@ public class TalonFXSim extends SimMotor {
             setControl(reqMotionMagicTorqueCurrentFOC);
         if (request instanceof MotionMagicVelocityDutyCycle reqMotionMagicVelocityDutyCycle)
             setControl(reqMotionMagicVelocityDutyCycle);
-        if (request instanceof MotionMagicVelocityTorqueCurrentFOC reqMotionMagicVelocityTorqueCurrentFOC)
+        if (request
+                instanceof
+                MotionMagicVelocityTorqueCurrentFOC
+                reqMotionMagicVelocityTorqueCurrentFOC)
             setControl(reqMotionMagicVelocityTorqueCurrentFOC);
         throw new IllegalArgumentException("Unsupported Control Request!");
     }
