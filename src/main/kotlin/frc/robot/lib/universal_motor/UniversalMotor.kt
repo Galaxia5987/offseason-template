@@ -10,14 +10,14 @@ import frc.robot.CURRENT_MODE
 import frc.robot.Mode
 import frc.robot.lib.extensions.m
 
-// If Motor is not a linearSubsystem (For example Elevator) No need for radius
+// If Motor is not a linearSubsystem (For example Elevator or a linear intake) No need for diameter
 class UniversalMotor(
     port: Int,
     canbus: String = "",
     config: TalonFXConfiguration = TalonFXConfiguration(),
     momentOfInertia: MomentOfInertia,
     gearRatio: Double = 1.0,
-    diameter: Distance = 0.m,
+    linearSystemWheelDiameter: Distance = 0.m,
 ) {
     private val motorIO: MotorIO
     val inputs: LoggedMotorInputs
@@ -26,7 +26,7 @@ class UniversalMotor(
     init {
         motorIO =
             if (CURRENT_MODE == Mode.REAL)
-                MotorIOReal(port = port, canbus, config, gearRatio, diameter)
+                MotorIOReal(port = port, canbus, config, gearRatio, linearSystemWheelDiameter)
             else {
                 val slot0Config: Slot0Configs = config.Slot0
                 val controller =
@@ -41,7 +41,7 @@ class UniversalMotor(
                     config,
                     controller,
                     gearRatio,
-                    diameter
+                    linearSystemWheelDiameter
                 )
             }
     }
