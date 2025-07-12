@@ -13,6 +13,14 @@ import frc.robot.lib.extensions.toDistance
 import frc.robot.lib.motors.TalonFXSim
 import frc.robot.lib.motors.TalonType
 
+/**
+ * Simulated implementation of [MotorIO] for use during robot simulation.
+ *
+ * @param momentOfInertia The moment of inertia of the simulated mechanism.
+ * @param config The TalonFX configuration used to build the PID controller.
+ * @param gearRatio The gear ratio between motor output and mechanism.
+ * @param diameter The wheel/spool diameter for computing linear distance.
+ */
 class MotorIOSim(
     private val momentOfInertia: MomentOfInertia,
     override val config: TalonFXConfiguration,
@@ -20,7 +28,8 @@ class MotorIOSim(
     private val diameter: Distance
 ) : MotorIO {
     override val inputs = LoggedMotorInputs()
-    private val controller = PIDController(config.Slot0.kP, config.Slot0.kI, config.Slot0.kD)
+    private val controller =
+        PIDController(config.Slot0.kP, config.Slot0.kI, config.Slot0.kD)
     private val motor =
         TalonFXSim(
             1,
