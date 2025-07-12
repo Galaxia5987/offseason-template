@@ -26,7 +26,7 @@ class UniversalMotor(
     init {
         motorIO =
             if (CURRENT_MODE == Mode.REAL)
-                MotorIOReal(port = port, canbus, config, gearRatio, linearSystemWheelDiameter)
+                MotorIOReal(port, canbus, config, gearRatio, linearSystemWheelDiameter)
             else {
                 MotorIOSim(
                     momentOfInertia,
