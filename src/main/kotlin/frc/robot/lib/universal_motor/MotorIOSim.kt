@@ -17,7 +17,7 @@ class MotorIOSim(
     override val config: TalonFXConfiguration,
     private val controller: PIDController,
     private val gearRatio: Double,
-    private val radius: Distance
+    private val diameter: Distance
 ) : MotorIO {
     override val inputs = LoggedMotorInputs()
     private val motor =
@@ -43,6 +43,6 @@ class MotorIOSim(
         inputs.position = Rotations.of(motor.position)
         inputs.voltage = motor.appliedVoltage
         inputs.distance =
-            Rotations.of(motor.position).toDistance(radius, gearRatio)
+            Rotations.of(motor.position).toDistance(diameter, gearRatio)
     }
 }
