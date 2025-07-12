@@ -17,7 +17,7 @@ class UniversalMotor(
     config: TalonFXConfiguration = TalonFXConfiguration(),
     momentOfInertia: MomentOfInertia,
     gearRatio: Double = 1.0,
-    radius: Distance = Meters.zero()
+    radius: Distance = 0.m
 ) {
     private val motorIO: MotorIO
     val inputs: LoggedMotorInputs
