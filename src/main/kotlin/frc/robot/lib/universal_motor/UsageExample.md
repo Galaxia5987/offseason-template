@@ -6,11 +6,11 @@ This document demonstrates how to create subsystems using the `UniversalMotor` c
 
 ## Elevator Example
 
-The `Elevator` subsystem uses a `UniversalMotor` with a radius and gear ratio to control position using closed-loop feedback:
+The `Elevator` subsystem uses a `UniversalMotor` with a diameter and gear ratio to control position using closed-loop feedback:
 
 ```kotlin
 private const val GEAR_RATIO = 1 / 10.0
-private val RADIUS = 0.03.meters
+private val DIAMETER = 0.06.meters
 
 class Elevator : SubsystemBase() {
     @AutoLogOutput
@@ -23,14 +23,14 @@ class Elevator : SubsystemBase() {
             Slot0Configs().withKP(3.0)
         ),
         gearRatio = GEAR_RATIO,
-        radius = RADIUS
+        diameter = DIAMETER
     )
 
     private val positionRequest = PositionVoltage(0.0)
 
     fun setPosition(position: Distance): Command = this.runOnce {
         setPoint = position
-        motor.setControl(positionRequest.withPosition(position.toAngle(RADIUS, GEAR_RATIO)))
+        motor.setControl(positionRequest.withPosition(position.toAngle(DIAMETER, GEAR_RATIO)))
     }
 
     override fun periodic() {

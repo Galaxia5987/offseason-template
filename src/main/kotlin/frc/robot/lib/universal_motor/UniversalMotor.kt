@@ -4,11 +4,11 @@ import com.ctre.phoenix6.configs.Slot0Configs
 import com.ctre.phoenix6.configs.TalonFXConfiguration
 import com.ctre.phoenix6.controls.ControlRequest
 import edu.wpi.first.math.controller.PIDController
-import edu.wpi.first.units.Units.Meters
 import edu.wpi.first.units.measure.Distance
 import edu.wpi.first.units.measure.MomentOfInertia
 import frc.robot.CURRENT_MODE
 import frc.robot.Mode
+import frc.robot.lib.extensions.m
 
 // If Motor is not a linearSubsystem (For example Elevator) No need for radius
 class UniversalMotor(
@@ -17,7 +17,7 @@ class UniversalMotor(
     config: TalonFXConfiguration = TalonFXConfiguration(),
     momentOfInertia: MomentOfInertia,
     gearRatio: Double = 1.0,
-    radius: Distance = 0.m
+    diameter: Distance = 0.m,
 ) {
     private val motorIO: MotorIO
     val inputs: LoggedMotorInputs
@@ -26,7 +26,7 @@ class UniversalMotor(
     init {
         motorIO =
             if (CURRENT_MODE == Mode.REAL)
-                MotorIOReal(port = port, canbus, config, gearRatio, radius)
+                MotorIOReal(port = port, canbus, config, gearRatio, diameter)
             else {
                 val slot0Config: Slot0Configs = config.Slot0
                 val controller =
@@ -41,7 +41,7 @@ class UniversalMotor(
                     config,
                     controller,
                     gearRatio,
-                    radius
+                    diameter
                 )
             }
     }
