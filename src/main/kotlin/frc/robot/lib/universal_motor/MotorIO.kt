@@ -13,7 +13,8 @@ import frc.robot.lib.extensions.volts
 import org.team9432.annotation.Logged
 
 /**
- * Interface that defines the common motor input/output operations for both real and simulated motors.
+ * Interface that defines the common motor input/output operations for both real
+ * and simulated motors.
  */
 interface MotorIO {
     /** Current configuration for the TalonFX motor. */
@@ -23,28 +24,32 @@ interface MotorIO {
     val inputs: LoggedMotorInputs
 
     /**
-     * Sends a control request to the motor (e.g., velocity, position, voltage control).
+     * Sends a control request to the motor (e.g., velocity, position, voltage
+     * control).
      *
      * @param controlRequest The control request to apply.
      */
     fun setRequest(controlRequest: ControlRequest) {}
 
     /**
-     * Updates the latest inputs from the motor or simulation. Should be called periodically.
+     * Updates the latest inputs from the motor or simulation. Should be called
+     * periodically.
      */
     fun updateInputs() {}
 
     /**
-     * Base class representing the observable inputs from a motor.
-     * This class generates the logging class `LoggedMotorInputs`
+     * Base class representing the observable inputs from a motor. This class
+     * generates the logging class `LoggedMotorInputs`
      */
     @Logged
     open class MotorInputs {
-        /** Current position of the motor shaft, in degrees. */
+        /** Current position of the motor shaft. */
         var position: Angle = 0.deg
 
-        /** Linear distance the motor has moved, accounting for gear ratio and wheel diameter.
-         *  If not a linear system will not change */
+        /**
+         * Linear distance the motor has moved, accounting for gear ratio and
+         * wheel diameter. If not a linear system will not change
+         */
         var distance: Distance = 0.m
 
         /** Voltage applied to the motor. */

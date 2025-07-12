@@ -3,11 +3,12 @@ package frc.robot.lib.universal_motor
 import com.ctre.phoenix6.configs.TalonFXConfiguration
 import com.ctre.phoenix6.controls.ControlRequest
 import edu.wpi.first.math.controller.PIDController
-import edu.wpi.first.units.Units
 import edu.wpi.first.units.Units.Rotations
 import edu.wpi.first.units.measure.Distance
 import edu.wpi.first.units.measure.MomentOfInertia
 import edu.wpi.first.wpilibj.Timer
+import frc.robot.lib.extensions.get
+import frc.robot.lib.extensions.kg2m
 import frc.robot.lib.extensions.rot
 import frc.robot.lib.extensions.toDistance
 import frc.robot.lib.motors.TalonFXSim
@@ -31,13 +32,7 @@ class MotorIOSim(
     private val controller =
         PIDController(config.Slot0.kP, config.Slot0.kI, config.Slot0.kD)
     private val motor =
-        TalonFXSim(
-            1,
-            1.0,
-            momentOfInertia.`in`(Units.KilogramSquareMeters),
-            1.0,
-            TalonType.KRAKEN_FOC
-        )
+        TalonFXSim(1, 1.0, momentOfInertia[kg2m], 1.0, TalonType.KRAKEN_FOC)
 
     init {
         motor.setController(controller)
