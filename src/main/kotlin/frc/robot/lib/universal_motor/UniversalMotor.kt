@@ -28,18 +28,9 @@ class UniversalMotor(
             if (CURRENT_MODE == Mode.REAL)
                 MotorIOReal(port = port, canbus, config, gearRatio, linearSystemWheelDiameter)
             else {
-                val slot0Config: Slot0Configs = config.Slot0
-                val controller =
-                    PIDController(
-                        slot0Config.kP,
-                        slot0Config.kI,
-                        slot0Config.kD
-                    )
-
                 MotorIOSim(
                     momentOfInertia,
                     config,
-                    controller,
                     gearRatio,
                     linearSystemWheelDiameter
                 )
