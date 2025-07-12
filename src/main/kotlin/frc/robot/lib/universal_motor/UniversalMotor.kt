@@ -19,23 +19,17 @@ class UniversalMotor(
     gearRatio: Double = 1.0,
     linearSystemWheelDiameter: Distance = 0.m,
 ) {
-    private val motorIO: MotorIO
-    val inputs: LoggedMotorInputs
-        get() = motorIO.inputs
-
-    init {
-        motorIO =
-            if (CURRENT_MODE == Mode.REAL)
-                MotorIOReal(port, canbus, config, gearRatio, linearSystemWheelDiameter)
-            else {
-                MotorIOSim(
-                    momentOfInertia,
-                    config,
-                    gearRatio,
-                    linearSystemWheelDiameter
-                )
-            }
+    private val motorIO: MotorIO = if (CURRENT_MODE == Mode.REAL)
+        MotorIOReal(port, canbus, config, gearRatio, linearSystemWheelDiameter)
+    else {
+        MotorIOSim(
+            momentOfInertia,
+            config,
+            gearRatio,
+            linearSystemWheelDiameter
+        )
     }
+    val inputs: LoggedMotorInputs = motorIO.inputs
 
     fun setControl(control: ControlRequest) = motorIO.setRequest(control)
 
