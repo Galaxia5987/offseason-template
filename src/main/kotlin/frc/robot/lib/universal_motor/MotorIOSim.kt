@@ -15,11 +15,11 @@ import frc.robot.lib.motors.TalonType
 class MotorIOSim(
     private val momentOfInertia: MomentOfInertia,
     override val config: TalonFXConfiguration,
-    private val controller: PIDController,
     private val gearRatio: Double,
     private val diameter: Distance
 ) : MotorIO {
     override val inputs = LoggedMotorInputs()
+    private val controller = PIDController(config.Slot0.kP, config.Slot0.kI, config.Slot0.kD)
     private val motor =
         TalonFXSim(
             1,
