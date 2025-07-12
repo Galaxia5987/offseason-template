@@ -8,6 +8,7 @@ import edu.wpi.first.units.Units.Rotations
 import edu.wpi.first.units.measure.Distance
 import edu.wpi.first.units.measure.MomentOfInertia
 import edu.wpi.first.wpilibj.Timer
+import frc.robot.lib.extensions.rot
 import frc.robot.lib.extensions.toDistance
 import frc.robot.lib.motors.TalonFXSim
 import frc.robot.lib.motors.TalonType
@@ -40,7 +41,7 @@ class MotorIOSim(
     override fun updateInputs() {
         motor.update(Timer.getTimestamp())
         inputs.current = motor.appliedCurrent
-        inputs.position = Rotations.of(motor.position)
+        inputs.position = motor.position.rot
         inputs.voltage = motor.appliedVoltage
         inputs.distance =
             Rotations.of(motor.position).toDistance(diameter, gearRatio)
