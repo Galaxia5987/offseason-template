@@ -6,6 +6,15 @@ import com.ctre.phoenix6.hardware.TalonFX
 import edu.wpi.first.units.measure.Distance
 import frc.robot.lib.extensions.toDistance
 
+/**
+ * Real implementation of [MotorIO] for interacting with actual TalonFX hardware.
+ *
+ * @param port The CAN ID of the motor controller.
+ * @param canBus The CAN bus name (use empty string for default).
+ * @param config The TalonFX configuration to apply on startup.
+ * @param gearRatio The gear ratio between motor rotations and mechanism output.
+ * @param diameter The diameter of the wheel/spool if used in a linear system.
+ */
 class MotorIOReal(
     private val port: Int,
     private val canBus: String,
