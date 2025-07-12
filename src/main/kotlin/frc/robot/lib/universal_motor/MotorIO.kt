@@ -2,11 +2,14 @@ package frc.robot.lib.universal_motor
 
 import com.ctre.phoenix6.configs.TalonFXConfiguration
 import com.ctre.phoenix6.controls.ControlRequest
-import edu.wpi.first.units.Units.*
 import edu.wpi.first.units.measure.Angle
 import edu.wpi.first.units.measure.Current
 import edu.wpi.first.units.measure.Distance
 import edu.wpi.first.units.measure.Voltage
+import frc.robot.lib.extensions.amps
+import frc.robot.lib.extensions.deg
+import frc.robot.lib.extensions.m
+import frc.robot.lib.extensions.volts
 import org.team9432.annotation.Logged
 
 interface MotorIO {
@@ -19,9 +22,9 @@ interface MotorIO {
 
     @Logged
     open class MotorInputs {
-        var position: Angle = Degrees.zero()
-        var distance: Distance = Meters.zero()
-        var voltage: Voltage = Volts.zero()
-        var current: Current = Amps.zero()
+        var position: Angle = 0.deg
+        var distance: Distance = 0.m
+        var voltage: Voltage = 0.volts
+        var current: Current = 0.amps
     }
 }
