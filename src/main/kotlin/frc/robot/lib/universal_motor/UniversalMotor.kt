@@ -6,24 +6,31 @@ import edu.wpi.first.units.measure.Distance
 import edu.wpi.first.units.measure.MomentOfInertia
 import frc.robot.CURRENT_MODE
 import frc.robot.Mode
+import frc.robot.lib.extensions.get
+import frc.robot.lib.extensions.kg2m
 import frc.robot.lib.extensions.m
 
 /**
- * Represents a universal wrapper for a motor, which abstracts the real and simulated implementations.
+ * Represents a universal wrapper for a motor, which abstracts the real and
+ * simulated implementations.
  *
  * @param port The CAN ID of the motor controller.
  * @param canbus The CAN bus name (optional, default is the default bus).
  * @param config Configuration for the TalonFX motor controller.
  * @param momentOfInertia The moment of inertia used in simulation.
- * @param gearRatio The gear ratio between the motor and the mechanism (default is 1.0).
- * @param linearSystemWheelDiameter The diameter of the wheel or spool for linear mechanisms.
+ * @param gearRatio The gear ratio between the motor and the mechanism (default
+ * is 1.0).
+ * @param linearSystemWheelDiameter The diameter of the wheel or spool for
+ * linear mechanisms.
+ * ```
  *        Do Not pass this parameter if the motor does not actuate a linear mechanism (e.g., elevator or a linear intake).
+ * ```
  */
 class UniversalMotor(
     port: Int,
     canbus: String = "",
     config: TalonFXConfiguration = TalonFXConfiguration(),
-    momentOfInertia: MomentOfInertia,
+    momentOfInertia: MomentOfInertia = 0.003.kg2m,
     gearRatio: Double = 1.0,
     linearSystemWheelDiameter: Distance = 0.m,
 ) {

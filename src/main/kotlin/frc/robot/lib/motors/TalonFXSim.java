@@ -144,12 +144,14 @@ public class TalonFXSim extends SimMotor {
         else if (request instanceof VoltageOut reqVoltageOut) setControl(reqVoltageOut);
         else if (request instanceof PositionDutyCycle reqPositionDutyCycle)
             setControl(reqPositionDutyCycle);
-        else if (request instanceof PositionVoltage reqPositionVoltage) setControl(reqPositionVoltage);
+        else if (request instanceof PositionVoltage reqPositionVoltage)
+            setControl(reqPositionVoltage);
         else if (request instanceof PositionTorqueCurrentFOC reqPositionTorqueCurrentFOC)
             setControl(reqPositionTorqueCurrentFOC);
         else if (request instanceof VelocityDutyCycle reqVelocityDutyCycle)
             setControl(reqVelocityDutyCycle);
-        else if (request instanceof VelocityVoltage reqVelocityVoltage) setControl(reqVelocityVoltage);
+        else if (request instanceof VelocityVoltage reqVelocityVoltage)
+            setControl(reqVelocityVoltage);
         else if (request instanceof VelocityTorqueCurrentFOC reqVelocityTorqueCurrentFOC)
             setControl(reqVelocityTorqueCurrentFOC);
         else if (request instanceof MotionMagicDutyCycle reqMotionMagicDutyCycle)

@@ -7,7 +7,8 @@ import edu.wpi.first.units.measure.Distance
 import frc.robot.lib.extensions.toDistance
 
 /**
- * Real implementation of [MotorIO] for interacting with actual TalonFX hardware.
+ * Real implementation of [MotorIO] for interacting with actual TalonFX
+ * hardware.
  *
  * @param port The CAN ID of the motor controller.
  * @param canBus The CAN bus name (use empty string for default).
