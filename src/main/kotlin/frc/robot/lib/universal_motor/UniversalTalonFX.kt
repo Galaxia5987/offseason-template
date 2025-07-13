@@ -11,7 +11,7 @@ import frc.robot.CURRENT_MODE
 import frc.robot.Mode
 
 // If Motor is not a linearSubsystem (For example Elevator) No need for radius
-class UniversalMotor(
+class UniversalTalonFX(
     port: Int,
     canbus: String = "",
     config: TalonFXConfiguration = TalonFXConfiguration(),
