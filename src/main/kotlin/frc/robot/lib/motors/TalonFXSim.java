@@ -139,33 +139,35 @@ public class TalonFXSim extends SimMotor {
 
     public void setControl(ControlRequest request) {
         if (request instanceof DutyCycleOut reqDutyCycleOut) setControl(reqDutyCycleOut);
-        if (request instanceof TorqueCurrentFOC reqTorqueCurrentFOC)
+        else if (request instanceof TorqueCurrentFOC reqTorqueCurrentFOC)
             setControl(reqTorqueCurrentFOC);
-        if (request instanceof VoltageOut reqVoltageOut) setControl(reqVoltageOut);
-        if (request instanceof PositionDutyCycle reqPositionDutyCycle)
+        else if (request instanceof VoltageOut reqVoltageOut) setControl(reqVoltageOut);
+        else if (request instanceof PositionDutyCycle reqPositionDutyCycle)
             setControl(reqPositionDutyCycle);
-        if (request instanceof PositionVoltage reqPositionVoltage) setControl(reqPositionVoltage);
-        if (request instanceof PositionTorqueCurrentFOC reqPositionTorqueCurrentFOC)
+        else if (request instanceof PositionVoltage reqPositionVoltage)
+            setControl(reqPositionVoltage);
+        else if (request instanceof PositionTorqueCurrentFOC reqPositionTorqueCurrentFOC)
             setControl(reqPositionTorqueCurrentFOC);
-        if (request instanceof VelocityDutyCycle reqVelocityDutyCycle)
+        else if (request instanceof VelocityDutyCycle reqVelocityDutyCycle)
             setControl(reqVelocityDutyCycle);
-        if (request instanceof VelocityVoltage reqVelocityVoltage) setControl(reqVelocityVoltage);
-        if (request instanceof VelocityTorqueCurrentFOC reqVelocityTorqueCurrentFOC)
+        else if (request instanceof VelocityVoltage reqVelocityVoltage)
+            setControl(reqVelocityVoltage);
+        else if (request instanceof VelocityTorqueCurrentFOC reqVelocityTorqueCurrentFOC)
             setControl(reqVelocityTorqueCurrentFOC);
-        if (request instanceof MotionMagicDutyCycle reqMotionMagicDutyCycle)
+        else if (request instanceof MotionMagicDutyCycle reqMotionMagicDutyCycle)
             setControl(reqMotionMagicDutyCycle);
-        if (request instanceof MotionMagicVoltage reqMotionMagicVoltage)
+        else if (request instanceof MotionMagicVoltage reqMotionMagicVoltage)
             setControl(reqMotionMagicVoltage);
-        if (request instanceof MotionMagicTorqueCurrentFOC reqMotionMagicTorqueCurrentFOC)
+        else if (request instanceof MotionMagicTorqueCurrentFOC reqMotionMagicTorqueCurrentFOC)
             setControl(reqMotionMagicTorqueCurrentFOC);
-        if (request instanceof MotionMagicVelocityDutyCycle reqMotionMagicVelocityDutyCycle)
+        else if (request instanceof MotionMagicVelocityDutyCycle reqMotionMagicVelocityDutyCycle)
             setControl(reqMotionMagicVelocityDutyCycle);
-        if (request
+        else if (request
                 instanceof
                 MotionMagicVelocityTorqueCurrentFOC
                 reqMotionMagicVelocityTorqueCurrentFOC)
             setControl(reqMotionMagicVelocityTorqueCurrentFOC);
-        throw new IllegalArgumentException("Unsupported Control Request!");
+        else throw new IllegalArgumentException("Unsupported Control Request!");
     }
 
     public AngularVelocity getVelocity() {

@@ -3,32 +3,37 @@ package frc.robot.lib.universal_motor
 import com.ctre.phoenix6.configs.TalonFXConfiguration
 import com.ctre.phoenix6.controls.ControlRequest
 import edu.wpi.first.math.controller.PIDController
-import edu.wpi.first.units.Units
 import edu.wpi.first.units.Units.Rotations
 import edu.wpi.first.units.measure.Angle
 import edu.wpi.first.units.measure.Distance
 import edu.wpi.first.units.measure.MomentOfInertia
 import edu.wpi.first.wpilibj.Timer
+import frc.robot.lib.extensions.get
+import frc.robot.lib.extensions.kg2m
+import frc.robot.lib.extensions.rot
 import frc.robot.lib.extensions.toDistance
 import frc.robot.lib.motors.TalonFXSim
 import frc.robot.lib.motors.TalonType
 
+/**
+ * Simulated implementation of [MotorIO] for use during robot simulation.
+ *
+ * @param momentOfInertia The moment of inertia of the simulated mechanism.
+ * @param config The TalonFX configuration used to build the PID controller.
+ * @param gearRatio The gear ratio between motor output and mechanism.
+ * @param diameter The wheel/spool diameter for computing linear distance.
+ */
 class MotorIOSim(
     private val momentOfInertia: MomentOfInertia,
     override val config: TalonFXConfiguration,
-    private val controller: PIDController,
     private val gearRatio: Double,
-    private val radius: Distance
+    private val diameter: Distance
 ) : MotorIO {
     override val inputs = LoggedMotorInputs()
+    private val controller =
+        PIDController(config.Slot0.kP, config.Slot0.kI, config.Slot0.kD)
     private val motor =
-        TalonFXSim(
-            1,
-            1.0,
-            momentOfInertia.`in`(Units.KilogramSquareMeters),
-            1.0,
-            TalonType.KRAKEN_FOC
-        )
+        TalonFXSim(1, 1.0, momentOfInertia[kg2m], 1.0, TalonType.KRAKEN_FOC)
 
     init {
         motor.setController(controller)
@@ -41,9 +46,9 @@ class MotorIOSim(
     override fun updateInputs() {
         motor.update(Timer.getTimestamp())
         inputs.current = motor.appliedCurrent
-        inputs.position = Rotations.of(motor.position)
+        inputs.position = motor.position.rot
         inputs.voltage = motor.appliedVoltage
         inputs.distance =
-            Rotations.of(motor.position).toDistance(radius, gearRatio)
+            Rotations.of(motor.position).toDistance(diameter, gearRatio)
     }
 }
