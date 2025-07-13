@@ -5,6 +5,7 @@ import com.ctre.phoenix6.controls.ControlRequest
 import com.ctre.phoenix6.hardware.TalonFX
 import edu.wpi.first.units.measure.Angle
 import edu.wpi.first.units.measure.Distance
+import frc.robot.lib.extensions.deg
 import frc.robot.lib.extensions.toDistance
 
 /**
