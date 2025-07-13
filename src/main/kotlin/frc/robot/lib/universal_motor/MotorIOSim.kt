@@ -5,6 +5,7 @@ import com.ctre.phoenix6.controls.ControlRequest
 import edu.wpi.first.math.controller.PIDController
 import edu.wpi.first.units.Units
 import edu.wpi.first.units.Units.Rotations
+import edu.wpi.first.units.measure.Angle
 import edu.wpi.first.units.measure.Distance
 import edu.wpi.first.units.measure.MomentOfInertia
 import edu.wpi.first.wpilibj.Timer
