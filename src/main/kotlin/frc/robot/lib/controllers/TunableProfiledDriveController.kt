@@ -8,6 +8,7 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints
 import edu.wpi.first.units.measure.Angle
 import edu.wpi.first.units.measure.Distance
 import edu.wpi.first.units.measure.LinearVelocity
+import edu.wpi.first.wpilibj2.command.button.Trigger
 import frc.robot.lib.extensions.*
 import org.littletonrobotics.junction.Logger
 import org.littletonrobotics.junction.networktables.LoggedNetworkNumber
@@ -15,11 +16,10 @@ import org.littletonrobotics.junction.networktables.LoggedNetworkNumber
 class TunableProfiledDriveController(
     private val translationGains: PIDConstants,
     private val translationConstraints: Constraints,
-    private val translationTolerance: Distance = 0.1.m,
+    private val tolerance: Pose2d = Pose2d(0.05.m, 0.05.m, 1.deg.toRotation2d()),
     private val rotationGains: PIDConstants,
     private val rotationConstraints: Constraints,
-    private val rotationTolerance: Angle = 1.deg,
-    private val poseSupplier: () -> Pose2d,
+    var poseSupplier: () -> Pose2d,
     private val speedsSupplier: () -> ChassisSpeeds,
 ) {
     private val translationKP = LoggedNetworkNumber("$TRANSLATION_TUNING_PATH/kP", translationGains.kP)
@@ -27,19 +27,25 @@ class TunableProfiledDriveController(
     private val translationKD = LoggedNetworkNumber("$TRANSLATION_TUNING_PATH/kD", translationGains.kD)
     private val maxTranslationalVelocity = LoggedNetworkNumber("$TRANSLATION_TUNING_PATH/maxVelocity", translationConstraints.maxVelocity)
     private val maxTranslationalAcceleration = LoggedNetworkNumber("$TRANSLATION_TUNING_PATH/maxAcceleration", translationConstraints.maxAcceleration)
-    private val loggedTranslationTolerance = LoggedNetworkNumber("$TRANSLATION_TUNING_PATH/tolerance", translationTolerance[m])
+    private val loggedTranslationTolerance = LoggedNetworkNumber("$TRANSLATION_TUNING_PATH/tolerance", tolerance.x)
 
     private val rotationKP = LoggedNetworkNumber("$ROTATION_TUNING_PATH/kP", rotationGains.kP)
     private val rotationKI = LoggedNetworkNumber("$ROTATION_TUNING_PATH/kI", rotationGains.kI)
     private val rotationKD = LoggedNetworkNumber("$ROTATION_TUNING_PATH/kD", rotationGains.kD)
     private val maxRotationalVelocity = LoggedNetworkNumber("$TRANSLATION_TUNING_PATH/maxVelocity", rotationConstraints.maxVelocity)
     private val maxRotationalAcceleration = LoggedNetworkNumber("$TRANSLATION_TUNING_PATH/maxAcceleration", rotationConstraints.maxAcceleration)
-    private val loggedRotationTolerance = LoggedNetworkNumber("$ROTATION_TUNING_PATH/tolerance", rotationTolerance[deg])
+    private val loggedRotationTolerance = LoggedNetworkNumber("$ROTATION_TUNING_PATH/tolerance", tolerance.rotation.measure[deg])
 
 
     private lateinit var xController : ProfiledPIDController
     private lateinit var yController : ProfiledPIDController
     private lateinit var rotationController : ProfiledPIDController
+
+    val atGoal = Trigger {
+        xController.atGoal() &&
+                yController.atGoal() &&
+                rotationController.atGoal()
+    }
 
     init {
         initializeControllers()
@@ -104,6 +110,7 @@ class TunableProfiledDriveController(
         )
 
         log()
+        Logger.recordOutput("$ALIGNMENT_LOGGING_PATH/Profiled/AtGoal", atGoal.asBoolean)
         Logger.recordOutput("$ALIGNMENT_LOGGING_PATH/Profiled/ControllerOutputSpeeds", outputSpeeds)
 
         return outputSpeeds

@@ -11,7 +11,12 @@ import edu.wpi.first.wpilibj2.command.Command
 import edu.wpi.first.wpilibj2.command.Commands.*
 import edu.wpi.first.wpilibj2.command.button.Trigger
 import frc.robot.drive
+import frc.robot.lib.controllers.ALIGNMENT_LOGGING_PATH
 import frc.robot.lib.controllers.TunableHolonomicDriveController
+import frc.robot.lib.controllers.TunableProfiledDriveController
+import frc.robot.lib.extensions.get
+import frc.robot.lib.extensions.mps
+import frc.robot.lib.extensions.sec
 import org.littletonrobotics.junction.Logger
 
 private val translationController =
@@ -28,6 +33,16 @@ private val angularController =
 val controller =
     TunableHolonomicDriveController(translationController, angularController)
         .apply { setTolerance(TOLERANCE) }
+
+val profiledController = TunableProfiledDriveController(
+    PROFILED_TRANSLATION_GAINS,
+    PROFILED_TRANSLATION_CONSTRAINTS,
+    TOLERANCE,
+    PROFILED_ROTATION_GAINS,
+    ANGULAR_CONSTRAINTS,
+    { drive.pose },
+    { drive.chassisSpeeds }
+)
 
 /**
  * Creates a command that aligns the robot to a given goal pose using a
@@ -74,7 +89,7 @@ fun alignToPose(
     runOnce({
             controller.setTolerance(tolerance)
             Logger.recordOutput(
-                "Alignment/Controllers/CurrentRunningController",
+                "$ALIGNMENT_LOGGING_PATH/CurrentRunningController",
                 holonomicController.second
             )
         })
@@ -95,3 +110,27 @@ fun alignToPose(
                 )
         )
         .withName("Drive/AlignToPose")
+
+fun profiledAlignToPose(
+    goalPose: Pose2d,
+    linearVelocity: LinearVelocity = MetersPerSecond.zero(),
+    tolerance: Pose2d = TOLERANCE,
+    poseSupplier: () -> Pose2d = { drive.pose },
+    atGoalDebounce: Time = 0.1.sec,
+): Command =
+    runOnce({
+        profiledController.poseSupplier = poseSupplier
+        Logger.recordOutput(
+            "$ALIGNMENT_LOGGING_PATH/CurrentRunningController",
+            "ProfiledController"
+        )
+    }).andThen(
+        run({
+            drive.runVelocity(
+                profiledController.calculate(goalPose)
+            )
+        }).until(
+            profiledController.atGoal.debounce(atGoalDebounce[sec])
+        ).withName("Drive/ProfiledAlignToPose")
+    )
+

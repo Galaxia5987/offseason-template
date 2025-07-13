@@ -10,14 +10,13 @@ import edu.wpi.first.units.Unit as WPIUnit
 import edu.wpi.first.util.struct.Struct
 import edu.wpi.first.util.struct.StructSerializable
 import edu.wpi.first.wpilibj2.command.button.Trigger
+import frc.robot.lib.controllers.ALIGNMENT_LOGGING_PATH
 import kotlin.reflect.KProperty
 import org.littletonrobotics.junction.AutoLogOutputManager
 import org.littletonrobotics.junction.LogTable
 import org.littletonrobotics.junction.Logger.recordOutput
 import org.littletonrobotics.junction.inputs.LoggableInputs
 import org.littletonrobotics.junction.mechanism.LoggedMechanism2d
-
-const val ALIGNMENT_LOGGING_PATH = "Alignment/Controllers"
 
 abstract class AutoLogInputs : LoggableInputs {
 

@@ -1,5 +1,7 @@
 package frc.robot.lib.controllers
 
+const val ALIGNMENT_LOGGING_PATH = "Alignment/Controllers"
+
 const val TUNING_PATH = "/Tuning/Alignment"
 const val TRANSLATION_TUNING_PATH = "$TUNING_PATH/Translation"
 const val ROTATION_TUNING_PATH = "$TUNING_PATH/Rotation"
