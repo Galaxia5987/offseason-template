@@ -17,7 +17,10 @@ import org.littletonrobotics.junction.Logger.recordOutput
 import org.littletonrobotics.junction.inputs.LoggableInputs
 import org.littletonrobotics.junction.mechanism.LoggedMechanism2d
 
+const val ALIGNMENT_LOGGING_PATH = "Alignment/Controllers"
+
 abstract class AutoLogInputs : LoggableInputs {
+
     fun log(value: Double, key: String? = null) =
         LoggedInput(value, key, LogTable::put, LogTable::get)
 
@@ -71,8 +74,8 @@ abstract class AutoLogInputs : LoggableInputs {
 
     fun <T : StructSerializable> log(value: Array<T>, key: String? = null) =
         LoggedInput(value, key, LogTable::put, LogTable::get)
-
     private val toLogRunners = mutableListOf<(LogTable) -> Unit>()
+
     private val fromLogRunners = mutableListOf<(LogTable) -> Unit>()
 
     inner class LoggedInput<T>(
@@ -82,10 +85,10 @@ abstract class AutoLogInputs : LoggableInputs {
         private val fromLog: LogTable.(String, T) -> T,
     ) {
         operator fun getValue(thisRef: Any, property: KProperty<*>) = value
+
         operator fun setValue(thisRef: Any, property: KProperty<*>, value: T) {
             this.value = value
         }
-
         operator fun provideDelegate(
             thisRef: Any,
             property: KProperty<*>,
@@ -104,7 +107,6 @@ abstract class AutoLogInputs : LoggableInputs {
     override fun fromLog(table: LogTable) {
         fromLogRunners.forEach { it(table) }
     }
-
     override fun toLog(table: LogTable) {
         toLogRunners.forEach { it(table) }
     }
@@ -141,7 +143,7 @@ fun Map<String, Any>.log(loggingPath: String = "") {
 }
 
 fun PIDController.log(loggingName: String) {
-    val loggingPath = "Alignment/Controllers/$loggingName"
+    val loggingPath = "$ALIGNMENT_LOGGING_PATH/$loggingName"
     mapOf(
             "setpoint" to setpoint,
             "error" to error,
@@ -151,7 +153,7 @@ fun PIDController.log(loggingName: String) {
 }
 
 fun ProfiledPIDController.log(loggingName: String) {
-    val loggingPath = "Alignment/Controllers/$loggingName"
+    val loggingPath = "$ALIGNMENT_LOGGING_PATH/$loggingName"
 
     mapOf(
             "goal" to goal.position,
@@ -174,7 +176,7 @@ fun HolonomicDriveController.log() {
     xController.log("XController")
     yController.log("YController")
     thetaController.log("ThetaController")
-    recordOutput("Alignment/Controllers/AtGoal", atReference())
+    recordOutput("$ALIGNMENT_LOGGING_PATH/AtGoal", atReference())
 }
 
 // ```

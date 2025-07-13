@@ -14,11 +14,6 @@ import edu.wpi.first.units.measure.LinearVelocity
 import frc.robot.lib.extensions.log
 import frc.robot.subsystems.drive.controller
 import org.littletonrobotics.junction.networktables.LoggedNetworkNumber
-
-const val TUNING_PATH = "/Tuning/Alignment"
-const val TRANSLATION_TUNING_PATH = "$TUNING_PATH/Translation"
-const val ROTATION_TUNING_PATH = "$TUNING_PATH/Rotation"
-
 /**
  * A subclass of [HolonomicDriveController] that allows runtime tuning of PID
  * values using [LoggedNetworkNumber] and logs them to NetworkTables along with
