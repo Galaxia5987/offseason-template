@@ -15,11 +15,13 @@ val OUTTAKE_VOLTAGE: Voltage = -INTAKE_VOLTAGE
 private val STATOR_CURRENT_LIMIT = 30.amps
 private val SUPPLY_CURRENT_LIMIT = STATOR_CURRENT_LIMIT.times(2.0)
 
-val MOTOR_CONFIG = TalonFXConfiguration().apply {
-    CurrentLimits = CurrentLimitsConfigs().apply {
-        StatorCurrentLimitEnable = true
-        StatorCurrentLimit = STATOR_CURRENT_LIMIT[amps]
-        SupplyCurrentLimitEnable = true
-        SupplyCurrentLimit = SUPPLY_CURRENT_LIMIT[amps]
+val MOTOR_CONFIG =
+    TalonFXConfiguration().apply {
+        CurrentLimits =
+            CurrentLimitsConfigs().apply {
+                StatorCurrentLimitEnable = true
+                StatorCurrentLimit = STATOR_CURRENT_LIMIT[amps]
+                SupplyCurrentLimitEnable = true
+                SupplyCurrentLimit = SUPPLY_CURRENT_LIMIT[amps]
+            }
     }
-}
