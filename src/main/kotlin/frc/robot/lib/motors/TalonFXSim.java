@@ -1,6 +1,7 @@
 package frc.robot.lib.motors;
 
 import com.ctre.phoenix6.controls.*;
+import com.ctre.phoenix6.controls.compound.*;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N2;
 import edu.wpi.first.math.system.LinearSystem;
@@ -89,6 +90,84 @@ public class TalonFXSim extends SimMotor {
                 () ->
                         profiledController.calculate(getPosition(), request.Position)
                                 + request.FeedForward;
+    }
+
+    public void setControl(VelocityTorqueCurrentFOC request) {
+        voltageRequest =
+                () ->
+                        controller.calculate(
+                                        getVelocity().in(Units.RotationsPerSecond),
+                                        request.Velocity)
+                                + (request.FeedForward * 12);
+    }
+
+    public void setControl(TorqueCurrentFOC request) {
+        setControl(new VoltageOut(request.Output * 12));
+    }
+
+    public void setControl(PositionTorqueCurrentFOC request) {
+        voltageRequest =
+                () ->
+                        controller.calculate(getPosition(), request.Position)
+                                + request.FeedForward * 12;
+    }
+
+    public void setControl(MotionMagicTorqueCurrentFOC request) {
+        voltageRequest =
+                () ->
+                        profiledController.calculate(getPosition(), request.Position)
+                                + request.FeedForward * 12;
+    }
+
+    public void setControl(MotionMagicVelocityDutyCycle request) {
+        voltageRequest =
+                () ->
+                        profiledController.calculate(
+                                        getVelocity().in(Units.RotationsPerSecond),
+                                        request.Velocity)
+                                + request.FeedForward * 12;
+    }
+
+    public void setControl(MotionMagicVelocityTorqueCurrentFOC request) {
+        voltageRequest =
+                () ->
+                        profiledController.calculate(
+                                        getVelocity().in(Units.RotationsPerSecond),
+                                        request.Velocity)
+                                + request.FeedForward * 12;
+    }
+
+    public void setControl(ControlRequest request) {
+        if (request instanceof DutyCycleOut reqDutyCycleOut) setControl(reqDutyCycleOut);
+        else if (request instanceof TorqueCurrentFOC reqTorqueCurrentFOC)
+            setControl(reqTorqueCurrentFOC);
+        else if (request instanceof VoltageOut reqVoltageOut) setControl(reqVoltageOut);
+        else if (request instanceof PositionDutyCycle reqPositionDutyCycle)
+            setControl(reqPositionDutyCycle);
+        else if (request instanceof PositionVoltage reqPositionVoltage)
+            setControl(reqPositionVoltage);
+        else if (request instanceof PositionTorqueCurrentFOC reqPositionTorqueCurrentFOC)
+            setControl(reqPositionTorqueCurrentFOC);
+        else if (request instanceof VelocityDutyCycle reqVelocityDutyCycle)
+            setControl(reqVelocityDutyCycle);
+        else if (request instanceof VelocityVoltage reqVelocityVoltage)
+            setControl(reqVelocityVoltage);
+        else if (request instanceof VelocityTorqueCurrentFOC reqVelocityTorqueCurrentFOC)
+            setControl(reqVelocityTorqueCurrentFOC);
+        else if (request instanceof MotionMagicDutyCycle reqMotionMagicDutyCycle)
+            setControl(reqMotionMagicDutyCycle);
+        else if (request instanceof MotionMagicVoltage reqMotionMagicVoltage)
+            setControl(reqMotionMagicVoltage);
+        else if (request instanceof MotionMagicTorqueCurrentFOC reqMotionMagicTorqueCurrentFOC)
+            setControl(reqMotionMagicTorqueCurrentFOC);
+        else if (request instanceof MotionMagicVelocityDutyCycle reqMotionMagicVelocityDutyCycle)
+            setControl(reqMotionMagicVelocityDutyCycle);
+        else if (request
+                instanceof
+                MotionMagicVelocityTorqueCurrentFOC
+                reqMotionMagicVelocityTorqueCurrentFOC)
+            setControl(reqMotionMagicVelocityTorqueCurrentFOC);
+        else throw new IllegalArgumentException("Unsupported Control Request!");
     }
 
     public AngularVelocity getVelocity() {
