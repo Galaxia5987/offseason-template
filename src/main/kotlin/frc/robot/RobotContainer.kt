@@ -7,6 +7,7 @@ import edu.wpi.first.math.geometry.Rotation2d
 import edu.wpi.first.wpilibj2.command.Command
 import edu.wpi.first.wpilibj2.command.Commands.runOnce
 import edu.wpi.first.wpilibj2.command.button.CommandPS5Controller
+import edu.wpi.first.wpilibj2.command.button.CommandXboxController
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine
 import frc.robot.lib.extensions.enableAutoLogOutputFor
 import frc.robot.subsystems.drive.DriveCommands
@@ -17,6 +18,7 @@ import org.littletonrobotics.junction.networktables.LoggedDashboardChooser
 object RobotContainer {
 
     private val driverController = CommandPS5Controller(0)
+    private val testDriverController = CommandXboxController(1)
 
     private val autoChooser: LoggedDashboardChooser<Command>
 
@@ -64,6 +66,9 @@ object RobotContainer {
                     { Rotation2d() }
                 )
             )
+
+        testDriverController.povDown().onTrue(arm.setIntaking())
+        testDriverController.povUp().onTrue(arm.setUp())
 
         // Switch to X pattern when X button is pressed
         driverController.square().onTrue(runOnce(drive::stopWithX, drive))
