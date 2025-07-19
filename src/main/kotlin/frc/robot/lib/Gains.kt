@@ -3,7 +3,8 @@ package frc.robot.lib
 import com.ctre.phoenix6.configs.Slot0Configs
 
 /**
- * An extension function to convert a [Gains] type to the [Slot0Configs] that the motor uses.
+ * An extension function to convert a [Gains] type to the [Slot0Configs] that
+ * the motor uses.
  */
 fun Gains.toSlotConfig() =
     Slot0Configs().apply {
