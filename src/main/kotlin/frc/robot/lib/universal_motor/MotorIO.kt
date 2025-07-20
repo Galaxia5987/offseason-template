@@ -3,13 +3,16 @@ package frc.robot.lib.universal_motor
 import com.ctre.phoenix6.configs.TalonFXConfiguration
 import com.ctre.phoenix6.controls.ControlRequest
 import edu.wpi.first.units.measure.Angle
+import edu.wpi.first.units.measure.AngularVelocity
 import edu.wpi.first.units.measure.Current
 import edu.wpi.first.units.measure.Distance
 import edu.wpi.first.units.measure.Voltage
 import frc.robot.lib.extensions.amps
 import frc.robot.lib.extensions.deg
 import frc.robot.lib.extensions.m
+import frc.robot.lib.extensions.sec
 import frc.robot.lib.extensions.volts
+import jdk.internal.org.jline.utils.Colors.s
 import org.team9432.annotation.Logged
 
 /**
@@ -53,6 +56,8 @@ interface MotorIO {
          * wheel diameter. If not a linear system will not change
          */
         var distance: Distance = 0.m
+
+        var velocity: AngularVelocity = 0.deg.per(sec)
 
         /** Voltage applied to the motor. */
         var voltage: Voltage = 0.volts

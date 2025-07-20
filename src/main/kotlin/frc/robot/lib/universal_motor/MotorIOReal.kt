@@ -43,6 +43,7 @@ class MotorIOReal(
         inputs.current = motor.supplyCurrent.value
         inputs.position = motor.position.value
         inputs.voltage = motor.motorVoltage.value
+        inputs.velocity = motor.velocity.value
         inputs.distance = motor.position.value.toDistance(diameter, gearRatio)
     }
 }

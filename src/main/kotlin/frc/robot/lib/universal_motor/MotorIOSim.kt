@@ -47,6 +47,7 @@ class MotorIOSim(
         inputs.current = motor.appliedCurrent
         inputs.position = motor.position.rot
         inputs.voltage = motor.appliedVoltage
+        inputs.velocity = motor.velocity
         inputs.distance =
             Rotations.of(motor.position).toDistance(diameter, gearRatio)
     }
