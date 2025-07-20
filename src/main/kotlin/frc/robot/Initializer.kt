@@ -17,7 +17,7 @@ import org.ironmaple.simulation.SimulatedArena
 import org.ironmaple.simulation.drivesims.SwerveDriveSimulation
 
 val driveSimulation: SwerveDriveSimulation? =
-    if (CURRENT_MODE != Mode.REPLAY)
+    if (CURRENT_MODE == Mode.SIM)
         SwerveDriveSimulation(
                 Drive.mapleSimConfig,
                 Pose2d(3.0, 3.0, Rotation2d())
@@ -45,7 +45,7 @@ private val driveModuleIOs =
 
 private val gyroIO =
     when (CURRENT_MODE) {
-        Mode.REAL -> GyroIONavX()
+        Mode.REAL -> GyroIOPigeon2()
         Mode.SIM ->
             GyroIOSim(
                 driveSimulation?.gyroSimulation
