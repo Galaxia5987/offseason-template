@@ -63,8 +63,8 @@ T : SubsystemBase {
 
     private val name = subsystem.name
 
-    private var forwardRoutine: () -> SysIdRoutine? = { null }
-    private var backwardRoutine: () -> SysIdRoutine? = { null }
+    private lateinit var forwardRoutine: () -> SysIdRoutine
+    private lateinit var backwardRoutine: () -> SysIdRoutine
     private lateinit var forwardRoutineConfig: LoggedSysIdRoutineConfig
     private lateinit var backwardRoutineConfig: LoggedSysIdRoutineConfig
 
@@ -161,17 +161,21 @@ T : SubsystemBase {
             .defer {
                 Commands.sequence(
                     createRoutineCommands(),
-                    forwardRoutine.invoke()!!.dynamic(SysIdRoutine.Direction.kForward),
+                    forwardRoutine
+                        .invoke()
+                        .dynamic(SysIdRoutine.Direction.kForward),
                     Commands.waitTime(TIME_BETWEEN_ROUTINES),
-                    backwardRoutine.invoke()!!.dynamic(SysIdRoutine.Direction.kReverse),
+                    backwardRoutine
+                        .invoke()
+                        .dynamic(SysIdRoutine.Direction.kReverse),
                     Commands.waitTime(TIME_BETWEEN_ROUTINES),
-                    forwardRoutine.invoke()!!.quasistatic(
-                        SysIdRoutine.Direction.kForward
-                    ),
+                    forwardRoutine
+                        .invoke()
+                        .quasistatic(SysIdRoutine.Direction.kForward),
                     Commands.waitTime(TIME_BETWEEN_ROUTINES),
-                    backwardRoutine.invoke()!!.quasistatic(
-                        SysIdRoutine.Direction.kReverse
-                    )
+                    backwardRoutine
+                        .invoke()
+                        .quasistatic(SysIdRoutine.Direction.kReverse)
                 )
             }
             .withName("$name/characterize")
