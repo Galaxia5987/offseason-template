@@ -87,7 +87,12 @@ T : SubsystemBase {
         timeout: Time
     ): SysIdCommand<T> {
         forwardRoutineConfig =
-            LoggedSysIdRoutineConfig(rampRate, stepVoltage, timeout, SysIdRoutine.Direction.kForward)
+            LoggedSysIdRoutineConfig(
+                rampRate,
+                stepVoltage,
+                timeout,
+                SysIdRoutine.Direction.kForward
+            )
         forwardRoutine = createRoutine(forwardRoutineConfig)
         return this
     }
@@ -111,7 +116,12 @@ T : SubsystemBase {
         timeout: Time
     ): SysIdCommand<T> {
         backwardRoutineConfig =
-            LoggedSysIdRoutineConfig(rampRate, stepVoltage, timeout, SysIdRoutine.Direction.kReverse)
+            LoggedSysIdRoutineConfig(
+                rampRate,
+                stepVoltage,
+                timeout,
+                SysIdRoutine.Direction.kReverse
+            )
         backwardRoutine = createRoutine(backwardRoutineConfig)
         return this
     }
@@ -121,8 +131,8 @@ T : SubsystemBase {
      *
      * @param routineConfig A configuration for the routine.
      */
-    private fun createRoutine(routineConfig: LoggedSysIdRoutineConfig) =
-        {SysIdRoutine(
+    private fun createRoutine(routineConfig: LoggedSysIdRoutineConfig) = {
+        SysIdRoutine(
             SysIdRoutine.Config(
                 routineConfig.loggedRampRate.get().volts / sec,
                 routineConfig.loggedStepVoltage.get().volts,
@@ -135,7 +145,8 @@ T : SubsystemBase {
                 null,
                 subsystem
             )
-        )}
+        )
+    }
 
     /** Initializes the internal SysId routines from the stored constants. */
     private fun createRoutineCommands(): Command =

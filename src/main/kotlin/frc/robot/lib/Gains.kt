@@ -12,8 +12,8 @@ data class Gains(
     val kG: Double = 0.0
 ) {
     /**
-     * A function to convert a [Gains] type to the [Slot0Configs] that
-     * the motor uses.
+     * A function to convert a [Gains] type to the [Slot0Configs] that the motor
+     * uses.
      */
     fun toSlotConfig() =
         Slot0Configs().apply {
