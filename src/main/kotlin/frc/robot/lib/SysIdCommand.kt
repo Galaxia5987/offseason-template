@@ -128,7 +128,7 @@ T : SubsystemBase {
                 routineConfig.loggedStepVoltage.get().volts,
                 routineConfig.loggedTimeout.get().sec,
             ) { state: SysIdRoutineLog.State ->
-                Logger.recordOutput("$name/state", state.toString())
+                Logger.recordOutput("SysId/$name/state", state.toString())
             },
             SysIdRoutine.Mechanism(
                 subsystem.setVoltageConsumer,
@@ -196,7 +196,7 @@ T : SubsystemBase {
         direction: SysIdRoutine.Direction
     ) {
 
-        val loggingPath = "/Tuning/$name/${direction.name}"
+        val loggingPath = "/Tuning/SysId/$name/${direction.name}"
 
         /** Logged ramp rate value in volts/sec, tunable via NetworkTables. */
         val loggedRampRate =
