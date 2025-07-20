@@ -1,4 +1,4 @@
-package frc.robot.lib
+package frc.robot.lib.sysid
 
 import edu.wpi.first.units.VoltageUnit
 import edu.wpi.first.units.measure.Time
