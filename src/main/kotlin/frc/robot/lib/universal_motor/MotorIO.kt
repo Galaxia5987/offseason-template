@@ -12,7 +12,6 @@ import frc.robot.lib.extensions.deg
 import frc.robot.lib.extensions.m
 import frc.robot.lib.extensions.sec
 import frc.robot.lib.extensions.volts
-import jdk.internal.org.jline.utils.Colors.s
 import org.team9432.annotation.Logged
 
 /**
