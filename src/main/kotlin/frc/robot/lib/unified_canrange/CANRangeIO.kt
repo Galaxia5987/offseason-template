@@ -1,11 +1,10 @@
-package frc.robot.lib.unified_sensor
+package frc.robot.lib.unified_canrange
 
 import edu.wpi.first.epilogue.Logged
 import edu.wpi.first.units.measure.Distance
-import frc.robot.lib.extensions.centimeters
 import frc.robot.lib.extensions.cm
 
-interface SensorIO {
+interface CANRangeIO {
     val inputs: SensorInputs
 
     fun updateInputs() {}

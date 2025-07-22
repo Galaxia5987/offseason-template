@@ -1,15 +1,14 @@
-package frc.robot.lib.unified_sensor
+package frc.robot.lib.unified_canrange
 
 import com.ctre.phoenix6.configs.CANrangeConfiguration
 import com.ctre.phoenix6.hardware.CANrange
-import edu.wpi.first.wpilibj2.command.Command
 
-class SensorIOReal
+class CANRangeIOReal
     (private val port: Int,
      private val canbus: String = "",
      configuration: CANrangeConfiguration
-            ) : SensorIO {
-    override val inputs = SensorIO.SensorInputs()
+            ) : CANRangeIO {
+    override val inputs = CANRangeIO.SensorInputs()
 
     private val CANrange = CANrange(port, canbus)
 
