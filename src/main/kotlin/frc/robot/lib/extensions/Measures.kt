@@ -210,3 +210,11 @@ val Number.kilogramSquareMeters: MomentOfInertia
 
 operator fun MomentOfInertia.get(unit: MomentOfInertiaUnit): Double =
     this.`in`(unit)
+
+/**
+ * Alternative syntax for [Measure.`in`(...)] that doesn't require tildas.
+ * Matches the format of toUnit(...) which also takes units.
+ */
+fun <U : edu.wpi.first.units.Unit> Measure<U>.InUnits(units : U) : Double{
+    return this.`in`(units)
+}
