@@ -23,8 +23,9 @@ class wrist: SubsystemBase() {
             .withSupplyCurrentLimitEnable(true )
             .withStatorCurrentLimitEnable(false)
             .withSupplyCurrentLimit(12.0))
-
+        motor.configurator.apply(motorConfigs)
     }
+
     val positionRequest= PositionVoltage(0.0)
     fun setPosition(angle: Angle): Command{
         return Commands.run({motor.setControl(positionRequest.withPosition(angle))})
