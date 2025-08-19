@@ -15,6 +15,8 @@ import frc.robot.Mode.REAL
 import frc.robot.Mode.REPLAY
 import frc.robot.Mode.SIM
 import frc.robot.lib.extensions.enableAutoLogOutputFor
+import frc.robot.subsystems.flywheel.Flywheel
+import frc.robot.subsystems.hood.Hood
 import org.ironmaple.simulation.SimulatedArena
 import org.littletonrobotics.junction.LogFileUtil
 import org.littletonrobotics.junction.LoggedRobot
@@ -38,6 +40,9 @@ object Robot : LoggedRobot() {
      * This function is run when the robot is first started up and should be
      * used for any initialization code.
      */
+    val flywheel = Flywheel()
+    val hood = Hood()
+
     init {
         // Report Kotlin language usage
         // https://www.chiefdelphi.com/t/do-you-use-kotlin-make-sure-first-knows/447155?u=dan
