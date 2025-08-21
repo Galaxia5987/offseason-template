@@ -1,4 +1,4 @@
-package org.team9432.annotation
+package org.team5987.annotation
 
 import com.google.devtools.ksp.processing.CodeGenerator
 import com.google.devtools.ksp.processing.Dependencies
@@ -35,7 +35,7 @@ class LoggedProcessor(private val codeGenerator: CodeGenerator, private val logg
     }
 
     override fun process(resolver: Resolver): List<KSAnnotated> {
-        val annotatedClasses = resolver.getSymbolsWithAnnotation("org.team9432.annotation.Logged").filterIsInstance<KSClassDeclaration>()
+        val annotatedClasses = resolver.getSymbolsWithAnnotation("org.team5987.annotation.Logged").filterIsInstance<KSClassDeclaration>()
         annotatedClasses.forEach { process(it) }
         return annotatedClasses.filterNot { it.validate() }.toList()
     }

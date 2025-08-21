@@ -1,4 +1,4 @@
-package org.team9432.annotation
+package org.team5987.annotation
 
 @Target(AnnotationTarget.CLASS)
 annotation class Logged
