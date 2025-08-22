@@ -7,16 +7,18 @@ import edu.wpi.first.math.geometry.Rotation2d
 import edu.wpi.first.wpilibj2.command.Command
 import edu.wpi.first.wpilibj2.command.Commands.runOnce
 import edu.wpi.first.wpilibj2.command.button.CommandPS5Controller
+import edu.wpi.first.wpilibj2.command.button.CommandXboxController
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine
 import frc.robot.lib.extensions.enableAutoLogOutputFor
 import frc.robot.subsystems.drive.DriveCommands
+import frc.robot.subsystems.wrist.Wrist
 import org.ironmaple.simulation.SimulatedArena
 import org.littletonrobotics.junction.AutoLogOutput
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser
 
 object RobotContainer {
 
-    private val driverController = CommandPS5Controller(0)
+    private val driverController = CommandXboxController(0)
 
     private val autoChooser: LoggedDashboardChooser<Command>
 
@@ -53,38 +55,7 @@ object RobotContainer {
     }
 
     private fun configureButtonBindings() {
-        // Lock to 0° when A button is held
-        driverController
-            .cross()
-            .whileTrue(
-                DriveCommands.joystickDriveAtAngle(
-                    drive,
-                    { -driverController.leftY },
-                    { -driverController.leftX },
-                    { Rotation2d() }
-                )
-            )
-
-        // Switch to X pattern when X button is pressed
-        driverController.square().onTrue(runOnce(drive::stopWithX, drive))
-
-        // Reset gyro / odometry
-        val resetOdometry =
-            if (CURRENT_MODE == Mode.SIM)
-                Runnable {
-                    drive.resetOdometry(
-                        driveSimulation!!.simulatedDriveTrainPose
-                    )
-                }
-            else
-                Runnable {
-                    drive.resetOdometry(
-                        Pose2d(drive.pose.translation, Rotation2d())
-                    )
-                }
-        driverController
-            .options()
-            .onTrue(runOnce(resetOdometry).ignoringDisable(true))
+        driverController.x().onTrue(hood.setVoltage())
     }
 
     fun getAutonomousCommand(): Command = autoChooser.get()
