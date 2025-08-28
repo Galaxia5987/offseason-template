@@ -183,7 +183,7 @@ object LoggedOutputManager : SubsystemBase() {
                                 )
                             } catch (e: ClassCastException) {
                                 DriverStation.reportError(
-                                    "[AdvantageKit] Auto serialization is not supported for type " +
+                                    "[LoggedOutputManager] Auto serialization is not supported for type " +
                                         type.getSimpleName(),
                                     false
                                 )
@@ -285,7 +285,7 @@ object LoggedOutputManager : SubsystemBase() {
                                 )
                             } catch (e: ClassCastException) {
                                 DriverStation.reportError(
-                                    "[AdvantageKit] Auto serialization is not supported for array type " +
+                                    "[LoggedOutputManager] Auto serialization is not supported for array type " +
                                         componentType.getSimpleName(),
                                     false
                                 )

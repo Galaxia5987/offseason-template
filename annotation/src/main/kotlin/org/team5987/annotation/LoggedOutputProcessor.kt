@@ -12,7 +12,7 @@ class LoggedOutputProcessor(
 ) : SymbolProcessor {
 
     override fun process(resolver: Resolver): List<KSAnnotated> {
-        logger.warn("LoggedOutputProcessor started processing...")
+        logger.info("LoggedOutputProcessor started processing...")
         val symbols = resolver.getSymbolsWithAnnotation("org.team5987.annotation.LoggedOutput")
 
         if (symbols.none()) {
@@ -20,11 +20,11 @@ class LoggedOutputProcessor(
             return emptyList()
         }
 
-        logger.warn("Found ${symbols.count()} @LoggedOutput symbols.")
+        logger.info("Found ${symbols.count()} @LoggedOutput symbols.")
 
         val fileSpecBuilder = FileSpec.builder("frc.robot.lib.logged_output.generated", "LoggedRegistry")
         val funSpecBuilder = FunSpec.builder("registerAllLoggedOutputs")
-            .addStatement("// [LoggedOutput Manager] registers all LoggedOutput fields and methods")
+            .addStatement("// [LoggedOutputManager] registers all LoggedOutput fields and methods")
 
         fileSpecBuilder.addImport("frc.robot.lib.logged_output", "LoggedOutputManager")
 
@@ -41,7 +41,7 @@ class LoggedOutputProcessor(
                     val classType = ClassName(packageName, simpleName)
                     val fieldName = symbol.simpleName.asString()
 
-                    logger.warn("Registering field: $className.$fieldName with key=$key")
+                    logger.info("Registering field: $className.$fieldName with key=$key")
 
                     // LoggedOutputManager.registerField("key", MyClass::myField)
                     funSpecBuilder.addStatement(
@@ -61,7 +61,7 @@ class LoggedOutputProcessor(
                         val pkg = symbol.containingFile?.packageName?.asString() ?: continue
                         val member = MemberName(pkg, methodName)
 
-                        logger.warn("Registering TOP-LEVEL method: $pkg.$methodName with key=$key")
+                        logger.info("Registering TOP-LEVEL method: $pkg.$methodName with key=$key")
 
                         // LoggedOutputManager.registerMethod("key", ::testFun)
                         funSpecBuilder.addStatement(
@@ -76,7 +76,7 @@ class LoggedOutputProcessor(
                         val simpleName = classFqName.substringAfterLast(".")
                         val classType = ClassName(packageName, simpleName)
 
-                        logger.warn("Registering MEMBER method: $classFqName.$methodName with key=$key")
+                        logger.info("Registering MEMBER method: $classFqName.$methodName with key=$key")
 
                         // LoggedOutputManager.registerMethod("key", MyType::methodName)
                         funSpecBuilder.addStatement(
@@ -92,7 +92,7 @@ class LoggedOutputProcessor(
 
         fileSpecBuilder.addFunction(funSpecBuilder.build())
 
-        logger.warn("Writing generated file: LoggedRegistry.kt")
+        logger.info("Writing generated file: LoggedRegistry.kt")
 
         val file = codeGenerator.createNewFile(
             Dependencies.ALL_FILES,
@@ -104,7 +104,7 @@ class LoggedOutputProcessor(
             fileSpecBuilder.build().writeTo(writer)
         }
 
-        logger.warn("LoggedOutputProcessor finished generating LoggedRegistry.kt")
+        logger.info("LoggedOutputProcessor finished generating LoggedRegistry.kt")
 
         return emptyList()
     }
