@@ -24,7 +24,7 @@ class LoggedOutputProcessor(
 
         val fileSpecBuilder = FileSpec.builder("frc.robot.lib.logged_output.generated", "LoggedRegistry")
         val funSpecBuilder = FunSpec.builder("registerAll")
-            .addStatement("// Auto-generated: registers all LoggedOutput fields and methods")
+            .addStatement("// [LoggedOutput Manager] registers all LoggedOutput fields and methods")
 
         fileSpecBuilder.addImport("frc.robot.lib.logged_output", "LoggedOutputManager")
 
