@@ -3,7 +3,6 @@ package org.team5987.annotation
 import com.google.devtools.ksp.processing.*
 import com.google.devtools.ksp.symbol.*
 import com.squareup.kotlinpoet.*
-import java.util.function.Supplier
 
 // Call to `LoggedRegistry.registerAll` on robot init!!!!!!
 
@@ -34,46 +33,59 @@ class LoggedOutputProcessor(
                 .first { it.shortName.asString() == "LoggedOutput" }
                 .arguments.first().value.toString()
 
-
             when (symbol) {
                 is KSPropertyDeclaration -> {
                     val className = symbol.parentDeclaration?.qualifiedName?.asString() ?: continue
-                    val fieldName = symbol.simpleName.asString()
-
                     val packageName = className.substringBeforeLast(".")
                     val simpleName = className.substringAfterLast(".")
                     val classType = ClassName(packageName, simpleName)
+                    val fieldName = symbol.simpleName.asString()
 
                     logger.warn("Registering field: $className.$fieldName with key=$key")
 
+                    // LoggedOutputManager.registerField("key", MyClass::myField)
                     funSpecBuilder.addStatement(
-                        "LoggedOutputManager.registerField(%S, %T::class.java, %T { %L.%L })",
+                        "LoggedOutputManager.registerField(%S, %T::%L)",
                         key,
-                        classType,
-                        Supplier::class,
                         classType,
                         fieldName
                     )
                 }
+
                 is KSFunctionDeclaration -> {
-                    val className = symbol.parentDeclaration?.qualifiedName?.asString()
-                        ?: symbol.containingFile?.packageName?.asString() ?: continue
                     val methodName = symbol.simpleName.asString()
+                    val parentDecl = symbol.parentDeclaration
 
-                    val packageName = className.substringBeforeLast(".")
-                    val simpleName = className.substringAfterLast(".")
-                    val classType = ClassName(packageName, simpleName)
+                    if (parentDecl == null) {
+                        // TOP-LEVEL FUNCTION
+                        val pkg = symbol.containingFile?.packageName?.asString() ?: continue
+                        val member = MemberName(pkg, methodName)
 
-                    logger.warn("Registering method: $className.$methodName() with key=$key")
+                        logger.warn("Registering TOP-LEVEL method: $pkg.$methodName with key=$key")
 
-                    funSpecBuilder.addStatement(
-                        "LoggedOutputManager.registerMethod(%S, %T::class.java, %T { %L.%L() })",
-                        key,
-                        classType,
-                        Supplier::class,
-                        classType,
-                        methodName
-                    )
+                        // LoggedOutputManager.registerMethod("key", ::testFun)
+                        funSpecBuilder.addStatement(
+                            "LoggedOutputManager.registerMethod(%S, ::%M)",
+                            key,
+                            member
+                        )
+                    } else {
+                        // METHOD INSIDE TYPE (object/companion/@JvmStatic works as KFunction0 if no receiver)
+                        val classFqName = parentDecl.qualifiedName?.asString() ?: continue
+                        val packageName = classFqName.substringBeforeLast(".")
+                        val simpleName = classFqName.substringAfterLast(".")
+                        val classType = ClassName(packageName, simpleName)
+
+                        logger.warn("Registering MEMBER method: $classFqName.$methodName with key=$key")
+
+                        // LoggedOutputManager.registerMethod("key", MyType::methodName)
+                        funSpecBuilder.addStatement(
+                            "LoggedOutputManager.registerMethod(%S, %T::%L)",
+                            key,
+                            classType,
+                            methodName
+                        )
+                    }
                 }
             }
         }
@@ -82,7 +94,6 @@ class LoggedOutputProcessor(
 
         logger.warn("Writing generated file: LoggedRegistry.kt")
 
-        // Write file
         val file = codeGenerator.createNewFile(
             Dependencies.ALL_FILES,
             "frc.robot.lib.logged_output.generated",

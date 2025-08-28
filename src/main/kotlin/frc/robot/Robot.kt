@@ -15,6 +15,7 @@ import frc.robot.Mode.REAL
 import frc.robot.Mode.REPLAY
 import frc.robot.Mode.SIM
 import frc.robot.lib.extensions.enableAutoLogOutputFor
+import frc.robot.lib.logged_output.generated.registerAll
 import org.ironmaple.simulation.SimulatedArena
 import org.littletonrobotics.junction.LogFileUtil
 import org.littletonrobotics.junction.LoggedRobot
@@ -88,6 +89,8 @@ object Robot : LoggedRobot() {
         RobotContainer // Initialize robot container.
 
         enableAutoLogOutputFor(this)
+
+        registerAll()
 
         DriverStation.silenceJoystickConnectionWarning(true)
         PathfindingCommand.warmupCommand().schedule()

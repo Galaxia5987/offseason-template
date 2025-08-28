@@ -5,9 +5,14 @@ import edu.wpi.first.util.WPISerializable
 import edu.wpi.first.util.struct.StructSerializable
 import edu.wpi.first.wpilibj.DriverStation
 import edu.wpi.first.wpilibj2.command.SubsystemBase
-import java.util.function.*
+import frc.robot.lib.extensions.toPrimitive
 import org.littletonrobotics.junction.Logger
 import org.littletonrobotics.junction.mechanism.LoggedMechanism2d
+import java.util.function.*
+import kotlin.reflect.KFunction
+import kotlin.reflect.KProperty0
+import kotlin.reflect.jvm.javaField
+import kotlin.reflect.jvm.javaMethod
 
 object LoggedOutputManager : SubsystemBase() {
     private val callbacks = mutableListOf<Runnable>()
@@ -16,8 +21,30 @@ object LoggedOutputManager : SubsystemBase() {
         callbacks.forEach { it.run() }
     }
 
+    private fun makeKey(key: String, name: String, declaringClass: String?): String {
+        return key.ifBlank { "${declaringClass ?: "<unknown>"}//$name" }
+    }
+
+    fun <T> registerField(key: String, property: KProperty0<T>) {
+        val declaringClass = property.javaField?.declaringClass?.simpleName
+        val actualKey = makeKey(key, property.name, declaringClass)
+        register(actualKey) { property.get() }
+    }
+
+    fun <T> registerMethod(key: String, function: KFunction<T>) {
+        if (function.parameters.isNotEmpty()) {
+            throw IllegalArgumentException("Only zero-arg functions are supported: $key")
+        }
+
+        val declaringClass = function.javaMethod?.declaringClass?.simpleName ?: "<top-level>"
+        val actualKey = makeKey(key, function.name, declaringClass)
+        register(actualKey) { function.call() }
+    }
+
     @Suppress("UNCHECKED_CAST")
-    fun registerField(key: String, type: Class<*>, supplier: Supplier<*>) {
+    private fun register(key: String, supplier: Supplier<*>) {
+        val type = supplier.get()::class.java.toPrimitive()!!
+
         if (!type.isArray) {
             // Single types
             if (type == Boolean::class.javaPrimitiveType) {
@@ -75,7 +102,7 @@ object LoggedOutputManager : SubsystemBase() {
                         if (
                             value != null
                         ) // Cannot cast to enum subclass, log the name directly
-                         Logger.recordOutput(key, (value as Enum<*>).name)
+                            Logger.recordOutput(key, (value as Enum<*>).name)
                     }
                 )
             } else if (BooleanSupplier::class.java.isAssignableFrom(type)) {
@@ -150,7 +177,7 @@ object LoggedOutputManager : SubsystemBase() {
                             } catch (e: ClassCastException) {
                                 DriverStation.reportError(
                                     "[AdvantageKit] Auto serialization is not supported for type " +
-                                        type.getSimpleName(),
+                                            type.getSimpleName(),
                                     false
                                 )
                             }
@@ -252,7 +279,7 @@ object LoggedOutputManager : SubsystemBase() {
                             } catch (e: ClassCastException) {
                                 DriverStation.reportError(
                                     "[AdvantageKit] Auto serialization is not supported for array type " +
-                                        componentType.getSimpleName(),
+                                            componentType.getSimpleName(),
                                     false
                                 )
                             }
@@ -384,7 +411,7 @@ object LoggedOutputManager : SubsystemBase() {
                             } catch (e: ClassCastException) {
                                 DriverStation.reportError(
                                     ("[AdvantageKit] Auto serialization is not supported for 2D array type " +
-                                        componentType.getSimpleName()),
+                                            componentType.getSimpleName()),
                                     false
                                 )
                             }
