@@ -15,7 +15,6 @@ dependencies {
 
 repositories {
     mavenCentral()
-    google()
 }
 
 sourceSets.main {
