@@ -417,7 +417,7 @@ object LoggedOutputManager : SubsystemBase() {
                                 )
                             } catch (e: ClassCastException) {
                                 DriverStation.reportError(
-                                    ("[AdvantageKit] Auto serialization is not supported for 2D array type " +
+                                    ("[LoggedOutputManager] Auto serialization is not supported for 2D array type " +
                                         componentType.getSimpleName()),
                                     false
                                 )
