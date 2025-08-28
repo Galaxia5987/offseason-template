@@ -4,7 +4,7 @@ import com.google.devtools.ksp.processing.*
 import com.google.devtools.ksp.symbol.*
 import com.squareup.kotlinpoet.*
 
-// Call to `LoggedRegistry.registerAll` on robot init!!!!!!
+// Call `LoggedRegistry.registerAll()` on robot init!!!!!!
 
 class LoggedOutputProcessor(
     private val codeGenerator: CodeGenerator,
