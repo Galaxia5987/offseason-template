@@ -32,7 +32,7 @@ object LoggedOutputManager : SubsystemBase() {
     fun <T> registerField(key: String, property: KProperty0<T>) {
         val declaringClass = property.javaGetter?.declaringClass?.simpleName
         val actualKey = makeKey(key, property.name, declaringClass)
-        register(actualKey) { property.get() }
+        register(actualKey, property::get)
     }
 
     fun <T> registerMethod(key: String, function: KFunction<T>) {
@@ -45,7 +45,7 @@ object LoggedOutputManager : SubsystemBase() {
         val declaringClass =
             function.javaMethod?.declaringClass?.simpleName ?: "<top-level>"
         val actualKey = makeKey(key, function.name, declaringClass)
-        register(actualKey) { function.call() }
+        register(actualKey,function::call)
     }
 
     @Suppress("UNCHECKED_CAST")
