@@ -5,7 +5,7 @@ import edu.wpi.first.util.WPISerializable
 import edu.wpi.first.util.struct.StructSerializable
 import edu.wpi.first.wpilibj.DriverStation
 import edu.wpi.first.wpilibj2.command.SubsystemBase
-import frc.robot.lib.extensions.toPrimitive
+import frc.robot.lib.extensions.toPrimitiveTypeJava
 import java.util.function.*
 import kotlin.reflect.KFunction
 import kotlin.reflect.KProperty0
@@ -50,7 +50,7 @@ object LoggedOutputManager : SubsystemBase() {
 
     @Suppress("UNCHECKED_CAST")
     private fun register(key: String, supplier: Supplier<*>) {
-        val type = supplier.get()::class.java.toPrimitive()!!
+        val type = supplier.get()::class.java.toPrimitiveTypeJava()!!
 
         if (!type.isArray) {
             // Single types

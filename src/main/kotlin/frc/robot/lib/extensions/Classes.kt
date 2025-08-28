@@ -1,6 +1,6 @@
 package frc.robot.lib.extensions
 
-fun Class<*>.toPrimitive(): Class<*>? {
+fun Class<*>.toPrimitiveTypeJava(): Class<*>? {
     return when (this) {
         java.lang.Integer::class.java -> Int::class.javaPrimitiveType
         java.lang.Boolean::class.java -> Boolean::class.javaPrimitiveType
