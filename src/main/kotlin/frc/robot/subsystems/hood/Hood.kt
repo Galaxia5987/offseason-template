@@ -34,6 +34,9 @@ class Hood : SubsystemBase() {
                             StatorCurrentLimitEnable = true
                             StatorCurrentLimit = 10.0
                         }
+                    Slot0.kP = 0.6
+                    Slot1.kI=0.0
+                    Slot2.kD=0.3
                 }
         )
 

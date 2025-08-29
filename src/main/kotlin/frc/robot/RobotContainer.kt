@@ -54,6 +54,9 @@ object RobotContainer {
 
     private fun configureButtonBindings() {
         driverController.x().onTrue(hood.setVoltage(3.0.volts))
+        driverController.x().onFalse(hood.setVoltage(0.0.volts))
+        driverController.y().onTrue(hood.steepestAngle())
+        driverController.y().onFalse(hood.closeHood())
     }
 
     fun getAutonomousCommand(): Command = autoChooser.get()
