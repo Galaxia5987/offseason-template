@@ -11,7 +11,6 @@ import frc.robot.subsystems.drive.gyroIOs.GyroIOPigeon2
 import frc.robot.subsystems.drive.gyroIOs.GyroIOSim
 import frc.robot.subsystems.flywheel.Flywheel
 import frc.robot.subsystems.hood.Hood
-import frc.robot.subsystems.vision.Vision
 import frc.robot.subsystems.vision.VisionConstants
 import frc.robot.subsystems.vision.VisionIOPhotonVision
 import frc.robot.subsystems.vision.VisionIOPhotonVisionSim
@@ -81,8 +80,6 @@ private val visionIOs =
         Mode.REPLAY -> emptyList()
     }.toTypedArray()
 
-val vision = Vision(drive, *visionIOs)
-
 val wrist = Wrist()
-val hood= Hood()
-val flywheel= Flywheel()
+val hood = Hood()
+val flywheel = Flywheel()

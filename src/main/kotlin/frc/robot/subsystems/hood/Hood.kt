@@ -16,34 +16,40 @@ import frc.robot.lib.universal_motor.UniversalTalonFX
 import frc.robot.subsystems.flywheel.motorPort
 import org.littletonrobotics.junction.Logger
 
-
 class Hood : SubsystemBase() {
-    val motor = UniversalTalonFX(
-        motorPort,
-        config = TalonFXConfiguration().apply {
-            MotorOutput = MotorOutputConfigs().apply {
-                NeutralMode = NeutralModeValue.Brake
-                Inverted = InvertedValue.Clockwise_Positive
-            }
-            CurrentLimits = CurrentLimitsConfigs().apply {
-                SupplyCurrentLimitEnable = true
-                SupplyCurrentLimit = 10.0
-                StatorCurrentLimitEnable = true
-                StatorCurrentLimit = 10.0
-            }
-        }
-    )
+    val motor =
+        UniversalTalonFX(
+            motorPort,
+            config =
+                TalonFXConfiguration().apply {
+                    MotorOutput =
+                        MotorOutputConfigs().apply {
+                            NeutralMode = NeutralModeValue.Brake
+                            Inverted = InvertedValue.Clockwise_Positive
+                        }
+                    CurrentLimits =
+                        CurrentLimitsConfigs().apply {
+                            SupplyCurrentLimitEnable = true
+                            SupplyCurrentLimit = 10.0
+                            StatorCurrentLimitEnable = true
+                            StatorCurrentLimit = 10.0
+                        }
+                }
+        )
 
     val voltageRequest = VoltageOut(0.0)
     fun setVoltage(voltage: Voltage): Command {
-        return Commands.runOnce({ motor.setControl(voltageRequest.withOutput(voltage)) })
+        return Commands.runOnce({
+            motor.setControl(voltageRequest.withOutput(voltage))
+        })
     }
 
     val positionRequest = PositionVoltage(0.0)
     fun setPosition(angle: Angle): Command {
-        return Commands.runOnce({ motor.setControl(positionRequest.withPosition(angle)) })
+        return Commands.runOnce({
+            motor.setControl(positionRequest.withPosition(angle))
+        })
     }
-
 
     fun closeHood(): Command {
         return setPosition(Hoodangles.ZERO.angle)
@@ -60,6 +66,5 @@ class Hood : SubsystemBase() {
     override fun periodic() {
         motor.updateInputs()
         Logger.processInputs(name, motor.inputs)
-
     }
 }
