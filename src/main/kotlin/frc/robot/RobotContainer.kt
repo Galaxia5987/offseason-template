@@ -10,6 +10,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandPS5Controller
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine
 import frc.robot.lib.extensions.enableAutoLogOutputFor
+import frc.robot.lib.extensions.volts
 import frc.robot.subsystems.drive.DriveCommands
 import frc.robot.subsystems.wrist.Wrist
 import org.ironmaple.simulation.SimulatedArena
@@ -55,7 +56,8 @@ object RobotContainer {
     }
 
     private fun configureButtonBindings() {
-        driverController.x().onTrue(hood.setVoltage())
+        driverController.x().onTrue(hood.setVoltage(3.0.volts))
+
     }
 
     fun getAutonomousCommand(): Command = autoChooser.get()
