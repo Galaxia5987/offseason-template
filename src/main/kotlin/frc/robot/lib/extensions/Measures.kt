@@ -82,6 +82,8 @@ val amps
     get() = Units.Amps
 val volts
     get() = Units.Volts
+val kg2m
+    get() = Units.KilogramSquareMeters
 
 fun LinearVelocity.toAngular(
     diameter: Distance,
