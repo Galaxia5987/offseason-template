@@ -32,12 +32,15 @@ class Wrist : SubsystemBase() {
                             StatorCurrentLimitEnable = true
                             StatorCurrentLimit = 50.0
                         }
+                    Slot0.kP=1.0
+                    Slot0.kI=0.0
+                    Slot0.kD=0.0
                 }
         )
 
     val positionRequest = PositionVoltage(0.0)
     fun setPosition(angle: Angle): Command {
-        return Commands.run({
+        return Commands.runOnce({
             motor.setControl(positionRequest.withPosition(angle))
         })
     }

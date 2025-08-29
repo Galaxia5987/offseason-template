@@ -33,12 +33,16 @@ class Flywheel : SubsystemBase() {
                             StatorCurrentLimitEnable = true
                             SupplyCurrentLimit = 100.0
                         }
+                    Slot0.kP=1.0
+                    Slot0.kI=0.0
+                    Slot0.kD=0.0
                 }
+
         )
 
     val voltageRequest = VoltageOut(0.0)
     fun setVoltage(VoltageOut: Voltage): Command {
-        return Commands.run({
+        return Commands.runOnce({
             motor.setControl(voltageRequest.withOutput(VoltageOut))
         })
     }

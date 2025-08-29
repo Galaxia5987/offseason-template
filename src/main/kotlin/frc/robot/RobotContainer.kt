@@ -7,7 +7,10 @@ import edu.wpi.first.math.geometry.Rotation2d
 import edu.wpi.first.wpilibj2.command.Command
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine
+import frc.robot.lib.extensions.degrees
+import frc.robot.lib.extensions.degreesPerSecond
 import frc.robot.lib.extensions.enableAutoLogOutputFor
+import frc.robot.lib.extensions.mps
 import frc.robot.lib.extensions.volts
 import frc.robot.subsystems.drive.DriveCommands
 import org.ironmaple.simulation.SimulatedArena
@@ -57,6 +60,11 @@ object RobotContainer {
         driverController.x().onFalse(hood.setVoltage(0.0.volts))
         driverController.y().onTrue(hood.steepestAngle())
         driverController.y().onFalse(hood.closeHood())
+        driverController.rightBumper().onTrue(flywheel.setVelocity(2000.0.degreesPerSecond)).onFalse(flywheel.setVelocity(0.0.degreesPerSecond))
+        driverController.leftBumper().onTrue(flywheel.setVoltage(6.0.volts))
+        driverController.leftBumper().onFalse(flywheel.setVoltage(0.0.volts))
+        driverController.a().onTrue(wrist.setPosition(90.degrees))
+        driverController.a().onFalse(wrist.setPosition(0.degrees))
     }
 
     fun getAutonomousCommand(): Command = autoChooser.get()

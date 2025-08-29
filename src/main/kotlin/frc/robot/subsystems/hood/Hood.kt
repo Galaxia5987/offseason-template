@@ -33,10 +33,11 @@ class Hood : SubsystemBase() {
                             SupplyCurrentLimit = 10.0
                             StatorCurrentLimitEnable = true
                             StatorCurrentLimit = 10.0
+
                         }
                     Slot0.kP = 0.6
-                    Slot1.kI=0.0
-                    Slot2.kD=0.3
+                    Slot0.kI=0.0
+                    Slot0.kD=0.3
                 }
         )
 
