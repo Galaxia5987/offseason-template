@@ -45,7 +45,7 @@ object LoggedOutputManager : SubsystemBase() {
         val declaringClass =
             function.javaMethod?.declaringClass?.simpleName ?: "<top-level>"
         val actualKey = makeKey(key, function.name, declaringClass)
-        register(actualKey,function::call)
+        register(actualKey, function::call)
     }
 
     @Suppress("UNCHECKED_CAST")
