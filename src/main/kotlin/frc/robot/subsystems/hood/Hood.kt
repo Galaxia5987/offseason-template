@@ -1,7 +1,8 @@
-package frc.robot.subsystems.wrist
+package frc.robot.subsystems.hood
 
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs
 import com.ctre.phoenix6.configs.MotorOutputConfigs
+import org.littletonrobotics.junction.Logger
 import com.ctre.phoenix6.configs.TalonFXConfiguration
 import com.ctre.phoenix6.controls.PositionVoltage
 import com.ctre.phoenix6.signals.InvertedValue
@@ -12,10 +13,11 @@ import edu.wpi.first.wpilibj2.command.Commands
 import edu.wpi.first.wpilibj2.command.SubsystemBase
 import frc.robot.lib.extensions.degrees
 import frc.robot.lib.universal_motor.UniversalTalonFX
-import org.littletonrobotics.junction.Logger
+import frc.robot.subsystems.wrist.wristPort
 
-class Wrist : SubsystemBase() {
-    val wristMotorConfig = TalonFXConfiguration().apply {
+
+class Hood : SubsystemBase() {
+    val hoodMotorConfig = TalonFXConfiguration().apply {
         MotorOutput = MotorOutputConfigs().apply {
             NeutralMode = NeutralModeValue.Brake
             Inverted = InvertedValue.Clockwise_Positive
@@ -27,27 +29,34 @@ class Wrist : SubsystemBase() {
             SupplyCurrentLimit = 60.0
         }
     }
-    val wristMotor = UniversalTalonFX(wristPort, "wristMotor", wristMotorConfig)
+    val hoodMotor = UniversalTalonFX(wristPort, "hoodMotor", hoodMotorConfig)
     val positionRequest = PositionVoltage(0.0.degrees)
 
-    init {
-        wristMotorConfig.MotorOutput.withNeutralMode(NeutralModeValue.Coast)
-        wristMotorConfig.MotorOutput.withInverted(
-            InvertedValue.Clockwise_Positive
-        )
-        wristMotorConfig.CurrentLimits.withStatorCurrentLimit(12.0)
-            .withSupplyCurrentLimit(12.0)
-            .withStatorCurrentLimitEnable(true)
-            .withSupplyCurrentLimitEnable(true)
-    }
 
     fun setPosition(position: Angle): Command {
-        positionRequest.withPosition(position)
-        return Commands.run({ wristMotor.setControl(positionRequest) })
+        return Commands.runOnce({
+                hoodMotor.setControl(positionRequest.withPosition(position))
+        })
+    }
+
+    fun getUp(): Command {
+        return Commands.runOnce({ setPosition(HoodPositions.UP.angle) })
+    }
+
+    fun getDown(): Command {
+        return Commands.runOnce({ setPosition(HoodPositions.Down.angle) })
+    }
+
+    fun getToOuttake(): Command {
+        return Commands.runOnce({ setPosition(HoodPositions.TAKEOUT.angle) })
+    }
+
+    fun getToVertical(): Command {
+        return Commands.runOnce({ setPosition(HoodPositions.VERTICAL.angle) })
     }
 
     override fun periodic() {
-        wristMotor.updateInputs()
-        Logger.processInputs(name, wristMotor.inputs)
+        hoodMotor.updateInputs()
+        Logger.processInputs(name, hoodMotor.inputs)
     }
 }
