@@ -35,10 +35,10 @@ class FlyWheel : SubsystemBase() {
 
 
     fun setVoltage(voltage: Voltage): Command {
-        voltageRequest.withOutput(voltage)
-        return Commands.runOnce({ flywheelMotor.setControl(voltageRequest) })
+        return Commands.runOnce({
+            voltageRequest.withOutput(voltage)
+            flywheelMotor.setControl(voltageRequest) })
     }
-
     override fun periodic() {
         flywheelMotor.updateInputs()
         Logger.processInputs(name, flywheelMotor.inputs)

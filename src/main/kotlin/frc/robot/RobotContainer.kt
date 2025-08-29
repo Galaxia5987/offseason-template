@@ -45,10 +45,16 @@ object RobotContainer {
         driverController.povUp().whileTrue(hood.moveByController(10.degrees))
         driverController.povDown().whileTrue(hood.moveByController((-10).degrees))
 
-        driverController.povLeft().whileTrue(flywheel.setVoltage(5.0.volts))
-        driverController.povRight().whileTrue(flywheel.setVoltage((-5.0).volts))
+        driverController.povLeft().onTrue(flywheel.setVoltage(0.3.volts))
+        driverController.povRight().onTrue(flywheel.setVoltage((-0.3).volts))
+        driverController.povLeft().onFalse(flywheel.setVoltage(0.0.volts))
+        driverController.povRight().onFalse(flywheel.setVoltage(0.0.volts))
 
-        Trigger({driverController.rightY != 0.0}).whileTrue(wrist.addToPosition(driverController.rightY.degrees))
+
+        Trigger({driverController.rightY < 0.0}).and(driverController.R3()).whileTrue(wrist.addToPosition(10.0.degrees))
+        Trigger({driverController.rightY > 0.1}).and(driverController.R3()).whileTrue(wrist.addToPosition(-10.0.degrees))
+        driverController.R3().whileFalse(wrist.addToPosition(0.0.degrees))
+
     }
 
     fun getAutonomousCommand(): Command = Commands.none()

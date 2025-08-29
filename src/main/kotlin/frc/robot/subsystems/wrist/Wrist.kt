@@ -2,6 +2,7 @@ package frc.robot.subsystems.wrist
 
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs
 import com.ctre.phoenix6.configs.MotorOutputConfigs
+import com.ctre.phoenix6.configs.Slot0Configs
 import com.ctre.phoenix6.configs.TalonFXConfiguration
 import com.ctre.phoenix6.controls.PositionVoltage
 import com.ctre.phoenix6.signals.InvertedValue
@@ -27,6 +28,7 @@ class Wrist : SubsystemBase() {
             SupplyCurrentLimit = 60.0
         }
     }
+
     val wristMotor = UniversalTalonFX(wristPort, "wristMotor", wristMotorConfig)
     val positionRequest = PositionVoltage(0.0.degrees)
 
@@ -41,9 +43,12 @@ class Wrist : SubsystemBase() {
             .withSupplyCurrentLimitEnable(true)
     }
 
-    fun setPosition(position: Angle): Command {
-        positionRequest.withPosition(position)
-        return Commands.run({ wristMotor.setControl(positionRequest) })
+    fun addToPosition(position: Angle): Command {
+        return Commands.run({
+            val currentPosition = wristMotor.inputs.position
+            positionRequest.withPosition(currentPosition + position)
+            wristMotor.setControl(positionRequest)
+            })
     }
 
     override fun periodic() {
