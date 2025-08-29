@@ -32,17 +32,11 @@ class FlyWheel : SubsystemBase() {
     }
     val flywheelMotor = UniversalTalonFX(FlywheelPort, "flywheelMotor", flywheelMotorConfig)
     val voltageRequest = VoltageOut(0.0.volts)
-    val angleRequest = PositionVoltage(0.0.degrees)
 
 
     fun setVoltage(voltage: Voltage): Command {
         voltageRequest.withOutput(voltage)
-        return Commands.run({ flywheelMotor.setControl(voltageRequest) })
-    }
-
-    fun setAngle(angle: Angle): Command {
-        angleRequest.withPosition(angle)
-        return Commands.run({ flywheelMotor.setControl(angleRequest) })
+        return Commands.runOnce({ flywheelMotor.setControl(voltageRequest) })
     }
 
     override fun periodic() {
