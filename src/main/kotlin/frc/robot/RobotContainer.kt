@@ -4,7 +4,9 @@ import com.pathplanner.lib.auto.AutoBuilder
 import com.pathplanner.lib.auto.NamedCommands
 import edu.wpi.first.math.geometry.Pose2d
 import edu.wpi.first.math.geometry.Rotation2d
+import edu.wpi.first.wpilibj.PS4Controller
 import edu.wpi.first.wpilibj2.command.Command
+import edu.wpi.first.wpilibj2.command.button.CommandPS5Controller
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine
 import frc.robot.lib.extensions.enableAutoLogOutputFor
@@ -15,7 +17,7 @@ import org.littletonrobotics.junction.networktables.LoggedDashboardChooser
 
 object RobotContainer {
 
-    private val driverController = CommandXboxController(0)
+    private val driverController = CommandPS5Controller(0)
 
     private val autoChooser: LoggedDashboardChooser<Command>
 
@@ -52,10 +54,10 @@ object RobotContainer {
     }
 
     private fun configureButtonBindings() {
-        driverController.y().onTrue(wrist.moveToL4())
-        driverController.x().onTrue(wrist.moveToL2())
-        driverController.b().onTrue(wrist.moveToL3())
-        driverController.a().onTrue(wrist.moveToL1())
+        driverController.triangle().onTrue(wrist.moveToL4())
+        driverController.square().onTrue(wrist.moveToL3())
+        driverController.circle().onTrue(wrist.moveToL1())
+        driverController.cross().onTrue(wrist.moveToL2())
     }
 
     fun getAutonomousCommand(): Command = autoChooser.get()

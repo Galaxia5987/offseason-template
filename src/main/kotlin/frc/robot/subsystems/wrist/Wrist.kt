@@ -19,7 +19,7 @@ import org.littletonrobotics.junction.Logger
 class Wrist : SubsystemBase() {
     val wristMotorConfig = TalonFXConfiguration().apply {
         Slot0.apply {
-            kP = 0.3
+            kP = 0.2
             kD - 0.0
         }
         MotorOutput = MotorOutputConfigs().apply {
