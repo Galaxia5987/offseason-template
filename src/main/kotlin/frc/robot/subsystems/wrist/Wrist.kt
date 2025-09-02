@@ -2,7 +2,7 @@ package frc.robot.subsystems.wrist
 
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs
 import com.ctre.phoenix6.configs.MotorOutputConfigs
-import com.ctre.phoenix6.configs.Slot0Configs
+import com.ctre.phoenix6.configs.SoftwareLimitSwitchConfigs
 import com.ctre.phoenix6.configs.TalonFXConfiguration
 import com.ctre.phoenix6.controls.PositionVoltage
 import com.ctre.phoenix6.signals.InvertedValue
@@ -12,6 +12,7 @@ import edu.wpi.first.wpilibj2.command.Command
 import edu.wpi.first.wpilibj2.command.Commands
 import edu.wpi.first.wpilibj2.command.SubsystemBase
 import frc.robot.lib.extensions.degrees
+import frc.robot.lib.extensions.toUnit
 import frc.robot.lib.universal_motor.UniversalTalonFX
 import org.littletonrobotics.junction.Logger
 
@@ -31,7 +32,12 @@ class Wrist : SubsystemBase() {
 
     val wristMotor = UniversalTalonFX(wristPort, "wristMotor", wristMotorConfig)
     val positionRequest = PositionVoltage(0.0.degrees)
-
+    val Limits = SoftwareLimitSwitchConfigs().apply {
+        ForwardSoftLimitEnable = true
+        ReverseSoftLimitEnable = true
+        ForwardSoftLimitThreshold = forwardLimits
+        ReverseSoftLimitThreshold = reverseLimits
+    }
     init {
         wristMotorConfig.MotorOutput.withNeutralMode(NeutralModeValue.Coast)
         wristMotorConfig.MotorOutput.withInverted(
