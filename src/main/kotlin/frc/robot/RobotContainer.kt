@@ -5,8 +5,7 @@ import com.pathplanner.lib.auto.NamedCommands
 import edu.wpi.first.math.geometry.Pose2d
 import edu.wpi.first.math.geometry.Rotation2d
 import edu.wpi.first.wpilibj2.command.Command
-import edu.wpi.first.wpilibj2.command.Commands.runOnce
-import edu.wpi.first.wpilibj2.command.button.CommandPS5Controller
+import edu.wpi.first.wpilibj2.command.button.CommandXboxController
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine
 import frc.robot.lib.extensions.enableAutoLogOutputFor
 import frc.robot.subsystems.drive.DriveCommands
@@ -16,7 +15,7 @@ import org.littletonrobotics.junction.networktables.LoggedDashboardChooser
 
 object RobotContainer {
 
-    private val driverController = CommandPS5Controller(0)
+    private val driverController = CommandXboxController(0)
 
     private val autoChooser: LoggedDashboardChooser<Command>
 
@@ -53,38 +52,10 @@ object RobotContainer {
     }
 
     private fun configureButtonBindings() {
-        // Lock to 0° when A button is held
-        driverController
-            .cross()
-            .whileTrue(
-                DriveCommands.joystickDriveAtAngle(
-                    drive,
-                    { -driverController.leftY },
-                    { -driverController.leftX },
-                    { Rotation2d() }
-                )
-            )
-
-        // Switch to X pattern when X button is pressed
-        driverController.square().onTrue(runOnce(drive::stopWithX, drive))
-
-        // Reset gyro / odometry
-        val resetOdometry =
-            if (CURRENT_MODE == Mode.SIM)
-                Runnable {
-                    drive.resetOdometry(
-                        driveSimulation!!.simulatedDriveTrainPose
-                    )
-                }
-            else
-                Runnable {
-                    drive.resetOdometry(
-                        Pose2d(drive.pose.translation, Rotation2d())
-                    )
-                }
-        driverController
-            .options()
-            .onTrue(runOnce(resetOdometry).ignoringDisable(true))
+        driverController.y().onTrue(wrist.moveToL4())
+        driverController.x().onTrue(wrist.moveToL2())
+        driverController.b().onTrue(wrist.moveToL3())
+        driverController.a().onTrue(wrist.moveToL1())
     }
 
     fun getAutonomousCommand(): Command = autoChooser.get()

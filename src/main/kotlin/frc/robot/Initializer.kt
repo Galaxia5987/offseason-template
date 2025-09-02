@@ -13,9 +13,11 @@ import frc.robot.subsystems.vision.Vision
 import frc.robot.subsystems.vision.VisionConstants
 import frc.robot.subsystems.vision.VisionIOPhotonVision
 import frc.robot.subsystems.vision.VisionIOPhotonVisionSim
+import frc.robot.subsystems.wrist.Wrist
 import org.ironmaple.simulation.SimulatedArena
 import org.ironmaple.simulation.drivesims.SwerveDriveSimulation
 
+val wrist = Wrist()
 val driveSimulation: SwerveDriveSimulation? =
     if (CURRENT_MODE == Mode.SIM)
         SwerveDriveSimulation(
