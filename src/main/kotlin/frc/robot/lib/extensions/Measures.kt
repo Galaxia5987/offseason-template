@@ -27,7 +27,7 @@ import kotlin.math.PI
  *
  * // Velocities
  * val linear = 2.mps
- * val angular = linear.toAngular(diameter = 0.1.m, gearRatio = 3.0)
+ * val angular = linear.toAngular(diameter = 0.1.m, GEAR_RATIO = 3.0)
  *
  * // Time and Others
  * val t = 2.sec
