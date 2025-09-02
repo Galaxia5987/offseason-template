@@ -18,6 +18,10 @@ import org.littletonrobotics.junction.Logger
 
 class Wrist : SubsystemBase() {
     val wristMotorConfig = TalonFXConfiguration().apply {
+        Slot0.apply {
+            kP = 0.3
+            kD - 0.0
+        }
         MotorOutput = MotorOutputConfigs().apply {
             NeutralMode = NeutralModeValue.Brake
             Inverted = InvertedValue.Clockwise_Positive
@@ -38,8 +42,6 @@ class Wrist : SubsystemBase() {
 
     val wristMotor = UniversalTalonFX(wristPort, "wristMotor", wristMotorConfig)
     val positionRequest = PositionVoltage(0.0.degrees)
-
-
 
     fun addToPosition(position: Angle): Command {
         return Commands.run({

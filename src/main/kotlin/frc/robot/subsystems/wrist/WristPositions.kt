@@ -6,9 +6,9 @@ import frc.robot.lib.extensions.degrees
 
 enum class WristPositions (angle: Angle) {
     L1 (0.0.degrees),
-    L2 (0.0.degrees),
-    L3 (0.0.degrees),
-    L4 (0.0.degrees);
+    L2 (30.0.degrees),
+    L3 (60.0.degrees),
+    L4 (90.0.degrees);
 
     val wristAngle = angle
 }
