@@ -57,8 +57,13 @@ object RobotContainer {
     }
 
     private fun configureButtonBindings() {
-        driverController.a().onTrue(elevator.setVoltage(10.volts))
-        driverController.x().onTrue(elevator.GoToL1())
+        driverController.a().onTrue(elevator.setVoltage(10.volts)).onFalse(elevator.setVoltage(0.0.volts))
+        driverController.x().onTrue(elevator.GoToL3()).onFalse(elevator.GoToL1())
+        driverController.povUp().onTrue(elevator.GoToL4())
+        driverController.povDown().onTrue(elevator.GoToL1())
+        driverController.povLeft().onTrue(elevator.GoToL3())
+        driverController.povRight().onTrue(elevator.GoToL2())
+
 //        // Lock to 0° when A button is held
 //        driverController
 //            .cross()
