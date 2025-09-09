@@ -40,7 +40,7 @@ class Elevator: SubsystemBase() {
               Slot0Configs().apply {
                   Slot0.kP = 1.0
                   Slot0.kI = 0.0
-                  Slot0.kD = 0.0
+                  Slot0.kD = 0.25
               }
           },
             gearRatio = GEAR_RATIO,
