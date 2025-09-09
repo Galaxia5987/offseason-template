@@ -9,10 +9,10 @@ val GEAR_RATIO= 1.0
 val SPORCKET_DIAMETERS: Distance = 36.4.millimeters
 
 enum class Corallevels (val position: Distance)  {
-    LEVEL1(10.0.centimeters),
-    LEVEL2(0.0.millimeters),
-    LEVEL3(0.0.millimeters),
-    LEVEL4(0.0.millimeters),
+    LEVEL1(0.0.millimeters),
+    LEVEL2(5000.0.millimeters),
+    LEVEL3(10000.0.millimeters),
+    LEVEL4(15000.0.millimeters),
 }
 val kP=1.0
 val kI=0.0
