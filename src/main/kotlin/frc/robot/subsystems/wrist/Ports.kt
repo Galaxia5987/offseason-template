@@ -1,3 +1,3 @@
 package frc.robot.subsystems.wrist
 
-val wristPort = 1
+val wristPort = 15

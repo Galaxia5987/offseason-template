@@ -1,12 +1,8 @@
 package frc.robot.subsystems.wrist
 
-import com.ctre.phoenix6.configs.CurrentLimitsConfigs
-import com.ctre.phoenix6.configs.MotorOutputConfigs
-import com.ctre.phoenix6.configs.SoftwareLimitSwitchConfigs
-import com.ctre.phoenix6.configs.TalonFXConfiguration
+import com.ctre.phoenix6.configs.*
 import com.ctre.phoenix6.controls.PositionVoltage
-import com.ctre.phoenix6.signals.InvertedValue
-import com.ctre.phoenix6.signals.NeutralModeValue
+import com.ctre.phoenix6.signals.*
 import edu.wpi.first.units.measure.Angle
 import edu.wpi.first.wpilibj2.command.Command
 import edu.wpi.first.wpilibj2.command.Commands
@@ -17,31 +13,39 @@ import frc.robot.lib.universal_motor.UniversalTalonFX
 import org.littletonrobotics.junction.Logger
 
 class Wrist : SubsystemBase() {
-    val wristMotorConfig = TalonFXConfiguration().apply {
-        Slot0.apply {
-            kP = 0.2
-            kD - 0.0
+    val motorConfig =
+        TalonFXConfiguration().apply {
+            MotorOutput =
+                MotorOutputConfigs().apply {
+                    NeutralMode = NeutralModeValue.Coast
+                    Inverted = InvertedValue.CounterClockwise_Positive
+                }
+            Feedback =
+                FeedbackConfigs().apply {
+                    RotorToSensorRatio = ROTOR_TO_SENSOR
+                    SensorToMechanismRatio = SENSOR_TO_MECHANISM
+                    FeedbackSensorSource =
+                        FeedbackSensorSourceValue.FusedCANcoder
+                }
+            Slot0 =
+                Slot0Configs().apply {
+                    kP = 45.0
+                    kD = 0.3
+                    GravityType = GravityTypeValue.Arm_Cosine
+                    StaticFeedforwardSign =
+                        StaticFeedforwardSignValue.UseClosedLoopSign
+                }
+            CurrentLimits =
+                CurrentLimitsConfigs().apply {
+                    StatorCurrentLimitEnable = true
+                    SupplyCurrentLimitEnable = true
+                    StatorCurrentLimit = 20.0
+                    SupplyCurrentLimit = 40.0
+                }
         }
-        MotorOutput = MotorOutputConfigs().apply {
-            NeutralMode = NeutralModeValue.Brake
-            Inverted = InvertedValue.Clockwise_Positive
-        }
-        CurrentLimits = CurrentLimitsConfigs().apply {
-            StatorCurrentLimitEnable = true
-            SupplyCurrentLimitEnable = true
-            StatorCurrentLimit = 30.0
-            SupplyCurrentLimit = 60.0
-        }
-        SoftwareLimitSwitch = SoftwareLimitSwitchConfigs().apply {
-            ForwardSoftLimitEnable = true
-            ReverseSoftLimitEnable = true
-            ForwardSoftLimitThreshold = forwardLimits
-            ReverseSoftLimitThreshold = reverseLimits
-        }
-    }
-
-    val wristMotor = UniversalTalonFX(wristPort, "wristMotor", wristMotorConfig)
+    val wristMotor = UniversalTalonFX(wristPort,config = motorConfig, gearRatio = GEAR_RATIO)
     val positionRequest = PositionVoltage(0.0.degrees)
+    var setPoint = 0.0.degrees
 
     fun addToPosition(position: Angle): Command {
         return Commands.run({
@@ -53,30 +57,35 @@ class Wrist : SubsystemBase() {
 
     fun moveToL1() : Command {
         return Commands.runOnce({
-            wristMotor.setControl(positionRequest.withPosition(WristPositions.L1.wristAngle))
+            setPoint = WristPositions.L1.angle
+            wristMotor.setControl(positionRequest.withPosition(WristPositions.L1.angle))
         })
     }
 
     fun moveToL2 () : Command {
         return Commands.runOnce({
-            wristMotor.setControl(positionRequest.withPosition(WristPositions.L2.wristAngle))
+            setPoint = WristPositions.L2.angle
+            wristMotor.setControl(positionRequest.withPosition(WristPositions.L2.angle))
         })
     }
 
     fun moveToL3() : Command {
         return Commands.runOnce({
-            wristMotor.setControl(positionRequest.withPosition(WristPositions.L3.wristAngle))
+            setPoint = WristPositions.L3.angle
+            wristMotor.setControl(positionRequest.withPosition(WristPositions.L3.angle))
         })
     }
 
     fun moveToL4() : Command {
         return Commands.runOnce({
-            wristMotor.setControl(positionRequest.withPosition(WristPositions.L4.wristAngle))
+            setPoint = WristPositions.L4.angle
+            wristMotor.setControl(positionRequest.withPosition(WristPositions.L4.angle))
         })
     }
 
     override fun periodic() {
         wristMotor.updateInputs()
         Logger.processInputs(name, wristMotor.inputs)
+        Logger.recordOutput("setPoint", setPoint)
     }
 }
