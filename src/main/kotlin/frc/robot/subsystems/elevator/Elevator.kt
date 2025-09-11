@@ -4,6 +4,7 @@ import com.ctre.phoenix6.configs.CurrentLimitsConfigs
 import com.ctre.phoenix6.configs.MotorOutputConfigs
 import com.ctre.phoenix6.configs.Slot0Configs
 import com.ctre.phoenix6.configs.TalonFXConfiguration
+import com.ctre.phoenix6.controls.Follower
 import com.ctre.phoenix6.controls.PositionVoltage
 import com.ctre.phoenix6.controls.VoltageOut
 import com.ctre.phoenix6.signals.InvertedValue
@@ -18,36 +19,51 @@ import frc.robot.lib.extensions.toAngle
 import frc.robot.lib.extensions.volts
 import frc.robot.lib.universal_motor.UniversalTalonFX
 import org.littletonrobotics.junction.Logger
+import javax.naming.InitialContext
+import sun.tools.jconsole.OutputViewer.init
 
 class Elevator : SubsystemBase() {
-    private val motor = UniversalTalonFX(
-        13,
-        config =
-        TalonFXConfiguration().apply {
-            MotorOutputConfigs().apply {
-                NeutralMode = NeutralModeValue.Brake
-                Inverted = InvertedValue.Clockwise_Positive
-            }
-            CurrentLimits = CurrentLimitsConfigs().apply {
-                SupplyCurrentLimitEnable = true
-                SupplyCurrentLimit = 70.0
-                StatorCurrentLimitEnable = true
-                StatorCurrentLimit = 70.0
-                SoftwareLimitSwitch.ForwardSoftLimitThreshold = 30.0
-                SoftwareLimitSwitch.ForwardSoftLimitEnable = true
-                SoftwareLimitSwitch.ReverseSoftLimitThreshold = -1.0
-                SoftwareLimitSwitch.ReverseSoftLimitEnable = true
-            }
+    private val motorConfigs=TalonFXConfiguration().apply {
+        MotorOutputConfigs().apply {
+            NeutralMode = NeutralModeValue.Brake
+            Inverted = InvertedValue.Clockwise_Positive
+        }
 
-            Slot0Configs().apply {
-                Slot0.kP = 1.0
-                Slot0.kI = 0.0
-                Slot0.kD = 0.25
-            }
-        },
+        CurrentLimits = CurrentLimitsConfigs().apply {
+            SupplyCurrentLimitEnable = true
+            SupplyCurrentLimit = 70.0
+            StatorCurrentLimitEnable = true
+            StatorCurrentLimit = 70.0
+            SoftwareLimitSwitch.ForwardSoftLimitThreshold = 0.0
+            SoftwareLimitSwitch.ForwardSoftLimitEnable = true
+            SoftwareLimitSwitch.ReverseSoftLimitThreshold = 1.0
+            SoftwareLimitSwitch.ReverseSoftLimitEnable = true
+        }
+
+        Slot0Configs().apply {
+            Slot0.kP = 1.0
+            Slot0.kI = 0.0
+            Slot0.kD = 0.25
+        }
+    }
+
+     private val Motor= UniversalTalonFX(
+        port = 1,
+        config = motorConfigs,
         gearRatio = GEAR_RATIO,
         linearSystemWheelDiameter = SPORCKET_DIAMETERS
     )
+
+    private  val motor = UniversalTalonFX(
+        0,
+        config = motorConfigs,
+        gearRatio = GEAR_RATIO,
+        linearSystemWheelDiameter = SPORCKET_DIAMETERS
+
+    )
+
+    val followerRequest= Follower(0,true)
+
     var setPoint = 0.0.m
     val postionvoltage = PositionVoltage(0.0)
     fun setPosition(position: Distance): Command {
@@ -90,7 +106,9 @@ class Elevator : SubsystemBase() {
     fun GoToL4(): Command {
         return setPosition(Corallevels.LEVEL4.position)
     }
-
+        init {
+            Motor.setControl(followerRequest)
+        }
     override fun periodic() {
         motor.updateInputs()
         Logger.processInputs(name, motor.inputs)
