@@ -20,7 +20,7 @@ import org.littletonrobotics.junction.networktables.LoggedDashboardChooser
 
 object RobotContainer {
 
-    private val driverController = CommandXboxController(0)
+    private val driverController = CommandPS5Controller(0)
 
     private val autoChooser: LoggedDashboardChooser<Command>
 
@@ -57,12 +57,12 @@ object RobotContainer {
     }
 
     private fun configureButtonBindings() {
-        driverController.a().onTrue(elevator.setVoltage(10.volts)).onFalse(elevator.setVoltage(0.0.volts))
-        driverController.x().onTrue(elevator.GoToL0())
-        driverController.povUp().onTrue(elevator.GoToL4())
-        driverController.povDown().onTrue(elevator.GoToL1())
-        driverController.povLeft().onTrue(elevator.GoToL3())
-        driverController.povRight().onTrue(elevator.GoToL2())
+        driverController.povUp().onTrue(elevator.setVoltage(10.volts)).onFalse(elevator.setVoltage(0.0.volts))
+        driverController.povDown().onTrue(elevator.GoToL0())
+        driverController.triangle().onTrue(elevator.GoToL4().alongWith(wrist.moveToL4()))
+        driverController.cross().onTrue(elevator.GoToL1().alongWith(wrist.moveToL1()))
+        driverController.circle().onTrue(elevator.GoToL3().alongWith(wrist.moveToL3()))
+        driverController.square().onTrue(elevator.GoToL2().alongWith(wrist.moveToL2()))
 
 //        // Lock to 0° when A button is held
 //        driverController
