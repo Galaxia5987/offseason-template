@@ -4,12 +4,15 @@ import com.pathplanner.lib.auto.AutoBuilder
 import com.pathplanner.lib.auto.NamedCommands
 import edu.wpi.first.math.geometry.Pose2d
 import edu.wpi.first.math.geometry.Rotation2d
-import edu.wpi.first.wpilibj.PS4Controller
 import edu.wpi.first.wpilibj2.command.Command
+import edu.wpi.first.wpilibj2.command.Commands.runOnce
+import edu.wpi.first.wpilibj2.command.button.CommandPS4Controller
 import edu.wpi.first.wpilibj2.command.button.CommandPS5Controller
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine
 import frc.robot.lib.extensions.enableAutoLogOutputFor
+import frc.robot.subsystems.elevator.Elevator
+import frc.robot.lib.extensions.volts
 import frc.robot.subsystems.drive.DriveCommands
 import org.ironmaple.simulation.SimulatedArena
 import org.littletonrobotics.junction.AutoLogOutput
@@ -17,7 +20,7 @@ import org.littletonrobotics.junction.networktables.LoggedDashboardChooser
 
 object RobotContainer {
 
-    private val driverController = CommandPS5Controller(0)
+    private val driverController = CommandXboxController(0)
 
     private val autoChooser: LoggedDashboardChooser<Command>
 
@@ -54,10 +57,45 @@ object RobotContainer {
     }
 
     private fun configureButtonBindings() {
-        driverController.triangle().onTrue(wrist.moveToL4())
-        driverController.square().onTrue(wrist.moveToL3())
-        driverController.circle().onTrue(wrist.moveToL1())
-        driverController.cross().onTrue(wrist.moveToL2())
+        driverController.a().onTrue(elevator.setVoltage(10.volts)).onFalse(elevator.setVoltage(0.0.volts))
+        driverController.x().onTrue(elevator.GoToL0())
+        driverController.povUp().onTrue(elevator.GoToL4())
+        driverController.povDown().onTrue(elevator.GoToL1())
+        driverController.povLeft().onTrue(elevator.GoToL3())
+        driverController.povRight().onTrue(elevator.GoToL2())
+
+//        // Lock to 0° when A button is held
+//        driverController
+//            .cross()
+//            .whileTrue(
+//                DriveCommands.joystickDriveAtAngle(
+//                    drive,
+//                    { -driverController.leftY },
+//                    { -driverController.leftX },
+//                    { Rotation2d() }
+//                )
+//            )
+//
+//        // Switch to X pattern when X button is pressed
+//        driverController.square().onTrue(runOnce(drive::stopWithX, drive))
+//
+//        // Reset gyro / odometry
+//        val resetOdometry =
+//            if (CURRENT_MODE == Mode.SIM)
+//                Runnable {
+//                    drive.resetOdometry(
+//                        driveSimulation!!.simulatedDriveTrainPose
+//                    )
+//                }
+//            else
+//                Runnable {
+//                    drive.resetOdometry(
+//                        Pose2d(drive.pose.translation, Rotation2d())
+//                    )
+//                }
+//        driverController
+//            .options()
+//            .onTrue(runOnce(resetOdometry).ignoringDisable(true))
     }
 
     fun getAutonomousCommand(): Command = autoChooser.get()
