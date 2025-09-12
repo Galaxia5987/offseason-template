@@ -34,10 +34,10 @@ class Elevator : SubsystemBase() {
             SupplyCurrentLimit = 70.0
             StatorCurrentLimitEnable = true
             StatorCurrentLimit = 70.0
-            SoftwareLimitSwitch.ForwardSoftLimitThreshold = 0.0
-            SoftwareLimitSwitch.ForwardSoftLimitEnable = true
-            SoftwareLimitSwitch.ReverseSoftLimitThreshold = 1.0
-            SoftwareLimitSwitch.ReverseSoftLimitEnable = true
+            SoftwareLimitSwitch.ForwardSoftLimitThreshold =27.5
+            SoftwareLimitSwitch.ForwardSoftLimitEnable = false
+            SoftwareLimitSwitch.ReverseSoftLimitThreshold = 0.0
+            SoftwareLimitSwitch.ReverseSoftLimitEnable = false
         }
 
         Slot0Configs().apply {
@@ -48,21 +48,21 @@ class Elevator : SubsystemBase() {
     }
 
      private val Motor= UniversalTalonFX(
-        port = 1,
+        port = 13,
         config = motorConfigs,
         gearRatio = GEAR_RATIO,
         linearSystemWheelDiameter = SPORCKET_DIAMETERS
     )
 
     private  val motor = UniversalTalonFX(
-        0,
+        14,
         config = motorConfigs,
         gearRatio = GEAR_RATIO,
         linearSystemWheelDiameter = SPORCKET_DIAMETERS
 
     )
 
-    val followerRequest= Follower(0,true)
+    val followerRequest= Follower(14,false)
 
     var setPoint = 0.0.m
     val postionvoltage = PositionVoltage(0.0)
