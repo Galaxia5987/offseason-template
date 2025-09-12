@@ -22,10 +22,8 @@ class Wrist : SubsystemBase() {
                 }
             Feedback =
                 FeedbackConfigs().apply {
-                    RotorToSensorRatio = ROTOR_TO_SENSOR
-                    SensorToMechanismRatio = SENSOR_TO_MECHANISM
-                    FeedbackSensorSource =
-                        FeedbackSensorSourceValue.FusedCANcoder
+                    RotorToSensorRatio = 1.0
+                    SensorToMechanismRatio = GEAR_RATIO
                 }
             Slot0 =
                 Slot0Configs().apply {
