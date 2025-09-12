@@ -29,3 +29,5 @@ enum class Mode {
     SIM,
     REPLAY
 }
+
+const val SENSOR_PORT = 3
