@@ -14,6 +14,8 @@ import edu.wpi.first.units.measure.Voltage
 import edu.wpi.first.wpilibj2.command.Command
 import edu.wpi.first.wpilibj2.command.Commands
 import edu.wpi.first.wpilibj2.command.SubsystemBase
+import frc.robot.RobotContainer.isFinished12
+import frc.robot.RobotContainer.isFinished34
 import frc.robot.lib.extensions.m
 import frc.robot.lib.extensions.toAngle
 import frc.robot.lib.extensions.volts
@@ -92,19 +94,27 @@ class Elevator : SubsystemBase() {
     }
 
     fun GoToL1(): Command {
-        return setPosition(Corallevels.LEVEL1.position)
+        return Commands.runOnce({
+            setPosition(Corallevels.LEVEL1.position).andThen({isFinished12 = true})
+        })
     }
 
     fun GoToL2(): Command {
-        return setPosition(Corallevels.LEVEL2.position)
+        return Commands.runOnce({
+            setPosition(Corallevels.LEVEL2.position).andThen({isFinished12 = true})
+        })
     }
 
     fun GoToL3(): Command {
-        return setPosition(Corallevels.LEVEL3.position)
+        return Commands.runOnce({
+            setPosition(Corallevels.LEVEL3.position).andThen({isFinished34 = true})
+        })
     }
 
     fun GoToL4(): Command {
-        return setPosition(Corallevels.LEVEL4.position)
+        return Commands.runOnce({
+            setPosition(Corallevels.LEVEL4.position).andThen({isFinished34 = true})
+        })
     }
         init {
             Motor.setControl(followerRequest)

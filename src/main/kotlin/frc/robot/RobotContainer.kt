@@ -5,22 +5,29 @@ import com.pathplanner.lib.auto.NamedCommands
 import edu.wpi.first.math.geometry.Pose2d
 import edu.wpi.first.math.geometry.Rotation2d
 import edu.wpi.first.wpilibj2.command.Command
+import edu.wpi.first.wpilibj2.command.Commands
 import edu.wpi.first.wpilibj2.command.Commands.runOnce
 import edu.wpi.first.wpilibj2.command.button.CommandPS4Controller
 import edu.wpi.first.wpilibj2.command.button.CommandPS5Controller
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController
+import edu.wpi.first.wpilibj2.command.button.Trigger
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine
 import frc.robot.lib.extensions.enableAutoLogOutputFor
+import frc.robot.lib.extensions.seconds
 import frc.robot.subsystems.elevator.Elevator
 import frc.robot.lib.extensions.volts
 import frc.robot.subsystems.drive.DriveCommands
 import org.ironmaple.simulation.SimulatedArena
 import org.littletonrobotics.junction.AutoLogOutput
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser
+import java.sql.Time
+import kotlin.concurrent.timer
 
 object RobotContainer {
 
     private val driverController = CommandPS5Controller(0)
+    public var isFinished12 = false
+    public var isFinished34 = false
 
     private val autoChooser: LoggedDashboardChooser<Command>
 
@@ -59,11 +66,13 @@ object RobotContainer {
     private fun configureButtonBindings() {
         driverController.povUp().onTrue(elevator.setVoltage(10.volts)).onFalse(elevator.setVoltage(0.0.volts))
         driverController.povDown().onTrue(elevator.GoToL0())
-        driverController.triangle().onTrue(elevator.GoToL4().alongWith(wrist.moveToL4()))
-        driverController.cross().onTrue(elevator.GoToL1().alongWith(wrist.moveToL1()))
-        driverController.circle().onTrue(elevator.GoToL3().alongWith(wrist.moveToL3()))
-        driverController.square().onTrue(elevator.GoToL2().alongWith(wrist.moveToL2()))
-
+        driverController.triangle().onTrue(elevator.GoToL4().alongWith(wrist.moveToL4())).onFalse(gripper.stop())
+        Trigger{isFinished34}.onTrue(gripper.intakeAndOuttake3And4())
+        driverController.cross().onTrue(elevator.GoToL1().alongWith(wrist.moveToL1()).andThen(gripper.outtake1And2())).onFalse(gripper.stop())
+        Trigger{isFinished12}.onTrue(gripper.outtake1And2())
+        driverController.circle().onTrue(elevator.GoToL3().alongWith(wrist.moveToL3()).andThen(gripper.intakeAndOuttake3And4())).onFalse(gripper.stop())
+        driverController.square().onTrue(elevator.GoToL2().alongWith(wrist.moveToL2()).andThen()).onFalse(gripper.stop())
+        driverController.povRight().whileTrue(gripper.intakeAndOuttake3And4()).onFalse(gripper.stop())
 //        // Lock to 0° when A button is held
 //        driverController
 //            .cross()
