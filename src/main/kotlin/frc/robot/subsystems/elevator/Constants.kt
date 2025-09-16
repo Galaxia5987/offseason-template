@@ -14,8 +14,8 @@ enum class Corallevels (val position: Distance)  {
     LEVEL0(0.01.m),
     LEVEL1(0.01.m),
     LEVEL2(0.01.m),
-    LEVEL3(0.46.m),
-    LEVEL4(0.90.m),
+    LEVEL3(0.40.m),
+    LEVEL4(0.95.m),
 
 }
 

@@ -19,7 +19,6 @@ import org.ironmaple.simulation.SimulatedArena
 import org.ironmaple.simulation.drivesims.SwerveDriveSimulation
 
 val wrist = Wrist()
-val reefCommands = ReefCommads()
 val driveSimulation: SwerveDriveSimulation? =
     if (CURRENT_MODE == Mode.SIM)
         SwerveDriveSimulation(
@@ -83,4 +82,5 @@ private val visionIOs =
     }.toTypedArray()
 
 val vision = Vision(drive, *visionIOs)
-val elevator= Elevator()
+val
+        elevator= Elevator()
