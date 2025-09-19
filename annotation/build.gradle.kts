@@ -2,7 +2,7 @@ plugins {
     kotlin("jvm")
 }
 
-group = "org.team9432"
+group = "org.team5987"
 
 dependencies {
     implementation("com.squareup:kotlinpoet:1.14.2")

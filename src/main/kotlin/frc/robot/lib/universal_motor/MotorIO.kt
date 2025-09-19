@@ -12,7 +12,7 @@ import frc.robot.lib.extensions.deg
 import frc.robot.lib.extensions.m
 import frc.robot.lib.extensions.sec
 import frc.robot.lib.extensions.volts
-import org.team9432.annotation.Logged
+import org.team5987.annotation.Logged
 
 /**
  * Interface that defines the common motor input/output operations for both real

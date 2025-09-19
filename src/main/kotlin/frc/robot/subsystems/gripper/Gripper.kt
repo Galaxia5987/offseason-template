@@ -1,64 +1,68 @@
 package frc.robot.subsystems.gripper
 
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs
-import com.ctre.phoenix6.configs.FeedbackConfigs
 import com.ctre.phoenix6.configs.MotorOutputConfigs
-import com.ctre.phoenix6.configs.Slot0Configs
 import com.ctre.phoenix6.configs.TalonFXConfiguration
 import com.ctre.phoenix6.controls.VoltageOut
-import com.ctre.phoenix6.signals.GravityTypeValue
 import com.ctre.phoenix6.signals.InvertedValue
 import com.ctre.phoenix6.signals.NeutralModeValue
-import com.ctre.phoenix6.signals.StaticFeedforwardSignValue
+import edu.wpi.first.math.filter.MedianFilter
+import edu.wpi.first.units.Units
+import edu.wpi.first.units.measure.Distance
+import edu.wpi.first.units.measure.Voltage
+import edu.wpi.first.wpilibj.AnalogInput
 import edu.wpi.first.wpilibj2.command.Command
 import edu.wpi.first.wpilibj2.command.Commands
 import edu.wpi.first.wpilibj2.command.SubsystemBase
-import frc.robot.RobotContainer.isFinished12
-import frc.robot.RobotContainer.isFinished34
+import frc.robot.lib.extensions.centimeters
+import frc.robot.lib.extensions.meters
 import frc.robot.lib.extensions.volts
 import frc.robot.lib.universal_motor.UniversalTalonFX
-import frc.robot.subsystems.wrist.GEAR_RATIO
 import org.littletonrobotics.junction.Logger
 
-
-class Gripper : SubsystemBase() {
-    val motorConfig =
+class Gripper:SubsystemBase() {
+    var sensorDistance: Distance = Units.Meters.zero()
+    private val sensor = AnalogInput(SENSOR_PORT)
+    private val distanceFilter = MedianFilter(3)
+    private val motor = UniversalTalonFX(0,
+        config =
         TalonFXConfiguration().apply {
-            MotorOutput =
-                MotorOutputConfigs().apply {
-                    NeutralMode = NeutralModeValue.Coast
-                    Inverted = InvertedValue.CounterClockwise_Positive
-                }
-            CurrentLimits =
-                CurrentLimitsConfigs().apply {
-                    StatorCurrentLimitEnable = true
-                    SupplyCurrentLimitEnable = true
-                    StatorCurrentLimit = 20.0
-                    SupplyCurrentLimit = 40.0
-                }
+            MotorOutputConfigs().apply {
+                NeutralMode = NeutralModeValue.Brake
+                Inverted = InvertedValue.CounterClockwise_Positive
+            }
+            CurrentLimits = CurrentLimitsConfigs().apply {
+                SupplyCurrentLimitEnable = true
+                SupplyCurrentLimit = 70.0
+                StatorCurrentLimitEnable = true
+                StatorCurrentLimit = 70.0
+            }
         }
-    val motor = UniversalTalonFX(16, config = motorConfig, gearRatio = frc.robot.subsystems.gripper.GEAR_RATIO)
-    val intakeVoltageRequest = VoltageOut(12.0.volts)
-    val outtakeVoltageRequests = VoltageOut((-12.0).volts)
+    )
+    val voltageRequest = VoltageOut(0.0)
 
 
-    fun intakeAndOuttake3And4() : Command {
-        return Commands.run({motor.setControl(intakeVoltageRequest)})
+    fun setVoltage(voltage: Voltage): Command {
+        return Commands.runOnce({ motor.setControl(voltageRequest.withOutput(voltage)) })
     }
 
-    fun outtake1And2() : Command{
-        return Commands.run({motor.setControl(outtakeVoltageRequests)})
-    }
-    fun stop() : Command{
-        return Commands.run({
-            motor.setControl(VoltageOut(0.0.volts)).andThen({isFinished12 = false}) })
+    fun output(): Command {
+        return setVoltage(outTakeVoltage)
     }
 
-    init {
-        motor.setControl(intakeVoltageRequest)
+    fun input(): Command {
+        return setVoltage(inTakeVoltage)
     }
+
+
     override fun periodic() {
-        motor.updateInputs()
-        Logger.processInputs(name, motor.inputs)
+        var calculatedDistance =
+            distanceFilter.calculate(4800 / (200 * sensor.voltage - 20.0))
+        if (calculatedDistance < 0) {
+            calculatedDistance = 80.0
+        }
+        sensorDistance=calculatedDistance.centimeters
+
+        Logger.recordOutput("sensorDistance", sensorDistance)
     }
 }
