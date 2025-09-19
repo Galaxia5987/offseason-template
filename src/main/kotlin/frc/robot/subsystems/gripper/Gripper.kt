@@ -15,35 +15,39 @@ import edu.wpi.first.wpilibj2.command.Command
 import edu.wpi.first.wpilibj2.command.Commands
 import edu.wpi.first.wpilibj2.command.SubsystemBase
 import frc.robot.lib.extensions.centimeters
-import frc.robot.lib.extensions.meters
-import frc.robot.lib.extensions.volts
 import frc.robot.lib.universal_motor.UniversalTalonFX
+import frc.robot.subsystems.wrist.GEAR_RATIO
 import org.littletonrobotics.junction.Logger
 
-class Gripper:SubsystemBase() {
+class Gripper : SubsystemBase() {
     var sensorDistance: Distance = Units.Meters.zero()
     private val sensor = AnalogInput(SENSOR_PORT)
     private val distanceFilter = MedianFilter(3)
-    private val motor = UniversalTalonFX(0,
-        config =
-        TalonFXConfiguration().apply {
-            MotorOutputConfigs().apply {
-                NeutralMode = NeutralModeValue.Brake
-                Inverted = InvertedValue.CounterClockwise_Positive
-            }
-            CurrentLimits = CurrentLimitsConfigs().apply {
-                SupplyCurrentLimitEnable = true
-                SupplyCurrentLimit = 70.0
-                StatorCurrentLimitEnable = true
-                StatorCurrentLimit = 70.0
-            }
-        }
-    )
+    private val motor =
+        UniversalTalonFX(
+            16,
+            gearRatio = frc.robot.subsystems.gripper.GEAR_RATIO,
+            config =
+                TalonFXConfiguration().apply {
+                    MotorOutputConfigs().apply {
+                        NeutralMode = NeutralModeValue.Brake
+                        Inverted = InvertedValue.CounterClockwise_Positive
+                    }
+                    CurrentLimits =
+                        CurrentLimitsConfigs().apply {
+                            SupplyCurrentLimitEnable = true
+                            SupplyCurrentLimit = 70.0
+                            StatorCurrentLimitEnable = true
+                            StatorCurrentLimit = 70.0
+                        }
+                }
+        )
     val voltageRequest = VoltageOut(0.0)
 
-
     fun setVoltage(voltage: Voltage): Command {
-        return Commands.runOnce({ motor.setControl(voltageRequest.withOutput(voltage)) })
+        return Commands.runOnce({
+            motor.setControl(voltageRequest.withOutput(voltage))
+        })
     }
 
     fun output(): Command {
@@ -54,14 +58,13 @@ class Gripper:SubsystemBase() {
         return setVoltage(inTakeVoltage)
     }
 
-
     override fun periodic() {
         var calculatedDistance =
             distanceFilter.calculate(4800 / (200 * sensor.voltage - 20.0))
         if (calculatedDistance < 0) {
             calculatedDistance = 80.0
         }
-        sensorDistance=calculatedDistance.centimeters
+        sensorDistance = calculatedDistance.centimeters
 
         Logger.recordOutput("sensorDistance", sensorDistance)
     }

@@ -2,7 +2,6 @@ package frc.robot
 
 import edu.wpi.first.math.geometry.Pose2d
 import edu.wpi.first.math.geometry.Rotation2d
-import frc.robot.subsystems.elevator.Elevator
 import frc.robot.subsystems.drive.*
 import frc.robot.subsystems.drive.ModuleIOs.ModuleIO
 import frc.robot.subsystems.drive.ModuleIOs.ModuleIOSim
@@ -10,6 +9,7 @@ import frc.robot.subsystems.drive.ModuleIOs.ModuleIOTalonFX
 import frc.robot.subsystems.drive.gyroIOs.GyroIO
 import frc.robot.subsystems.drive.gyroIOs.GyroIOPigeon2
 import frc.robot.subsystems.drive.gyroIOs.GyroIOSim
+import frc.robot.subsystems.elevator.Elevator
 import frc.robot.subsystems.gripper.Gripper
 import frc.robot.subsystems.vision.Vision
 import frc.robot.subsystems.vision.VisionConstants
@@ -84,5 +84,4 @@ private val visionIOs =
     }.toTypedArray()
 
 val vision = Vision(drive, *visionIOs)
-val
-        elevator= Elevator()
+val elevator = Elevator()
