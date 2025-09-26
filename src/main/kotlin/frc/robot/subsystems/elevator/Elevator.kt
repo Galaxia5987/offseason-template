@@ -48,7 +48,7 @@ class Elevator : SubsystemBase() {
             }
         }
 
-    private val Motor =
+    private val mainMotor =
         UniversalTalonFX(
             port = 13,
             config = motorConfigs,
