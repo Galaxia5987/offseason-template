@@ -67,12 +67,12 @@ class Elevator : SubsystemBase() {
     val followerRequest = Follower(14, false)
 
     var setPoint = 0.m
-    val postionvoltage = PositionVoltage(0.0)
+    val positionVoltage = PositionVoltage(0.0)
     fun setPosition(position: Distance): Command {
         return Commands.runOnce({
             setPoint = position
             motor.setControl(
-                postionvoltage.withPosition(
+                positionVoltage.withPosition(
                     position.toAngle(SPORCKET_DIAMETERS, GEAR_RATIO)
                 )
             )
