@@ -49,12 +49,12 @@ class Wrist : SubsystemBase() {
     val positionRequest = PositionVoltage(0.0.degrees)
     var setPoint = 0.0.degrees
 
-    fun addToPosition(position: Angle): Command {
-        return Commands.run({
-            val currentPosition = wristMotor.inputs.position
-            positionRequest.withPosition(currentPosition + position)
-            wristMotor.setControl(positionRequest)
-        })
+    fun setPosition(angle: Angle): Command{
+        return Commands.runOnce({wristMotor.setControl(positionRequest.withPosition(angle))})
+    }
+
+    init {
+        wristMotor.resetInternalEncoder()
     }
 
     fun moveToL1(): Command {
@@ -72,6 +72,7 @@ class Wrist : SubsystemBase() {
             wristMotor.setControl(
                 positionRequest.withPosition(WristPositions.L2.angle)
             )
+
         })
     }
 
@@ -96,6 +97,6 @@ class Wrist : SubsystemBase() {
     override fun periodic() {
         wristMotor.updateInputs()
         Logger.processInputs(name, wristMotor.inputs)
-        Logger.recordOutput("setPoint", setPoint)
+        Logger.recordOutput("Wrist/setPoint", setPoint)
     }
 }

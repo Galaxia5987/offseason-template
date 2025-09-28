@@ -14,8 +14,6 @@ import edu.wpi.first.units.measure.Voltage
 import edu.wpi.first.wpilibj2.command.Command
 import edu.wpi.first.wpilibj2.command.Commands
 import edu.wpi.first.wpilibj2.command.SubsystemBase
-import frc.robot.RobotContainer.isFinished12
-import frc.robot.RobotContainer.isFinished34
 import frc.robot.lib.extensions.m
 import frc.robot.lib.extensions.toAngle
 import frc.robot.lib.universal_motor.UniversalTalonFX
@@ -91,34 +89,23 @@ class Elevator : SubsystemBase() {
     }
 
     fun GoToL1(): Command {
-        return Commands.runOnce({
-            setPosition(Corallevels.LEVEL1.position)
-                .andThen({ isFinished12 = true })
-        })
+        return setPosition(Corallevels.LEVEL1.position)
     }
 
     fun GoToL2(): Command {
-        return Commands.runOnce({
-            setPosition(Corallevels.LEVEL2.position)
-                .andThen({ isFinished12 = true })
-        })
+        return setPosition(Corallevels.LEVEL2.position)
     }
 
     fun GoToL3(): Command {
-        return Commands.runOnce({
-            setPosition(Corallevels.LEVEL3.position)
-                .andThen({ isFinished34 = true })
-        })
+        return setPosition(Corallevels.LEVEL3.position)
     }
 
     fun GoToL4(): Command {
-        return Commands.runOnce({
-            setPosition(Corallevels.LEVEL4.position)
-                .andThen({ isFinished34 = true })
-        })
-    }
+          return setPosition(Corallevels.LEVEL4.position)
+        }
+
     init {
-        Motor.setControl(followerRequest)
+        mainMotor.setControl(followerRequest)
     }
     override fun periodic() {
         motor.updateInputs()

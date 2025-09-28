@@ -2,10 +2,12 @@ package frc.robot.lib.universal_motor
 
 import com.ctre.phoenix6.configs.TalonFXConfiguration
 import com.ctre.phoenix6.controls.ControlRequest
+import edu.wpi.first.units.measure.Angle
 import edu.wpi.first.units.measure.Distance
 import edu.wpi.first.units.measure.MomentOfInertia
 import frc.robot.CURRENT_MODE
 import frc.robot.Mode
+import frc.robot.lib.extensions.deg
 import frc.robot.lib.extensions.get
 import frc.robot.lib.extensions.kg2m
 import frc.robot.lib.extensions.m
@@ -59,6 +61,10 @@ class UniversalTalonFX(
      * @param control The control request to apply.
      */
     fun setControl(control: ControlRequest) = motorIO.setRequest(control)
+
+    fun resetInternalEncoder(angle: Angle = 0.0.deg) {
+        motorIO.resetInternalEncoder(angle)
+    }
 
     fun updateInputs() = motorIO.updateInputs()
 }
