@@ -54,7 +54,7 @@ class Elevator : SubsystemBase() {
             linearSystemWheelDiameter = SPORCKET_DIAMETERS
         )
 
-    private val motor =
+    private val auxMotor =
         UniversalTalonFX(
             14,
             config = motorConfigs,
@@ -62,14 +62,14 @@ class Elevator : SubsystemBase() {
             linearSystemWheelDiameter = SPORCKET_DIAMETERS
         )
 
-    val followerRequest = Follower(14, false)
+    val followerRequest = Follower(13, false)
 
     var setPoint = 0.m
     val positionVoltage = PositionVoltage(0.0)
     fun setPosition(position: Distance): Command {
         return Commands.runOnce({
             setPoint = position
-            motor.setControl(
+            auxMotor.setControl(
                 positionVoltage.withPosition(
                     position.toAngle(SPORCKET_DIAMETERS, GEAR_RATIO)
                 )
@@ -80,7 +80,7 @@ class Elevator : SubsystemBase() {
     val voltageRequest = VoltageOut(0.0)
     fun setVoltage(voltage: Voltage): Command {
         return Commands.runOnce({
-            motor.setControl(voltageRequest.withOutput(voltage))
+            auxMotor.setControl(voltageRequest.withOutput(voltage))
         })
     }
 
@@ -105,11 +105,11 @@ class Elevator : SubsystemBase() {
         }
 
     init {
-        mainMotor.setControl(followerRequest)
+        auxMotor.setControl(followerRequest)
     }
     override fun periodic() {
-        motor.updateInputs()
-        Logger.processInputs(name, motor.inputs)
+        auxMotor.updateInputs()
+        Logger.processInputs(name, mainMotor.inputs)
         Logger.recordOutput("levels", setPoint)
     }
 }
