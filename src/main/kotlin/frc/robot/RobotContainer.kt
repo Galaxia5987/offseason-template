@@ -6,8 +6,6 @@ import edu.wpi.first.math.geometry.Pose2d
 import edu.wpi.first.math.geometry.Rotation2d
 import edu.wpi.first.wpilibj2.command.Command
 import edu.wpi.first.wpilibj2.command.Commands.runOnce
-import edu.wpi.first.wpilibj2.command.button.CommandPS4Controller
-import edu.wpi.first.wpilibj2.command.button.CommandPS5Controller
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine
 import frc.robot.lib.extensions.degrees
@@ -25,7 +23,7 @@ import org.littletonrobotics.junction.networktables.LoggedDashboardChooser
 
 object RobotContainer {
 
-    private val driverController = CommandPS5Controller(0)
+    private val driverController = CommandXboxController(0)
 
     private val autoChooser: LoggedDashboardChooser<Command>
 
@@ -62,13 +60,13 @@ object RobotContainer {
     }
 
     private fun configureButtonBindings() {
-        driverController.triangle().onTrue(elevator.setVoltage(10.volts)).onFalse(elevator.setVoltage(0.0.volts))
+        driverController.a().onTrue(elevator.setVoltage(10.volts)).onFalse(elevator.setVoltage(0.0.volts))
         driverController.povUp().onTrue(level4())
         driverController.povLeft().onTrue(level2())
         driverController.povRight().onTrue(level3())
         driverController.povDown().onTrue(level1())
-        driverController.cross().onTrue(wrist.moveToL1())
-        driverController.square().onTrue(wrist.setPosition(280.degrees))
+        driverController.x().onTrue(wrist.moveToL1())
+        driverController.b().onTrue(wrist.setPosition(280.degrees))
     }
 
     fun getAutonomousCommand(): Command = autoChooser.get()
