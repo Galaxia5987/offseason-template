@@ -22,9 +22,11 @@ import org.littletonrobotics.junction.Logger
 class Elevator : SubsystemBase() {
     private val motorConfigs =
         TalonFXConfiguration().apply {
-            MotorOutputConfigs().apply {
+            MotorOutput =
+                MotorOutputConfigs().apply {
                 NeutralMode = NeutralModeValue.Brake
-                Inverted = InvertedValue.Clockwise_Positive
+                Inverted = InvertedValue.CounterClockwise_Positive
+
             }
 
             CurrentLimits =
@@ -33,17 +35,13 @@ class Elevator : SubsystemBase() {
                     SupplyCurrentLimit = 70.0
                     StatorCurrentLimitEnable = true
                     StatorCurrentLimit = 70.0
-                    SoftwareLimitSwitch.ForwardSoftLimitThreshold = 27.5
-                    SoftwareLimitSwitch.ForwardSoftLimitEnable = false
-                    SoftwareLimitSwitch.ReverseSoftLimitThreshold = 0.0
-                    SoftwareLimitSwitch.ReverseSoftLimitEnable = false
                 }
-
-            Slot0Configs().apply {
-                Slot0.kP = 1.0
-                Slot0.kI = 0.0
-                Slot0.kD = 0.25
-            }
+            Slot0 =
+                Slot0Configs().apply {
+                    kP = 1.0
+                    kI = 0.0
+                    kD = 0.25
+                }
         }
 
     private val mainMotor =
@@ -69,7 +67,7 @@ class Elevator : SubsystemBase() {
     fun setPosition(position: Distance): Command {
         return Commands.runOnce({
             setPoint = position
-            auxMotor.setControl(
+            mainMotor.setControl(
                 positionVoltage.withPosition(
                     position.toAngle(SPORCKET_DIAMETERS, GEAR_RATIO)
                 )
@@ -80,7 +78,7 @@ class Elevator : SubsystemBase() {
     val voltageRequest = VoltageOut(0.0)
     fun setVoltage(voltage: Voltage): Command {
         return Commands.runOnce({
-            auxMotor.setControl(voltageRequest.withOutput(voltage))
+            mainMotor.setControl(voltageRequest.withOutput(voltage))
         })
     }
 
@@ -101,14 +99,15 @@ class Elevator : SubsystemBase() {
     }
 
     fun GoToL4(): Command {
-          return setPosition(Corallevels.LEVEL4.position)
-        }
+        return setPosition(Corallevels.LEVEL4.position)
+    }
 
     init {
         auxMotor.setControl(followerRequest)
     }
+
     override fun periodic() {
-        auxMotor.updateInputs()
+        mainMotor.updateInputs()
         Logger.processInputs(name, mainMotor.inputs)
         Logger.recordOutput("levels", setPoint)
     }
