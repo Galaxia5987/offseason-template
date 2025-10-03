@@ -11,7 +11,7 @@ operator fun Trigger.not(): Trigger = this.negate()
 operator fun Trigger.get(seconds: Time): Trigger =
     this.debounce(
         seconds.`in`(Units.Seconds)
-    ) // can use trigger[sec as debounce] but might not be the most intuitive
+    )
 
 fun Trigger.debounce(seconds: Time) = this[seconds]
 
