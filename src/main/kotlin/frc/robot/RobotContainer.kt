@@ -5,18 +5,12 @@ import com.pathplanner.lib.auto.NamedCommands
 import edu.wpi.first.math.geometry.Pose2d
 import edu.wpi.first.math.geometry.Rotation2d
 import edu.wpi.first.wpilibj2.command.Command
-import edu.wpi.first.wpilibj2.command.Commands.runOnce
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine
 import frc.robot.lib.extensions.degrees
 import frc.robot.lib.extensions.enableAutoLogOutputFor
-import frc.robot.subsystems.elevator.Elevator
 import frc.robot.lib.extensions.volts
 import frc.robot.subsystems.drive.DriveCommands
-import frc.robot.subsystems.level1
-import frc.robot.subsystems.level2
-import frc.robot.subsystems.level3
-import frc.robot.subsystems.level4
 import org.ironmaple.simulation.SimulatedArena
 import org.littletonrobotics.junction.AutoLogOutput
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser
@@ -61,12 +55,14 @@ object RobotContainer {
 
     private fun configureButtonBindings() {
         driverController.a().onTrue(elevator.setVoltage(10.volts)).onFalse(elevator.setVoltage(0.0.volts))
-        driverController.povUp().onTrue(level4())
-        driverController.povLeft().onTrue(level2())
-        driverController.povRight().onTrue(level3())
-        driverController.povDown().onTrue(level1())
+        driverController.povUp().onTrue(goToL4())
+        driverController.povLeft().onTrue(goToL2())
+        driverController.povRight().onTrue(goToL3())
+        driverController.povDown().onTrue(goToL1())
         driverController.x().onTrue(wrist.moveToL1())
-        driverController.b().onTrue(wrist.setPosition(280.degrees))
+        driverController.b().whileTrue(wrist.setPosition(280.degrees))
+        driverController.leftBumper().whileTrue(gripper.output()).whileFalse(gripper.setVoltage(0.0.volts))
+        driverController.rightBumper().whileTrue(gripper.input()).whileFalse(gripper.setVoltage(0.0.volts))
     }
 
     fun getAutonomousCommand(): Command = autoChooser.get()
