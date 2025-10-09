@@ -8,12 +8,9 @@ import java.util.function.BooleanSupplier
 
 operator fun Trigger.not(): Trigger = this.negate()
 
-operator fun Trigger.get(seconds: Time): Trigger =
-    this.debounce(
-        seconds.`in`(Units.Seconds)
-    )
-
-fun Trigger.debounce(seconds: Time) = this[seconds]
+fun Trigger.debounce(seconds: Time) = this.debounce(
+    seconds.`in`(Units.Seconds)
+)
 
 fun Trigger.and(vararg trigger: BooleanSupplier): Trigger =
     trigger.fold(this) { baseTrigger, trigger -> baseTrigger.and(trigger) }
