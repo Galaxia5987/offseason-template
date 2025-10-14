@@ -2,10 +2,11 @@ package frc.robot
 
 import edu.wpi.first.math.geometry.Pose2d
 import edu.wpi.first.math.geometry.Rotation2d
-import frc.robot.subsystems.drive.*
+import frc.robot.subsystems.drive.Drive
 import frc.robot.subsystems.drive.ModuleIOs.ModuleIO
 import frc.robot.subsystems.drive.ModuleIOs.ModuleIOSim
 import frc.robot.subsystems.drive.ModuleIOs.ModuleIOTalonFX
+import frc.robot.subsystems.drive.TunerConstants
 import frc.robot.subsystems.drive.gyroIOs.GyroIO
 import frc.robot.subsystems.drive.gyroIOs.GyroIOPigeon2
 import frc.robot.subsystems.drive.gyroIOs.GyroIOSim
@@ -19,8 +20,7 @@ import frc.robot.subsystems.wrist.Wrist
 import org.ironmaple.simulation.SimulatedArena
 import org.ironmaple.simulation.drivesims.SwerveDriveSimulation
 
-val wrist = Wrist()
-val gripper = Gripper()
+
 val driveSimulation: SwerveDriveSimulation? =
     if (CURRENT_MODE == Mode.SIM)
         SwerveDriveSimulation(
@@ -85,3 +85,5 @@ private val visionIOs =
 
 val vision = Vision(drive, *visionIOs)
 val elevator = Elevator()
+val gripper = Gripper()
+val wrist = Wrist()
