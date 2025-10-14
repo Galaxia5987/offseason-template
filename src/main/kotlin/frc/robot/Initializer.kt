@@ -66,22 +66,22 @@ val drive =
         driveSimulation?.let { it::setSimulationWorldPose } ?: { _: Pose2d -> }
     )
 
-private val visionIOs =
-    when (CURRENT_MODE) {
-        Mode.REAL ->
-            VisionConstants.OVNameToTransform.map {
-                VisionIOPhotonVision(it.key, it.value)
-            }
-        Mode.SIM ->
-            VisionConstants.OVNameToTransform.map {
-                VisionIOPhotonVisionSim(
-                    it.key,
-                    it.value,
-                    driveSimulation!!::getSimulatedDriveTrainPose
-                )
-            }
-        Mode.REPLAY -> emptyList()
-    }.toTypedArray()
-
-val vision = Vision(drive, *visionIOs)
+//private val visionIOs =
+//    when (CURRENT_MODE) {
+//        Mode.REAL ->
+//            VisionConstants.OVNameToTransform.map {
+//                VisionIOPhotonVision(it.key, it.value)
+//            }
+//        Mode.SIM ->
+//            VisionConstants.OVNameToTransform.map {
+//                VisionIOPhotonVisionSim(
+//                    it.key,
+//                    it.value,
+//                    driveSimulation!!::getSimulatedDriveTrainPose
+//                )
+//            }
+//        Mode.REPLAY -> emptyList()
+//    }.toTypedArray()
+//
+//val vision = Vision(drive, *visionIOs)
 val elevator = Elevator()

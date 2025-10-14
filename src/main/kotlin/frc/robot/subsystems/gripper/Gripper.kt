@@ -1,6 +1,7 @@
 package frc.robot.subsystems.gripper
 
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs
+import com.ctre.phoenix6.configs.FeedbackConfigs
 import com.ctre.phoenix6.configs.MotorOutputConfigs
 import com.ctre.phoenix6.configs.TalonFXConfiguration
 import com.ctre.phoenix6.controls.VoltageOut
@@ -14,13 +15,16 @@ import edu.wpi.first.wpilibj.AnalogInput
 import edu.wpi.first.wpilibj2.command.Command
 import edu.wpi.first.wpilibj2.command.Commands
 import edu.wpi.first.wpilibj2.command.SubsystemBase
+import edu.wpi.first.wpilibj2.command.button.Trigger
 import frc.robot.lib.extensions.centimeters
+import frc.robot.lib.extensions.volts
 import frc.robot.lib.universal_motor.UniversalTalonFX
 import frc.robot.subsystems.wrist.GEAR_RATIO
 import org.littletonrobotics.junction.Logger
 
 class Gripper : SubsystemBase() {
     var sensorDistance: Distance = Units.Meters.zero()
+    val hasCoral = Trigger{sensorDistance <= coralInTheGripperConstant}
     private val sensor = AnalogInput(SENSOR_PORT)
     private val distanceFilter = MedianFilter(3)
     private val motor =
@@ -56,6 +60,18 @@ class Gripper : SubsystemBase() {
 
     fun input(): Command {
         return setVoltage(inTakeVoltage)
+    }
+
+    fun intakeByGripperSensor() : Command {
+        return input().andThen(Commands.waitUntil(hasCoral).andThen(stopIntakeOuttake()))
+    }
+
+    fun outtakeByGripperSensor() : Command{
+        return output().andThen(Commands.waitUntil(hasCoral.negate()).andThen(stopIntakeOuttake()))
+    }
+
+    fun stopIntakeOuttake() : Command{
+        return setVoltage(0.0.volts)
     }
 
     override fun periodic() {
