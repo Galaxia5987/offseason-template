@@ -2,7 +2,10 @@ package frc.robot.subsystems.wrist
 
 import com.ctre.phoenix6.configs.*
 import com.ctre.phoenix6.controls.PositionVoltage
-import com.ctre.phoenix6.signals.*
+import com.ctre.phoenix6.signals.GravityTypeValue
+import com.ctre.phoenix6.signals.InvertedValue
+import com.ctre.phoenix6.signals.NeutralModeValue
+import com.ctre.phoenix6.signals.StaticFeedforwardSignValue
 import edu.wpi.first.units.measure.Angle
 import edu.wpi.first.wpilibj2.command.Command
 import edu.wpi.first.wpilibj2.command.Commands
@@ -49,8 +52,10 @@ class Wrist : SubsystemBase() {
     val positionRequest = PositionVoltage(0.0.degrees)
     var setPoint = 0.0.degrees
 
-    fun setPosition(angle: Angle): Command{
-        return Commands.runOnce({wristMotor.setControl(positionRequest.withPosition(angle))})
+    fun setPosition(angle: Angle): Command {
+        return Commands.runOnce({
+            wristMotor.setControl(positionRequest.withPosition(angle))
+        })
     }
 
     init {
@@ -72,7 +77,6 @@ class Wrist : SubsystemBase() {
             wristMotor.setControl(
                 positionRequest.withPosition(WristPositions.L2.angle)
             )
-
         })
     }
 

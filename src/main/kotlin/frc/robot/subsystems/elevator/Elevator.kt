@@ -24,10 +24,9 @@ class Elevator : SubsystemBase() {
         TalonFXConfiguration().apply {
             MotorOutput =
                 MotorOutputConfigs().apply {
-                NeutralMode = NeutralModeValue.Brake
-                Inverted = InvertedValue.CounterClockwise_Positive
-
-            }
+                    NeutralMode = NeutralModeValue.Brake
+                    Inverted = InvertedValue.CounterClockwise_Positive
+                }
 
             CurrentLimits =
                 CurrentLimitsConfigs().apply {

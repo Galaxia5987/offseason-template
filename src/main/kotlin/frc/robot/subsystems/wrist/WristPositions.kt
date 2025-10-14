@@ -9,4 +9,3 @@ enum class WristPositions(val angle: Angle) {
     L3(200.0.degrees),
     L4(230.0.degrees)
 }
-
