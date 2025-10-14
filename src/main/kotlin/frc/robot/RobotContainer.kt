@@ -18,7 +18,6 @@ import org.littletonrobotics.junction.networktables.LoggedDashboardChooser
 object RobotContainer {
 
     private val driverController = CommandXboxController(0)
-
     private val autoChooser: LoggedDashboardChooser<Command>
 
     init {
@@ -59,7 +58,7 @@ object RobotContainer {
         driverController.povLeft().onTrue(goToL2())
         driverController.povRight().onTrue(goToL3())
         driverController.povDown().onTrue(goToL1())
-        driverController.x().onTrue(wrist.moveToL1())
+        driverController.x().onTrue(setIntTaking())
         driverController.b().whileTrue(wrist.setPosition(280.degrees))
         driverController.leftBumper().whileTrue(gripper.output()).whileFalse(gripper.setVoltage(0.0.volts))
         driverController.rightBumper().whileTrue(gripper.input()).whileFalse(gripper.setVoltage(0.0.volts))
