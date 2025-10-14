@@ -61,7 +61,6 @@ class Elevator : SubsystemBase() {
         )
 
     val followerRequest = Follower(13, false)
-
     var setPoint = 0.m
     val positionVoltage = PositionVoltage(0.0)
     fun setPosition(position: Distance): Command {

@@ -14,9 +14,13 @@ import edu.wpi.first.wpilibj.AnalogInput
 import edu.wpi.first.wpilibj2.command.Command
 import edu.wpi.first.wpilibj2.command.Commands
 import edu.wpi.first.wpilibj2.command.SubsystemBase
+import edu.wpi.first.wpilibj2.command.button.Trigger
 import frc.robot.lib.extensions.centimeters
+import frc.robot.lib.extensions.meters
+import frc.robot.lib.extensions.volts
 import frc.robot.lib.universal_motor.UniversalTalonFX
 import frc.robot.subsystems.wrist.GEAR_RATIO
+import org.littletonrobotics.junction.AutoLogOutput
 import org.littletonrobotics.junction.Logger
 
 class Gripper : SubsystemBase() {
@@ -50,12 +54,16 @@ class Gripper : SubsystemBase() {
         })
     }
 
+
     fun output(): Command {
         return setVoltage(outTakeVoltage)
     }
 
     fun input(): Command {
         return setVoltage(inTakeVoltage)
+    }
+    fun stop(): Command{
+        return setVoltage(0.0.volts)
     }
 
     override fun periodic() {
