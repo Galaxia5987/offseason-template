@@ -14,6 +14,7 @@ import edu.wpi.first.wpilibj.AnalogInput
 import edu.wpi.first.wpilibj2.command.Command
 import edu.wpi.first.wpilibj2.command.Commands
 import edu.wpi.first.wpilibj2.command.SubsystemBase
+import edu.wpi.first.wpilibj2.command.button.Trigger
 import frc.robot.lib.extensions.centimeters
 import frc.robot.lib.extensions.volts
 import frc.robot.lib.universal_motor.UniversalTalonFX
@@ -21,6 +22,7 @@ import org.littletonrobotics.junction.Logger
 
 class Gripper : SubsystemBase() {
     var sensorDistance: Distance = Units.Meters.zero()
+    val hasCoral = Trigger{sensorDistance <= coralInTheGripperConstant}
     private val sensor = AnalogInput(SENSOR_PORT)
     private val distanceFilter = MedianFilter(3)
     private val motor =
@@ -61,6 +63,18 @@ class Gripper : SubsystemBase() {
         return setVoltage(0.0.volts)
     }
 
+    fun intakeByGripperSensor() : Command {
+        return input().andThen(Commands.waitUntil(hasCoral).andThen(stopIntakeOuttake()))
+    }
+
+    fun outtakeByGripperSensor() : Command{
+        return output().andThen(Commands.waitUntil(hasCoral.negate()).andThen(stopIntakeOuttake()))
+    }
+
+    fun stopIntakeOuttake() : Command{
+        return setVoltage(0.0.volts)
+    }
+
     override fun periodic() {
         var calculatedDistance =
             distanceFilter.calculate(4800 / (200 * sensor.voltage - 20.0))
@@ -68,7 +82,8 @@ class Gripper : SubsystemBase() {
             calculatedDistance = 80.0
         }
         sensorDistance = calculatedDistance.centimeters
-
+        motor.updateInputs()
+        Logger.processInputs( "gripper", motor.inputs )
         Logger.recordOutput("sensorDistance", sensorDistance)
     }
 }
