@@ -51,6 +51,7 @@ class Wrist : SubsystemBase() {
         )
     val positionRequest = PositionVoltage(0.0.degrees)
     var setPoint = 0.0.degrees
+    var angle = { wristMotor.inputs.position }
 
     fun setPosition(angle: Angle): Command {
         return Commands.runOnce({
