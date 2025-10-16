@@ -19,7 +19,7 @@ fun goToL4(): Command {
 }
 
 fun intaking(): Command {
-    return goToL1().alongWith(gripper.input())
+    return goToL1().alongWith(wrist.moveToInTaking()).alongWith(gripper.input())
 }
 
 fun startOutTaking(): Command {
