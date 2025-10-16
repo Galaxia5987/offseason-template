@@ -11,6 +11,7 @@ import frc.robot.lib.extensions.degrees
 import frc.robot.lib.extensions.enableAutoLogOutputFor
 import frc.robot.lib.extensions.volts
 import frc.robot.subsystems.drive.DriveCommands
+import frc.robot.subsystems.gripper.Gripper
 import org.ironmaple.simulation.SimulatedArena
 import org.littletonrobotics.junction.AutoLogOutput
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser
@@ -18,6 +19,7 @@ import org.littletonrobotics.junction.networktables.LoggedDashboardChooser
 object RobotContainer {
 
     private val driverController = CommandXboxController(0)
+
     private val autoChooser: LoggedDashboardChooser<Command>
 
     init {
@@ -53,24 +55,8 @@ object RobotContainer {
     }
 
     private fun configureButtonBindings() {
-        driverController
-            .a()
-            .onTrue(elevator.setVoltage(10.volts))
-            .onFalse(elevator.setVoltage(0.0.volts))
-        driverController.povUp().onTrue(goToL4())
-        driverController.povLeft().onTrue(goToL2())
-        driverController.povRight().onTrue(goToL3())
-        driverController.povDown().onTrue(goToL1())
-        driverController.x().onTrue(setIntTaking())
-        driverController.b().whileTrue(wrist.setPosition(280.degrees))
-        driverController
-            .leftBumper()
-            .whileTrue(gripper.output())
-            .whileFalse(gripper.setVoltage(0.0.volts))
-        driverController
-            .rightBumper()
-            .whileTrue(gripper.input())
-            .whileFalse(gripper.setVoltage(0.0.volts))
+        driverController.y().whileTrue(gripper.intakeByGripperSensor())
+        driverController.a().whileTrue(gripper.outtakeByGripperSensor())
     }
 
     fun getAutonomousCommand(): Command = autoChooser.get()
