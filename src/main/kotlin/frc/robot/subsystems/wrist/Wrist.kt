@@ -30,9 +30,9 @@ class Wrist : SubsystemBase() {
             Slot0 =
                 Slot0Configs().apply {
                     kP=1.0
-                    kD=0.0
-                   // kP = 45.0
-                   // kD = 0.3
+                    kD=0.25
+//                    kP = 45.0
+//                    kD = 0.3
                     GravityType = GravityTypeValue.Arm_Cosine
                     StaticFeedforwardSign =
                         StaticFeedforwardSignValue.UseClosedLoopSign

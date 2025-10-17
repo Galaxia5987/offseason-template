@@ -22,7 +22,7 @@ import org.littletonrobotics.junction.Logger
 
 class Gripper : SubsystemBase() {
     var sensorDistance: Distance = Units.Meters.zero()
-    val hasCoral = Trigger{sensorDistance <= coralInTheGripperConstant}
+    val hasCoral = Trigger { sensorDistance <= coralInTheGripperConstant }
     private val sensor = AnalogInput(SENSOR_PORT)
     private val distanceFilter = MedianFilter(3)
     private val motor =
@@ -59,19 +59,20 @@ class Gripper : SubsystemBase() {
     fun input(): Command {
         return setVoltage(inTakeVoltage)
     }
+
     fun stop(): Command {
         return setVoltage(0.0.volts)
     }
 
-    fun intakeByGripperSensor() : Command {
+    fun intakeByGripperSensor(): Command {
         return input().andThen(Commands.waitUntil(hasCoral).andThen(stopIntakeOuttake()))
     }
 
-    fun outtakeByGripperSensor() : Command{
+    fun outtakeByGripperSensor(): Command {
         return output().andThen(Commands.waitUntil(hasCoral.negate()).andThen(stopIntakeOuttake()))
     }
 
-    fun stopIntakeOuttake() : Command{
+    fun stopIntakeOuttake(): Command {
         return setVoltage(0.0.volts)
     }
 
@@ -83,7 +84,7 @@ class Gripper : SubsystemBase() {
         }
         sensorDistance = calculatedDistance.centimeters
         motor.updateInputs()
-        Logger.processInputs( "gripper", motor.inputs )
+        Logger.processInputs("gripper", motor.inputs)
         Logger.recordOutput("sensorDistance", sensorDistance)
     }
 }

@@ -31,6 +31,7 @@ object RobotContainer {
         registerAutoCommands()
         configureButtonBindings()
         configureDefaultCommands()
+        bindRobotCommands()
 
         if (CURRENT_MODE == Mode.SIM) {
             SimulatedArena.getInstance().resetFieldForAuto()
@@ -53,14 +54,15 @@ object RobotContainer {
     }
 
     private fun configureButtonBindings() {
-        driverController.povUp().onTrue(goToL4())
-        driverController.povLeft().onTrue(goToL2())
-        driverController.povRight().onTrue(goToL3())
-        driverController.povDown().onTrue(goToL1())
+        driverController.povUp().onTrue(elevator.GoToL4())
+        driverController.povLeft().onTrue(elevator.GoToL2())
+        driverController.povRight().onTrue(elevator.GoToL3())
+        driverController.povDown().onTrue(elevator.GoToL1())
         driverController.leftBumper().whileTrue(gripper.output()).whileFalse(gripper.setVoltage(0.0.volts))
         driverController.rightBumper().whileTrue(gripper.input()).whileFalse(gripper.setVoltage(0.0.volts))
 
-        driverController.x().onTrue(setIntTaking())
+        driverController.b().whileTrue(intaking())
+        driverController.x().whileTrue(setIntTaking())
         driverController.y().whileTrue(gripper.intakeByGripperSensor())
         driverController.a().whileTrue(gripper.outtakeByGripperSensor())
 

@@ -19,25 +19,25 @@ fun goToL4(): Command {
 }
 
 fun intaking(): Command {
-    return goToL1().alongWith(wrist.moveToInTaking()).alongWith(gripper.input())
+    return goToL1().alongWith(wrist.moveToInTaking()).andThen(gripper.input())
 }
 
 fun startOutTaking(): Command {
-    return gripper.stop().alongWith(setOutTaking())
+    return gripper.stop().andThen(setOutTaking())
 }
 
 fun outTakeL1(): Command {
-    return wrist.moveToL1().alongWith(gripper.output())
+    return wrist.moveToL1().andThen(gripper.output().withTimeout(2.0))
 }
 
 fun outTakeL2(): Command {
-    return wrist.moveToL2().alongWith(gripper.output())
+    return wrist.moveToL2().andThen(gripper.output().withTimeout(2.0))
 }
 
 fun outTakeL3(): Command {
-    return wrist.moveToL3().alongWith(gripper.output())
+    return wrist.moveToL3().andThen(gripper.output().withTimeout(2.0))
 }
 
 fun outTakeL4(): Command {
-    return wrist.moveToL4().alongWith(gripper.output())
+    return wrist.moveToL4().andThen(gripper.output().withTimeout(2.0))
 }
