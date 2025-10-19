@@ -14,6 +14,7 @@ import edu.wpi.first.wpilibj2.command.button.Trigger
 import frc.robot.drive
 import frc.robot.lib.controllers.TunableHolonomicDriveController
 import frc.robot.lib.extensions.get
+import frc.robot.lib.extensions.mps
 import frc.robot.lib.extensions.sec
 import org.littletonrobotics.junction.Logger
 
@@ -67,7 +68,7 @@ val controller =
  */
 fun alignToPose(
     goalPose: Pose2d,
-    linearVelocity: LinearVelocity = MetersPerSecond.zero(),
+    linearVelocity: LinearVelocity = 0.mps,
     tolerance: Pose2d = TOLERANCE,
     poseSupplier: () -> Pose2d = { drive.pose },
     atGoalDebounce: Time = Seconds.of(0.1),
@@ -99,7 +100,7 @@ fun alignToPose(
         )
         .withName("Drive/AlignToPose")
 
-private fun profiledAlignToPose(
+fun profiledAlignToPose(
     goalPose: Pose2d,
     tolerance: Pose2d = TOLERANCE,
     poseSupplier: () -> Pose2d = { drive.pose },
@@ -124,7 +125,3 @@ private fun profiledAlignToPose(
                 .andThen(DriveCommands.stop())
         )
         .withName("Drive/profiledAlignToPose")
-
-fun align(pose: Pose2d) = drive.defer { alignToPose(pose) }
-
-fun profiledAlign(pose: Pose2d) = drive.defer { profiledAlignToPose(pose) }

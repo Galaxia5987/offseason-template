@@ -1,7 +1,12 @@
 package frc.robot
 
 import edu.wpi.first.math.geometry.Pose2d
+import edu.wpi.first.math.geometry.Pose3d
 import edu.wpi.first.math.geometry.Rotation2d
+import edu.wpi.first.math.geometry.Translation3d
+import frc.robot.lib.extensions.toTransform
+import frc.robot.lib.getRotation3d
+import frc.robot.sim.RapidReactArena
 import frc.robot.subsystems.drive.*
 import frc.robot.subsystems.drive.ModuleIOs.ModuleIO
 import frc.robot.subsystems.drive.ModuleIOs.ModuleIOSim
@@ -9,8 +14,10 @@ import frc.robot.subsystems.drive.ModuleIOs.ModuleIOTalonFX
 import frc.robot.subsystems.drive.gyroIOs.GyroIO
 import frc.robot.subsystems.drive.gyroIOs.GyroIOPigeon2
 import frc.robot.subsystems.drive.gyroIOs.GyroIOSim
+import frc.robot.subsystems.shooter.turret.Turret
 import frc.robot.subsystems.vision.Vision
 import frc.robot.subsystems.vision.VisionConstants
+import frc.robot.subsystems.vision.VisionConstants.turretOVName
 import frc.robot.subsystems.vision.VisionIOPhotonVision
 import frc.robot.subsystems.vision.VisionIOPhotonVisionSim
 import org.ironmaple.simulation.SimulatedArena
@@ -23,6 +30,7 @@ val driveSimulation: SwerveDriveSimulation? =
                 Pose2d(3.0, 3.0, Rotation2d())
             )
             .apply {
+                SimulatedArena.overrideInstance(RapidReactArena())
                 SimulatedArena.getInstance().addDriveTrainSimulation(this)
             }
     else null

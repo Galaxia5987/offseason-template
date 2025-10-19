@@ -22,20 +22,20 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
+import java.util.function.Supplier;
 import org.photonvision.PhotonCamera;
 
 /** IO implementation for real PhotonVision hardware. */
 public class VisionIOPhotonVision implements VisionIO {
     protected final PhotonCamera camera;
-    protected final Transform3d robotToCamera;
+    protected final Supplier<Transform3d> robotToCamera;
 
     /**
      * Creates a new VisionIOPhotonVision.
      *
      * @param name The configured name of the camera.
-     * @param rotationSupplier The 3D position of the camera relative to the robot.
      */
-    public VisionIOPhotonVision(String name, Transform3d robotToCamera) {
+    public VisionIOPhotonVision(String name, Supplier<Transform3d> robotToCamera) {
         camera = new PhotonCamera(name);
         this.robotToCamera = robotToCamera;
     }
@@ -65,7 +65,7 @@ public class VisionIOPhotonVision implements VisionIO {
 
                 // Calculate robot pose
                 Transform3d fieldToCamera = multitagResult.estimatedPose.best;
-                Transform3d fieldToRobot = fieldToCamera.plus(robotToCamera.inverse());
+                Transform3d fieldToRobot = fieldToCamera.plus(robotToCamera.get().inverse());
                 Pose3d robotPose =
                         new Pose3d(fieldToRobot.getTranslation(), fieldToRobot.getRotation());
 
@@ -99,7 +99,7 @@ public class VisionIOPhotonVision implements VisionIO {
                                     tagPose.get().getTranslation(), tagPose.get().getRotation());
                     Transform3d cameraToTarget = target.bestCameraToTarget;
                     Transform3d fieldToCamera = fieldToTarget.plus(cameraToTarget.inverse());
-                    Transform3d fieldToRobot = fieldToCamera.plus(robotToCamera.inverse());
+                    Transform3d fieldToRobot = fieldToCamera.plus(robotToCamera.get().inverse());
                     Pose3d robotPose =
                             new Pose3d(fieldToRobot.getTranslation(), fieldToRobot.getRotation());
 

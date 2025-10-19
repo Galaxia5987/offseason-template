@@ -41,10 +41,11 @@ class LoggedOutputProcessor(
                 else baseVal[1].value.toString()
             }
 
-            val path by lazy {
+            var path =
                 if (baseVal.first().name?.asString() == "path")
                     baseVal.first().value.toString()
-                else baseVal[1].value.toString() }
+                else baseVal[1].value.toString()
+
             when (symbol) {
                 is KSPropertyDeclaration -> { // or is property getter
                     val className = symbol.parentDeclaration?.qualifiedName?.asString()
@@ -53,6 +54,14 @@ class LoggedOutputProcessor(
                         val simpleName = className.substringAfterLast(".")
                         val classType = ClassName(packageName, simpleName)
                         val fieldName = symbol.simpleName.asString()
+                        val owner = symbol.parentDeclaration as? KSClassDeclaration
+                        owner?.superTypes?.forEach { classes ->
+                            val resolvedType = classes.resolve()
+                            val decl = resolvedType.declaration as? KSClassDeclaration
+                            if (decl?.qualifiedName?.asString()?.substringAfterLast(".") == "SubsystemBase") {
+                                path = path.ifEmpty { "Subsystems/$simpleName" }
+                            }
+                        }
 
                         logger.info("Registering field: $className.$fieldName with key=$key")
 
@@ -121,6 +130,7 @@ class LoggedOutputProcessor(
                 is KSClassDeclaration -> {
 
                     val pkg = symbol.containingFile?.packageName?.asString() ?: continue
+
                     val className = symbol.simpleName.asString()
                     val classType = ClassName(pkg, className)
                     symbol.getAllProperties().forEach {
@@ -132,7 +142,6 @@ class LoggedOutputProcessor(
                                 key,
                                 classType,
                                 methodName,
-                                path
                             )
                         }
                     }

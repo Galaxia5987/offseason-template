@@ -17,12 +17,10 @@ import org.littletonrobotics.junction.networktables.LoggedDashboardChooser
 object RobotContainer {
 
     private val driverController = CommandPS5Controller(0)
-
     private val autoChooser: LoggedDashboardChooser<Command>
 
     init {
         drive // Ensure Drive is initialized
-
         autoChooser =
             LoggedDashboardChooser(
                 "Auto Choices",
@@ -31,6 +29,7 @@ object RobotContainer {
         registerAutoCommands()
         configureButtonBindings()
         configureDefaultCommands()
+        bindRobotCommands()
 
         if (CURRENT_MODE == Mode.SIM) {
             SimulatedArena.getInstance().resetFieldForAuto()
@@ -46,23 +45,18 @@ object RobotContainer {
     private fun configureDefaultCommands() {
         drive.defaultCommand =
             DriveCommands.joystickDrive(
-                { -driverController.leftY },
-                { -driverController.leftX },
+                { driverController.leftY },
+                { driverController.leftX },
                 { -driverController.rightX * 0.8 }
             )
     }
 
     private fun configureButtonBindings() {
-        // Lock to 0° when A button is held
+        // reset swerve
         driverController
-            .cross()
-            .whileTrue(
-                DriveCommands.joystickDriveAtAngle(
-                    drive,
-                    { -driverController.leftY },
-                    { -driverController.leftX },
-                    { Rotation2d() }
-                )
+            .options()
+            .onTrue(
+                drive.runOnce { drive.resetGyro() }.ignoringDisable(true),
             )
 
         // Switch to X pattern when X button is pressed
@@ -82,9 +76,6 @@ object RobotContainer {
                         Pose2d(drive.pose.translation, Rotation2d())
                     )
                 }
-        driverController
-            .options()
-            .onTrue(runOnce(resetOdometry).ignoringDisable(true))
     }
 
     fun getAutonomousCommand(): Command = autoChooser.get()

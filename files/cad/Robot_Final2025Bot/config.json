@@ -1,7 +1,7 @@
 {
-  "name": "Neptune",
-  "sourceUrl": "https://cad.onshape.com/documents/9e305a824e87fdd775b1f389",
-  "disableSimplification": true,
+  "name": "2022OffSeason",
+  "sourceUrl": "",
+  "disableSimplification": false,
   "rotations": [
     {
       "axis": "x",
@@ -143,7 +143,7 @@
       "zeroedPosition": [
         0,
         0,
-        0.0
+        0
       ]
     },
     {
@@ -273,43 +273,7 @@
       ]
     },
     {
-      "_comment": "model_8 : Intake Rods",
-      "zeroedRotations": [
-        {
-          "axis": "x",
-          "degrees": 90
-        },
-        {
-          "axis": "z",
-          "degrees": 90
-        }
-      ],
-      "zeroedPosition": [
-        -0.0,
-        0,
-        -0.0
-      ]
-    },
-    {
-      "_comment": "model_9 : Intake Roller",
-      "zeroedRotations": [
-        {
-          "axis": "x",
-          "degrees": 90
-        },
-        {
-          "axis": "z",
-          "degrees": 90
-        }
-      ],
-      "zeroedPosition": [
-        -0.0,
-        0,
-        -0.0
-      ]
-    },
-    {
-      "_comment": "model_10 : Elevator Stage 1",
+      "_comment": "model_8 : Intake Plates",
       "zeroedRotations": [
         {
           "axis": "x",
@@ -321,13 +285,29 @@
         }
       ],
       "zeroedPosition": [
-        -0.0,
         0,
-        -0.02
+        0,
+        0
       ]
     },
     {
-      "_comment": "model_11 : Elevator Stage 2",
+      "_comment": "model_9 : Intake Roller Front wait : -0.56,0,0.28",
+      "zeroedRotations": [
+        {
+          "axis": "x",
+          "degrees": 90
+        },
+        {
+          "axis": "z",
+          "degrees": -90
+        }
+      ],
+      "zeroedPosition": [
+        0,0,0
+      ]
+    },
+    {
+      "_comment": "model_10 : Intake Roller Second",
       "zeroedRotations": [
         {
           "axis": "x",
@@ -345,7 +325,7 @@
       ]
     },
     {
-      "_comment": "model_12 : Gripper",
+      "_comment": "model_11 : Conveyor Front",
 
       "zeroedRotations": [
         {
@@ -368,7 +348,7 @@
       ]
     },
     {
-      "_comment": "model_13 : Gripper  -Roller Coral Down",
+      "_comment": "model_12 : Conveyor Second",
 
       "zeroedRotations": [
         {
@@ -387,7 +367,7 @@
       ]
     },
     {
-      "_comment": "model_14 : Gripper  -Roller Coral Up",
+      "_comment": "model_13 : Pre Shooter - Front",
 
       "zeroedRotations": [
         {
@@ -407,7 +387,95 @@
     },
 
     {
-      "_comment": "model_16 : Climb",
+      "_comment": "model_14 : Pre Shooter - Second",
+      "zeroedRotations": [
+        {
+          "axis": "x",
+          "degrees": 128
+        },
+        {
+          "axis": "y",
+          "degrees": 0
+        },
+        {
+          "axis": "z",
+          "degrees": -90
+        }
+      ],
+      "zeroedPosition": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "_comment": "model_15 : Turret",
+      "zeroedRotations": [
+        {
+          "axis": "x",
+          "degrees": 90
+        },
+        {
+          "axis": "y",
+          "degrees": 0
+        },
+        {
+          "axis": "z",
+          "degrees": 0
+        }
+      ],
+      "zeroedPosition": [
+        0,
+        0,
+        0.0
+      ]
+    },
+    {
+      "_comment": "model_16 : Shooter Roller",
+      "zeroedRotations": [
+        {
+          "axis": "x",
+          "degrees": 128
+        },
+        {
+          "axis": "y",
+          "degrees": 0
+        },
+        {
+          "axis": "z",
+          "degrees": -90
+        }
+      ],
+      "zeroedPosition": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "_comment": "model_17 : Hood",
+      "zeroedRotations": [
+        {
+          "axis": "x",
+          "degrees": 0
+        },
+        {
+          "axis": "y",
+          "degrees": 180
+        },
+        {
+          "axis": "z",
+          "degrees":0
+        }
+      ],
+      "zeroedPosition": [
+        0.0,
+        0.0,
+        0
+      ]
+    },
+    {
+      "_comment": "model_18 : Hood Roller",
       "zeroedRotations": [
         {
           "axis": "x",
