@@ -61,21 +61,6 @@ object RobotContainer {
 
         // Switch to X pattern when X button is pressed
         driverController.square().onTrue(runOnce(drive::stopWithX, drive))
-
-        // Reset gyro / odometry
-        val resetOdometry =
-            if (CURRENT_MODE == Mode.SIM)
-                Runnable {
-                    drive.resetOdometry(
-                        driveSimulation!!.simulatedDriveTrainPose
-                    )
-                }
-            else
-                Runnable {
-                    drive.resetOdometry(
-                        Pose2d(drive.pose.translation, Rotation2d())
-                    )
-                }
     }
 
     fun getAutonomousCommand(): Command = autoChooser.get()
@@ -111,6 +96,8 @@ object RobotContainer {
             drive.sysIdDynamic(SysIdRoutine.Direction.kReverse)
         )
     }
+
+    private fun bindRobotCommands() {}
 
     fun resetSimulationField() {
         if (CURRENT_MODE != Mode.SIM) return
