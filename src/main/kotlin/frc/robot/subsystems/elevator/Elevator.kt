@@ -20,30 +20,6 @@ import frc.robot.lib.universal_motor.UniversalTalonFX
 import org.littletonrobotics.junction.Logger
 
 object Elevator: SubsystemBase() {
-    private val config =
-        TalonFXConfiguration().apply {
-            MotorOutput =
-                MotorOutputConfigs().apply{
-                    NeutralMode = NeutralModeValue.Brake
-                    Inverted = InvertedValue.Clockwise_Positive
-                }
-            CurrentLimits =
-                CurrentLimitsConfigs().apply{
-                    StatorCurrentLimit = 70.0
-                    StatorCurrentLimitEnable = true
-                    SupplyCurrentLimit = 35.0
-                    SupplyCurrentLimitEnable = true
-            }
-            Feedback =
-                FeedbackConfigs().apply{
-                    SensorToMechanismRatio = 2.0 / 7.0
-                }
-            Slot0 =
-                Slot0Configs().apply{
-                    kP = 3.2
-                    kD = 0.4
-                }
-        }
 
     private val motor1: UniversalTalonFX =
         UniversalTalonFX(0, config = config, gearRatio = ratio, linearSystemWheelDiameter = wheelDiameter)

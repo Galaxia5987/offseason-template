@@ -1,4 +1,4 @@
-package frc.robot.subsystems.elevator
+package frc.robot.subsystems.wrist
 
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs
 import com.ctre.phoenix6.configs.FeedbackConfigs
@@ -9,30 +9,30 @@ import com.ctre.phoenix6.signals.InvertedValue
 import com.ctre.phoenix6.signals.NeutralModeValue
 import frc.robot.lib.extensions.cm
 
-val ratio = 2.0 / 7.0
-val wheelDiameter = 3.0.cm
+val ratio = 1.0 / 5.0
+val wheelDiameter = 2.0.cm
 
 public val config =
     TalonFXConfiguration().apply {
         MotorOutput =
             MotorOutputConfigs().apply{
-                NeutralMode = NeutralModeValue.Brake
-                Inverted = InvertedValue.Clockwise_Positive
+                NeutralMode = NeutralModeValue.Coast
+                Inverted = InvertedValue.CounterClockwise_Positive
             }
         CurrentLimits =
             CurrentLimitsConfigs().apply{
-                StatorCurrentLimit = 70.0
+                StatorCurrentLimit = 80.0
                 StatorCurrentLimitEnable = true
-                SupplyCurrentLimit = 35.0
+                SupplyCurrentLimit = 40.0
                 SupplyCurrentLimitEnable = true
             }
         Feedback =
             FeedbackConfigs().apply{
-                SensorToMechanismRatio = 2.0 / 7.0
+                SensorToMechanismRatio = 1.0 / 5.0
             }
         Slot0 =
             Slot0Configs().apply{
-                kP = 3.2
-                kD = 0.4
+                kP = 0.0
+                kD = 0.0
             }
     }

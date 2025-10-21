@@ -31,10 +31,10 @@ class Hood : SubsystemBase() {
     private val motor: UniversalTalonFX =
         UniversalTalonFX(port = 0, config = config, gearRatio = 1.0 / 5.0)
     private val positionRequest: PositionVoltage = PositionVoltage(0.0) //Motor's final position when angle = 0.0
-    private var setPoint = 0.0 //Var to check when angle is right
+    private var setPoint = 0.0.degrees //Var to check when angle is right
 
     fun setAngle(angle: Angle) {
-        setPoint = angle[degrees] //setPoint = angle (digit reference degrees)
+        setPoint = angle //setPoint = angle (digit reference degrees)
         motor.setControl(positionRequest.withPosition(angle[degrees])) //Motor moves angle[degrees]
     }
 
