@@ -3,12 +3,15 @@ package frc.robot.lib.universal_motor
 import com.ctre.phoenix6.configs.TalonFXConfiguration
 import com.ctre.phoenix6.controls.ControlRequest
 import edu.wpi.first.units.measure.Angle
+import edu.wpi.first.units.measure.AngularVelocity
 import edu.wpi.first.units.measure.Current
 import edu.wpi.first.units.measure.Distance
+import edu.wpi.first.units.measure.Velocity
 import edu.wpi.first.units.measure.Voltage
 import frc.robot.lib.extensions.amps
 import frc.robot.lib.extensions.deg
 import frc.robot.lib.extensions.m
+import frc.robot.lib.extensions.rotationsPerSecond
 import frc.robot.lib.extensions.volts
 import org.team9432.annotation.Logged
 
@@ -59,5 +62,7 @@ interface MotorIO {
 
         /** Current drawn by the motor. */
         var current: Current = 0.amps
+
+        var velocity: AngularVelocity = 0.rotationsPerSecond
     }
 }
