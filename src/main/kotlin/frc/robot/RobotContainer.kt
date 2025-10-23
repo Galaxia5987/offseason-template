@@ -10,6 +10,8 @@ import edu.wpi.first.wpilibj2.command.button.CommandPS5Controller
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine
 import frc.robot.lib.extensions.enableAutoLogOutputFor
 import frc.robot.subsystems.drive.DriveCommands
+import frc.robot.subsystems.hood.Hood
+import frc.robot.subsystems.shooter.Shooter
 import org.ironmaple.simulation.SimulatedArena
 import org.littletonrobotics.junction.AutoLogOutput
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser
@@ -53,38 +55,7 @@ object RobotContainer {
     }
 
     private fun configureButtonBindings() {
-        // Lock to 0° when A button is held
-        driverController
-            .cross()
-            .whileTrue(
-                DriveCommands.joystickDriveAtAngle(
-                    drive,
-                    { -driverController.leftY },
-                    { -driverController.leftX },
-                    { Rotation2d() }
-                )
-            )
-
-        // Switch to X pattern when X button is pressed
-        driverController.square().onTrue(runOnce(drive::stopWithX, drive))
-
-        // Reset gyro / odometry
-        val resetOdometry =
-            if (CURRENT_MODE == Mode.SIM)
-                Runnable {
-                    drive.resetOdometry(
-                        driveSimulation!!.simulatedDriveTrainPose
-                    )
-                }
-            else
-                Runnable {
-                    drive.resetOdometry(
-                        Pose2d(drive.pose.translation, Rotation2d())
-                    )
-                }
-        driverController
-            .options()
-            .onTrue(runOnce(resetOdometry).ignoringDisable(true))
+        driverController.cross().onTrue(Hood.setAngle1())
     }
 
     fun getAutonomousCommand(): Command = autoChooser.get()
