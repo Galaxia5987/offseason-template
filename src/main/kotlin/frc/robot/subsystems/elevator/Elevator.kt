@@ -17,6 +17,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase
 import frc.robot.lib.extensions.meters
 import frc.robot.lib.extensions.toAngle
 import frc.robot.lib.universal_motor.UniversalTalonFX
+import org.littletonrobotics.junction.AutoLogOutput
 import org.littletonrobotics.junction.Logger
 
 object Elevator: SubsystemBase() {

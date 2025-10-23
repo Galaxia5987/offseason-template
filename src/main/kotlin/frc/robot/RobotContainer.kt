@@ -18,6 +18,9 @@ import frc.robot.subsystems.Shooter
 import frc.robot.subsystems.drive.DriveCommands
 import frc.robot.subsystems.elevator.Elevator
 import frc.robot.subsystems.elevator.ElevatorPositions
+import frc.robot.subsystems.gripper.Gripper
+import frc.robot.subsystems.wrist.Wrist
+import frc.robot.subsystems.wrist.WristPositions
 import org.ironmaple.simulation.SimulatedArena
 import org.littletonrobotics.junction.AutoLogOutput
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser
@@ -65,8 +68,15 @@ object RobotContainer {
         driverController.povRight().onTrue(Elevator.setLevel(ElevatorPositions.LEVEL3)) // (0_0)
         driverController.povUp().onTrue(Elevator.setLevel(ElevatorPositions.LEVEL4)) // (*u*)
 
-        driverController.y().onTrue(Shooter.setVelocity(30.rotationsPerSecond))
-        driverController.a().onTrue(Shooter.setVelocity((-30).rotationsPerSecond))
+        driverController.y().onTrue(Wrist.setAnglePosition(WristPositions.OPEN))
+        driverController.a().onTrue(Wrist.setAnglePosition(WristPositions.CLOSE))
+
+        driverController.b().whileTrue(Gripper.inTake())
+        driverController.x().whileTrue(Gripper.outTake())
+        driverController.leftStick().whileTrue(Gripper.stop())
+
+
+
     }
 
     fun getAutonomousCommand(): Command = autoChooser.get()

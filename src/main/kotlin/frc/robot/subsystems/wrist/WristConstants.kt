@@ -32,7 +32,7 @@ public val config =
             }
         Slot0 =
             Slot0Configs().apply{
-                kP = 0.0
-                kD = 0.0
+                kP = 3.0
+                kD = 0.2
             }
     }

@@ -35,9 +35,4 @@ public val config =
             FeedbackConfigs().apply {
                 SensorToMechanismRatio = 2.0 / 3.0
             }
-        Slot0 =
-            Slot0Configs().apply {
-                kP = 0.0
-                kD = 0.0
-            }
     }
