@@ -15,23 +15,21 @@ val wheelDiameter = 2.0.cm
 public val config =
     TalonFXConfiguration().apply {
         MotorOutput =
-            MotorOutputConfigs().apply{
+            MotorOutputConfigs().apply {
                 NeutralMode = NeutralModeValue.Coast
                 Inverted = InvertedValue.CounterClockwise_Positive
             }
         CurrentLimits =
-            CurrentLimitsConfigs().apply{
+            CurrentLimitsConfigs().apply {
                 StatorCurrentLimit = 80.0
                 StatorCurrentLimitEnable = true
                 SupplyCurrentLimit = 40.0
                 SupplyCurrentLimitEnable = true
             }
         Feedback =
-            FeedbackConfigs().apply{
-                SensorToMechanismRatio = 1.0 / 5.0
-            }
+            FeedbackConfigs().apply { SensorToMechanismRatio = 1.0 / 5.0 }
         Slot0 =
-            Slot0Configs().apply{
+            Slot0Configs().apply {
                 kP = 3.0
                 kD = 0.2
             }

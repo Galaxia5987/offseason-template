@@ -18,7 +18,7 @@ import frc.robot.lib.universal_motor.UniversalTalonFX
 import frc.robot.subsystems.elevator.wheelDiameter
 import org.littletonrobotics.junction.Logger
 
-object Shooter: SubsystemBase() {
+object Shooter : SubsystemBase() {
     private val config =
         TalonFXConfiguration().apply {
             MotorOutput =
@@ -45,7 +45,12 @@ object Shooter: SubsystemBase() {
                 }
         }
     private val motor1: UniversalTalonFX =
-        UniversalTalonFX(port = 0, config = config, gearRatio = 1.0 / 5.0, linearSystemWheelDiameter = wheelDiameter)
+        UniversalTalonFX(
+            port = 0,
+            config = config,
+            gearRatio = 1.0 / 5.0,
+            linearSystemWheelDiameter = wheelDiameter
+        )
     private val motor2: UniversalTalonFX =
         UniversalTalonFX(port = 1, config = config, gearRatio = 1.0 / 5.0)
     private val velocityVoltageRequest: VelocityVoltage = VelocityVoltage(0.0)
@@ -58,7 +63,8 @@ object Shooter: SubsystemBase() {
     fun setVelocity(velocity: AngularVelocity): Command {
         return Commands.runOnce({
             setVelocity = velocity
-            motor1.setControl(velocityVoltageRequest.withVelocity(velocity))})
+            motor1.setControl(velocityVoltageRequest.withVelocity(velocity))
+        })
     }
 
     override fun periodic() {

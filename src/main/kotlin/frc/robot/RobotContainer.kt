@@ -4,23 +4,12 @@ import com.pathplanner.lib.auto.AutoBuilder
 import com.pathplanner.lib.auto.NamedCommands
 import edu.wpi.first.math.geometry.Pose2d
 import edu.wpi.first.math.geometry.Rotation2d
-import edu.wpi.first.units.measure.AngularVelocity
 import edu.wpi.first.wpilibj2.command.Command
-import edu.wpi.first.wpilibj2.command.Commands.runOnce
-import edu.wpi.first.wpilibj2.command.button.CommandPS5Controller
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine
 import frc.robot.lib.extensions.enableAutoLogOutputFor
-import frc.robot.lib.extensions.rotationsPerSecond
-import frc.robot.lib.extensions.volts
-import frc.robot.subsystems.Hood
-import frc.robot.subsystems.Shooter
 import frc.robot.subsystems.drive.DriveCommands
-import frc.robot.subsystems.elevator.Elevator
-import frc.robot.subsystems.elevator.ElevatorPositions
 import frc.robot.subsystems.gripper.Gripper
-import frc.robot.subsystems.wrist.Wrist
-import frc.robot.subsystems.wrist.WristPositions
 import org.ironmaple.simulation.SimulatedArena
 import org.littletonrobotics.junction.AutoLogOutput
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser
@@ -63,17 +52,15 @@ object RobotContainer {
     }
 
     private fun configureButtonBindings() {
-        driverController.a().onTrue(level0WristElevator()) // (-_-)
-        driverController.povDown().onTrue(level1WristElevator()) // (~_~)
-        driverController.povLeft().onTrue(level2WristElevator()) // (o_o)
-        driverController.povRight().onTrue(level3WristElevator()) // (0_0)
-        driverController.povUp().onTrue(level4WristElevator()) // (^u^)
+        driverController.a().onTrue(level0WristElevator()) // (-_-) //after pressing "a", elevator wont move ):<
+        driverController.povDown().onTrue(level1OutTake()) // (~_~)
+        driverController.povLeft().onTrue(level2OutTake()) // (o_o)
+        driverController.povRight().onTrue(level3OutTake()) // (0_0)
+        driverController.povUp().onTrue(level4OutTake()) // (^u^)
 
-        driverController.b().onTrue(Gripper.inTake())
+        driverController.b().onTrue(Gripper.inTakeUntilSenses())
         driverController.x().onTrue(Gripper.outTake())
         driverController.y().onTrue(Gripper.stop())
-
-
     }
 
     fun getAutonomousCommand(): Command = autoChooser.get()
