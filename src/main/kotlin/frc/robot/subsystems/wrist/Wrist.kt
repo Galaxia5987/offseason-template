@@ -10,7 +10,9 @@ import edu.wpi.first.units.measure.Angle
 import edu.wpi.first.wpilibj2.command.Command
 import edu.wpi.first.wpilibj2.command.Commands
 import edu.wpi.first.wpilibj2.command.SubsystemBase
+import frc.robot.lib.extensions.amps
 import frc.robot.lib.extensions.degrees
+import frc.robot.lib.extensions.seconds
 import frc.robot.lib.universal_motor.UniversalTalonFX
 import org.littletonrobotics.junction.Logger
 
@@ -50,54 +52,43 @@ class Wrist : SubsystemBase() {
             gearRatio = GEAR_RATIO
         )
     val positionRequest = PositionVoltage(0.0.degrees)
-    var setPoint = 0.0.degrees
-
-    fun setPosition(angle: Angle): Command {
-        return Commands.runOnce({
-            wristMotor.setControl(positionRequest.withPosition(angle))
-        })
-    }
+    var setPoint: WristPositions = WristPositions.DOWN
 
     init {
         wristMotor.resetInternalEncoder()
     }
 
-    fun moveToL1(): Command {
+    // TODO: Change setPosition `angle` parameter type to WristPosition
+    // TODO: Change setpoint type to WristPositions Enum
+    // TODO: Update setpoint
+    // TODO: Use this function in the move Commands
+    fun setPosition(angle: WristPositions): Command {
         return Commands.runOnce({
-            setPoint = WristPositions.L1.angle
-            wristMotor.setControl(
-                positionRequest.withPosition(WristPositions.L1.angle)
-            )
-        })
+            setPoint = angle
+            wristMotor.setControl(positionRequest.withPosition(angle.angle)) })
+            .andThen(Commands.waitTime(0.2.seconds))
+            .andThen(Commands.waitUntil{wristMotor.inputs.current < 2.0.amps})
+    }
+
+    fun moveToL1(): Command {
+        return setPosition(WristPositions.L1)
     }
 
     fun moveToL2(): Command {
-        return Commands.runOnce({
-            setPoint = WristPositions.L2.angle
-            wristMotor.setControl(
-                positionRequest.withPosition(WristPositions.L2.angle)
-            )
-        })
+        return setPosition(WristPositions.L2)
     }
 
     fun moveToL3(): Command {
-        return Commands.runOnce({
-            setPoint = WristPositions.L3.angle
-            wristMotor.setControl(
-                positionRequest.withPosition(WristPositions.L3.angle)
-            )
-        })
+        return setPosition(WristPositions.L3)
     }
 
     fun moveToL4(): Command {
-        return Commands.runOnce({
-            setPoint = WristPositions.L4.angle
-            wristMotor.setControl(
-                positionRequest.withPosition(WristPositions.L4.angle)
-            )
-        })
+        return setPosition(WristPositions.L4)
     }
 
+    fun moveToCollectCoral(): Command {
+        return setPosition(WristPositions.FEEDER)
+    }
     override fun periodic() {
         wristMotor.updateInputs()
         Logger.processInputs(name, wristMotor.inputs)

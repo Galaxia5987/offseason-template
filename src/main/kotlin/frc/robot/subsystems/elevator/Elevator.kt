@@ -14,7 +14,9 @@ import edu.wpi.first.units.measure.Voltage
 import edu.wpi.first.wpilibj2.command.Command
 import edu.wpi.first.wpilibj2.command.Commands
 import edu.wpi.first.wpilibj2.command.SubsystemBase
+import frc.robot.lib.extensions.amps
 import frc.robot.lib.extensions.m
+import frc.robot.lib.extensions.seconds
 import frc.robot.lib.extensions.toAngle
 import frc.robot.lib.universal_motor.UniversalTalonFX
 import org.littletonrobotics.junction.Logger
@@ -62,6 +64,7 @@ class Elevator : SubsystemBase() {
     val followerRequest = Follower(13, false)
     var setPoint = 0.m
     val positionVoltage = PositionVoltage(0.0)
+
     fun setPosition(position: Distance): Command {
         return Commands.runOnce({
             setPoint = position
@@ -71,6 +74,8 @@ class Elevator : SubsystemBase() {
                 )
             )
         })
+            .andThen(Commands.waitTime(0.2.seconds))
+            .andThen(Commands.waitUntil{mainMotor.inputs.current < 3.0.amps})
     }
 
     val voltageRequest = VoltageOut(0.0)

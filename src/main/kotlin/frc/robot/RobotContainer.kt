@@ -5,6 +5,7 @@ import com.pathplanner.lib.auto.NamedCommands
 import edu.wpi.first.math.geometry.Pose2d
 import edu.wpi.first.math.geometry.Rotation2d
 import edu.wpi.first.wpilibj2.command.Command
+import edu.wpi.first.wpilibj2.command.button.CommandPS5Controller
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine
 import frc.robot.lib.extensions.degrees
@@ -12,13 +13,14 @@ import frc.robot.lib.extensions.enableAutoLogOutputFor
 import frc.robot.lib.extensions.volts
 import frc.robot.subsystems.drive.DriveCommands
 import frc.robot.subsystems.gripper.Gripper
+import frc.robot.subsystems.gripper.outtakeBySensorWithWristPosition
 import org.ironmaple.simulation.SimulatedArena
 import org.littletonrobotics.junction.AutoLogOutput
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser
 
 object RobotContainer {
 
-    private val driverController = CommandXboxController(0)
+    private val driverController = CommandPS5Controller(0)
 
     private val autoChooser: LoggedDashboardChooser<Command>
 
@@ -55,8 +57,14 @@ object RobotContainer {
     }
 
     private fun configureButtonBindings() {
-        driverController.y().whileTrue(gripper.intakeByGripperSensor())
-        driverController.a().whileTrue(gripper.outtakeByGripperSensor())
+        driverController.square().onTrue(gripper.intakeByGripperSensor())
+        driverController.circle().onTrue(outtakeBySensorWithWristPosition())
+        //driverController.square().whileTrue(gripper.intake()).whileFalse(gripper.stop())
+        driverController.povUp().onTrue(goToL4()).onFalse(outtakeBySensorWithWristPosition())
+        driverController.povDown().onTrue(goToL1()).onFalse(outtakeBySensorWithWristPosition())
+        driverController.povLeft().onTrue(goToL2()).onFalse(outtakeBySensorWithWristPosition())
+        driverController.povRight().onTrue(goToL3()).onFalse(outtakeBySensorWithWristPosition())
+        driverController.L1().whileTrue(wrist.moveToCollectCoral())
     }
 
     fun getAutonomousCommand(): Command = autoChooser.get()

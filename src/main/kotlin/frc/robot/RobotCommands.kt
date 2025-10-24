@@ -15,15 +15,14 @@ val isInL2 = Trigger { elevator.setPoint == Corallevels.LEVEL2.position }
 val isInL3 = Trigger { elevator.setPoint == Corallevels.LEVEL3.position }
 val isInl4 = Trigger { elevator.setPoint == Corallevels.LEVEL4.position }
 
-@AutoLogOutput val hasCoral = Trigger { gripper.sensorDistance < 0.1.meters }
 
 fun blindRobotCommands() {
     isIntTaking.apply {
-        and(hasCoral).onTrue(startOutTaking())
-        and(hasCoral).onFalse(intaking())
+        and(gripper.hasCoral).onTrue(startOutTaking())
+        and(gripper.hasCoral).onFalse(intaking())
     }
     isOutTaking.apply {
-        and(hasCoral).onTrue(startOutTaking())
+        and(gripper.hasCoral).onTrue(startOutTaking())
         and(isInL1).onTrue(outTakeL1())
         and(isInL2).onTrue(outTakeL2())
         and(isInL3).onTrue(outTakeL3())
