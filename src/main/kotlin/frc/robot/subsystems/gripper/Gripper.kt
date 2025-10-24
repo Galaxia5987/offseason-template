@@ -26,13 +26,6 @@ import org.littletonrobotics.junction.Logger
 import org.littletonrobotics.junction.mechanism.LoggedMechanism2d
 import org.littletonrobotics.junction.mechanism.LoggedMechanismLigament2d
 
-@AutoLogOutput(key = "Gripper/mechanism")
-private var mechanism = LoggedMechanism2d(6.0, 4.0)
-private var root = mechanism.getRoot("Gripper", 3.0, 2.0)
-private val ligament =
-    root.append(LoggedMechanismLigament2d("GripperLigament", 0.25, 90.0))
-
-
 object Gripper : SubsystemBase() {
 
     private val motor1: UniversalTalonFX =
@@ -58,9 +51,7 @@ object Gripper : SubsystemBase() {
     }
 
     override fun periodic() {
-        Gripper.motor1.updateInputs()
-        ligament.setAngle(setPoint[degrees])
-        Logger.processInputs("Gripper", Gripper.motor1.inputs)
-        Logger.recordOutput("Subsystems/Gripper/Ligament", mechanism)
+        motor1.updateInputs()
+        Logger.processInputs("Gripper", motor1.inputs)
     }
 }

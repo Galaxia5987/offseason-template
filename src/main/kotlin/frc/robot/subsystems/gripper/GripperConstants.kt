@@ -11,10 +11,9 @@ import frc.robot.lib.extensions.cm
 import frc.robot.lib.extensions.volts
 
 val ratio = 2.0 / 3.0
-val wheelDiameter = 1.0.cm
 
- val voltageInTake = -5.0.volts
- val voltageOutTake = 5.0.volts
+ val voltageInTake = -2.5.volts
+ val voltageOutTake = 2.5.volts
  val voltageStop = 0.0.volts
 
 public val config =

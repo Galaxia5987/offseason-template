@@ -71,9 +71,9 @@ object RobotContainer {
         driverController.y().onTrue(Wrist.setAnglePosition(WristPositions.OPEN))
         driverController.a().onTrue(Wrist.setAnglePosition(WristPositions.CLOSE))
 
-        driverController.b().whileTrue(Gripper.inTake())
-        driverController.x().whileTrue(Gripper.outTake())
-        driverController.leftStick().whileTrue(Gripper.stop())
+        driverController.b().onTrue(Gripper.inTake())
+        driverController.x().onTrue(Gripper.outTake())
+        driverController.leftBumper().onTrue(Gripper.stop())
 
 
 

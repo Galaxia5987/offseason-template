@@ -12,7 +12,7 @@ import frc.robot.lib.extensions.cm
 val ratio = 2.0 / 7.0
 val wheelDiameter = 3.0.cm
 
-public val config =
+val config =
     TalonFXConfiguration().apply {
         MotorOutput =
             MotorOutputConfigs().apply{
