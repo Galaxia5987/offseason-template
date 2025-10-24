@@ -7,7 +7,7 @@ import frc.robot.subsystems.drive.ModuleIOs.ModuleIO
 import frc.robot.subsystems.drive.ModuleIOs.ModuleIOSim
 import frc.robot.subsystems.drive.ModuleIOs.ModuleIOTalonFX
 import frc.robot.subsystems.drive.gyroIOs.GyroIO
-import frc.robot.subsystems.drive.gyroIOs.GyroIONavX
+import frc.robot.subsystems.drive.gyroIOs.GyroIOPigeon2
 import frc.robot.subsystems.drive.gyroIOs.GyroIOSim
 import frc.robot.subsystems.elevator.Elevator
 import frc.robot.subsystems.vision.Vision
@@ -18,7 +18,7 @@ import org.ironmaple.simulation.SimulatedArena
 import org.ironmaple.simulation.drivesims.SwerveDriveSimulation
 
 val driveSimulation: SwerveDriveSimulation? =
-    if (CURRENT_MODE != Mode.REPLAY)
+    if (CURRENT_MODE == Mode.SIM)
         SwerveDriveSimulation(
                 Drive.mapleSimConfig,
                 Pose2d(3.0, 3.0, Rotation2d())
@@ -46,7 +46,7 @@ private val driveModuleIOs =
 
 private val gyroIO =
     when (CURRENT_MODE) {
-        Mode.REAL -> GyroIONavX()
+        Mode.REAL -> GyroIOPigeon2()
         Mode.SIM ->
             GyroIOSim(
                 driveSimulation?.gyroSimulation
@@ -66,13 +66,13 @@ private val visionIOs =
     when (CURRENT_MODE) {
         Mode.REAL ->
             VisionConstants.OVNameToTransform.map {
-                VisionIOPhotonVision(it.key, it.value)
+                VisionIOPhotonVision(it.key) { it.value }
             }
         Mode.SIM ->
             VisionConstants.OVNameToTransform.map {
                 VisionIOPhotonVisionSim(
                     it.key,
-                    it.value,
+                    { it.value },
                     driveSimulation!!::getSimulatedDriveTrainPose
                 )
             }

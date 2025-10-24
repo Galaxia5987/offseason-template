@@ -39,6 +39,8 @@ import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.system.plant.DCMotor;
+import edu.wpi.first.units.measure.Angle;
+import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Alert.AlertType;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -49,6 +51,8 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.ConstantsKt;
 import frc.robot.Mode;
 import frc.robot.lib.LocalADStarAK;
+import frc.robot.lib.LoggedNetworkGains;
+import frc.robot.lib.sysid.SysIdable;
 import frc.robot.subsystems.drive.ModuleIOs.Module;
 import frc.robot.subsystems.drive.ModuleIOs.ModuleIO;
 import frc.robot.subsystems.drive.gyroIOs.GyroIO;
@@ -57,13 +61,16 @@ import frc.robot.subsystems.vision.Vision;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.Consumer;
+import kotlin.Unit;
+import kotlin.jvm.functions.Function1;
 import org.ironmaple.simulation.drivesims.COTS;
 import org.ironmaple.simulation.drivesims.configs.DriveTrainSimulationConfig;
 import org.ironmaple.simulation.drivesims.configs.SwerveModuleSimulationConfig;
+import org.jetbrains.annotations.NotNull;
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 
-public class Drive extends SubsystemBase implements Vision.VisionConsumer {
+public class Drive extends SubsystemBase implements Vision.VisionConsumer, SysIdable {
     // TunerConstants doesn't include these constants, so they are declared locally
     public static final double ODOMETRY_FREQUENCY =
             new CANBus(TunerConstants.DrivetrainConstants.CANBusName).isNetworkFD() ? 250.0 : 100.0;
@@ -121,6 +128,10 @@ public class Drive extends SubsystemBase implements Vision.VisionConsumer {
 
     static final Lock odometryLock = new ReentrantLock();
     private final GyroIO gyroIO;
+    public Angle[] SwerveTurnAngle =
+            new Angle[] {Radians.zero(), Radians.zero(), Radians.zero(), Radians.zero()};
+    public Angle[] SwerveDriveAngle =
+            new Angle[] {Radians.zero(), Radians.zero(), Radians.zero(), Radians.zero()};
     private final GyroIOInputsAutoLogged gyroInputs = new GyroIOInputsAutoLogged();
     private final Module[] modules = new Module[4]; // FL, FR, BL, BR
     private final SysIdRoutine sysId;
@@ -137,6 +148,39 @@ public class Drive extends SubsystemBase implements Vision.VisionConsumer {
                 new SwerveModulePosition(),
                 new SwerveModulePosition()
             };
+
+    private final LoggedNetworkGains driveGains =
+            new LoggedNetworkGains(
+                    "Drive",
+                    TunerConstants.driveGains.kP,
+                    TunerConstants.driveGains.kI,
+                    TunerConstants.driveGains.kD,
+                    TunerConstants.driveGains.kS,
+                    TunerConstants.driveGains.kV,
+                    TunerConstants.driveGains.kA,
+                    TunerConstants.driveGains.kG,
+                    RotationsPerSecond.zero(),
+                    RotationsPerSecond.per(Second).zero(),
+                    0.0,
+                    "Drive");
+
+    private final LoggedNetworkGains turnGains =
+            new LoggedNetworkGains(
+                    "Turn",
+                    TunerConstants.turnGains.kP,
+                    TunerConstants.turnGains.kI,
+                    TunerConstants.turnGains.kD,
+                    TunerConstants.turnGains.kS,
+                    TunerConstants.turnGains.kV,
+                    TunerConstants.turnGains.kA,
+                    TunerConstants.turnGains.kG,
+                    RadiansPerSecond.of(
+                            TunerConstants.motionMagicSteerGains.MotionMagicCruiseVelocity),
+                    RadiansPerSecondPerSecond.of(
+                            TunerConstants.motionMagicSteerGains.MotionMagicAcceleration),
+                    TunerConstants.motionMagicSteerGains.MotionMagicJerk,
+                    "Drive");
+
     private final SwerveDrivePoseEstimator poseEstimator =
             new SwerveDrivePoseEstimator(
                     kinematics, rawGyroRotation, lastModulePositions, new Pose2d());
@@ -185,6 +229,7 @@ public class Drive extends SubsystemBase implements Vision.VisionConsumer {
                 PP_CONFIG,
                 () -> DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Red,
                 this);
+
         Pathfinding.setPathfinder(new LocalADStarAK());
         PathPlannerLogging.setLogActivePathCallback(
                 (activePath) -> {
@@ -213,9 +258,20 @@ public class Drive extends SubsystemBase implements Vision.VisionConsumer {
     @Override
     public void periodic() {
         odometryLock.lock(); // Prevents odometry updates while reading data
+        SwerveTurnAngle[0] = modules[0].getAngle().getMeasure();
+        SwerveTurnAngle[1] = modules[1].getAngle().getMeasure();
+        SwerveTurnAngle[2] = modules[2].getAngle().getMeasure();
+        SwerveTurnAngle[3] = modules[3].getAngle().getMeasure();
+
+        SwerveDriveAngle[0] = Radians.of(modules[0].getWheelRadiusCharacterizationPosition());
+        SwerveDriveAngle[1] = Radians.of(modules[1].getWheelRadiusCharacterizationPosition());
+        SwerveDriveAngle[2] = Radians.of(modules[2].getWheelRadiusCharacterizationPosition());
+        SwerveDriveAngle[3] = Radians.of(modules[3].getWheelRadiusCharacterizationPosition());
         gyroIO.updateInputs(gyroInputs);
         Logger.processInputs("Drive/Gyro", gyroInputs);
+
         for (var module : modules) {
+            module.updateGains(turnGains, driveGains);
             module.periodic();
         }
         odometryLock.unlock();
@@ -319,6 +375,10 @@ public class Drive extends SubsystemBase implements Vision.VisionConsumer {
         stop();
     }
 
+    public Command lock() {
+        return runOnce(this::stopWithX);
+    }
+
     /** Returns a command to run a quasistatic test in the specified direction. */
     public Command sysIdQuasistatic(SysIdRoutine.Direction direction) {
         return run(() -> runCharacterization(0.0))
@@ -343,6 +403,10 @@ public class Drive extends SubsystemBase implements Vision.VisionConsumer {
         return states;
     }
 
+    public void resetGyro() {
+        gyroIO.reset();
+    }
+
     /** Returns the module positions (turn angles and drive positions) for all of the modules. */
     private SwerveModulePosition[] getModulePositions() {
         SwerveModulePosition[] states = new SwerveModulePosition[4];
@@ -354,8 +418,14 @@ public class Drive extends SubsystemBase implements Vision.VisionConsumer {
 
     /** Returns the measured chassis speeds of the robot. */
     @AutoLogOutput(key = "SwerveChassisSpeeds/Measured")
-    private ChassisSpeeds getChassisSpeeds() {
+    public ChassisSpeeds getChassisSpeeds() {
         return kinematics.toChassisSpeeds(getModuleStates());
+    }
+
+    @AutoLogOutput(key = "SwerveChassisSpeeds/MeasuredFieldOriented")
+    public ChassisSpeeds getFieldOrientedSpeeds() {
+        return ChassisSpeeds.fromRobotRelativeSpeeds(
+                kinematics.toChassisSpeeds(getModuleStates()), getRotation());
     }
 
     /** Returns the position of each module in radians. */
@@ -423,6 +493,21 @@ public class Drive extends SubsystemBase implements Vision.VisionConsumer {
             new Translation2d(TunerConstants.BackLeft.LocationX, TunerConstants.BackLeft.LocationY),
             new Translation2d(
                     TunerConstants.BackRight.LocationX, TunerConstants.BackRight.LocationY)
+        };
+    }
+
+    @Override
+    public void setVoltage(@NotNull Voltage voltage) {
+        for (int i = 0; i < 4; i++) {
+            modules[i].runCharacterization(voltage.in(Volts));
+        }
+    }
+
+    @Override
+    public @NotNull Function1<Voltage, Unit> getSetVoltageConsumer() {
+        return (voltage) -> {
+            setVoltage(voltage);
+            return null;
         };
     }
 }

@@ -307,6 +307,10 @@ public class DriveCommands {
                                         })));
     }
 
+    public static Command stop() {
+        return drive.runOnce(drive::stop);
+    }
+
     private static class WheelRadiusCharacterizationState {
         double[] positions = new double[4];
         Rotation2d lastAngle = new Rotation2d();

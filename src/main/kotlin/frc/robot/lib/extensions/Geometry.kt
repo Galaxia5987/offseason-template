@@ -77,6 +77,9 @@ fun Translation2d.toPose(): Pose2d = Pose2d(this, Rotation2d())
 fun Translation2d.rotationToPoint(targetPoint: Translation2d): Rotation2d =
     Rotation2d(targetPoint.x - this.x, targetPoint.y - this.y)
 
+fun Translation2d.rotationFromPoint(translation: Translation2d): Rotation2d =
+    Rotation2d(this.x - translation.x, this.y - translation.y)
+
 fun Rotation2d.flip(): Rotation2d = FlippingUtil.flipFieldRotation(this)
 
 fun Rotation2d.flipIfNeeded(): Rotation2d = if (IS_RED) this.flip() else this

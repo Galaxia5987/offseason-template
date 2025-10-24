@@ -20,6 +20,7 @@ import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Alert.AlertType;
+import frc.robot.lib.LoggedNetworkGains;
 import org.littletonrobotics.junction.Logger;
 
 public class Module {
@@ -93,6 +94,11 @@ public class Module {
         io.setTurnOpenLoop(0.0);
     }
 
+    public void runTurnCharacterization(double output) {
+        io.setDriveOpenLoop(0.0);
+        io.setTurnOpenLoop(output);
+    }
+
     /** Returns the current turn angle of the module. */
     public Rotation2d getAngle() {
         return inputs.turnPosition;
@@ -136,5 +142,9 @@ public class Module {
     /** Returns the module velocity in rotations/sec (Phoenix native units). */
     public double getFFCharacterizationVelocity() {
         return Units.radiansToRotations(inputs.driveVelocityRadPerSec);
+    }
+
+    public void updateGains(LoggedNetworkGains turnGains, LoggedNetworkGains driveGains) {
+        io.updateGains(turnGains, driveGains);
     }
 }

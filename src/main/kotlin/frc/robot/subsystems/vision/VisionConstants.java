@@ -23,33 +23,23 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class VisionConstants {
+    public static String LOG_PREFIX = "Subsystems/Vision/";
     // AprilTag layout
     public static AprilTagFieldLayout aprilTagLayout =
             AprilTagFieldLayout.loadField(AprilTagFields.kDefaultField);
 
     // Camera names, must match names configured on coprocessor
-    public static String FrontRightOVName = "frontRight";
-    public static String FrontLeftOVName = "frontLeft";
-    public static String FeederOVName = "feeder";
+    public static String turretOVName = "turret";
 
     // Robot to camera transforms
     // (Not used by Limelight, configure in web UI instead)
-    public static Transform3d robotToFrontRightOV =
-            new Transform3d(
-                    0.24886, -0.11289, 0.59876, new Rotation3d(0.0, Math.toRadians(35.0), 0.0));
-    public static Transform3d robotToFrontLeftOV =
-            new Transform3d(
-                    0.24886, 0.11411, 0.59876, new Rotation3d(0.0, Math.toRadians(35.0), 0.0));
-    public static Transform3d robotToFeederOV =
-            new Transform3d(
-                    0.22306, 0.21289, 0.76926, new Rotation3d(0.0, Math.toRadians(-40.0), 0.0));
+    public static Transform3d robotToTurretCamera =
+            new Transform3d(0.24886, -0.11289, 0.59876, new Rotation3d());
 
     public static Map<String, Transform3d> OVNameToTransform =
             new HashMap<>() {
                 {
-                    put(FrontRightOVName, robotToFrontRightOV);
-                    put(FrontLeftOVName, robotToFrontLeftOV);
-                    put(FeederOVName, robotToFeederOV);
+                    put(turretOVName, robotToTurretCamera);
                 }
             };
 

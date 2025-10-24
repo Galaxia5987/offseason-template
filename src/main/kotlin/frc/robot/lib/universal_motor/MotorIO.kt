@@ -6,14 +6,13 @@ import edu.wpi.first.units.measure.Angle
 import edu.wpi.first.units.measure.AngularVelocity
 import edu.wpi.first.units.measure.Current
 import edu.wpi.first.units.measure.Distance
-import edu.wpi.first.units.measure.Velocity
 import edu.wpi.first.units.measure.Voltage
 import frc.robot.lib.extensions.amps
 import frc.robot.lib.extensions.deg
 import frc.robot.lib.extensions.m
-import frc.robot.lib.extensions.rotationsPerSecond
+import frc.robot.lib.extensions.sec
 import frc.robot.lib.extensions.volts
-import org.team9432.annotation.Logged
+import org.team5987.annotation.Logged
 
 /**
  * Interface that defines the common motor input/output operations for both real
@@ -57,12 +56,13 @@ interface MotorIO {
          */
         var distance: Distance = 0.m
 
+        var velocity: AngularVelocity = 0.deg.per(sec)
+
         /** Voltage applied to the motor. */
         var voltage: Voltage = 0.volts
 
         /** Current drawn by the motor. */
         var current: Current = 0.amps
-
-        var velocity: AngularVelocity = 0.rotationsPerSecond
+        var absoluteEncoderPositionNoOffset: Angle = 0.deg
     }
 }
