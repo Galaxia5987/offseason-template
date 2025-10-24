@@ -35,3 +35,4 @@ public val config =
                 SensorToMechanismRatio = 2.0 / 3.0
             }
     }
+

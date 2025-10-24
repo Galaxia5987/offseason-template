@@ -63,18 +63,15 @@ object RobotContainer {
     }
 
     private fun configureButtonBindings() {
-        driverController.povDown().onTrue(Elevator.setLevel(ElevatorPositions.LEVEL1)) // (-_-)
-        driverController.povLeft().onTrue(Elevator.setLevel(ElevatorPositions.LEVEL2)) // (~_~)
-        driverController.povRight().onTrue(Elevator.setLevel(ElevatorPositions.LEVEL3)) // (0_0)
-        driverController.povUp().onTrue(Elevator.setLevel(ElevatorPositions.LEVEL4)) // (*u*)
-
-        driverController.y().onTrue(Wrist.setAnglePosition(WristPositions.OPEN))
-        driverController.a().onTrue(Wrist.setAnglePosition(WristPositions.CLOSE))
+        driverController.a().onTrue(level0WristElevator()) // (-_-)
+        driverController.povDown().onTrue(level1WristElevator()) // (~_~)
+        driverController.povLeft().onTrue(level2WristElevator()) // (o_o)
+        driverController.povRight().onTrue(level3WristElevator()) // (0_0)
+        driverController.povUp().onTrue(level4WristElevator()) // (^u^)
 
         driverController.b().onTrue(Gripper.inTake())
         driverController.x().onTrue(Gripper.outTake())
-        driverController.leftBumper().onTrue(Gripper.stop())
-
+        driverController.y().onTrue(Gripper.stop())
 
 
     }

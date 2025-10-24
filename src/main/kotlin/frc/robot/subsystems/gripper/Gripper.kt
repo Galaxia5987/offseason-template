@@ -17,6 +17,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase
 import frc.robot.lib.extensions.degrees
 import frc.robot.lib.extensions.get
 import frc.robot.lib.extensions.volts
+import frc.robot.lib.unified_canrange.UnifiedCANRange
 import frc.robot.lib.universal_motor.UniversalTalonFX
 import frc.robot.subsystems.wrist.Wrist.setPoint
 import frc.robot.subsystems.wrist.ligament
@@ -30,6 +31,12 @@ object Gripper : SubsystemBase() {
 
     private val motor1: UniversalTalonFX =
         UniversalTalonFX(0, config = config, gearRatio = ratio)
+    private val distanceSensor =
+        UnifiedCANRange(
+            DISTANCE_SENSOR_ID,
+            configuration = DISTANCE_SENSOR_CONFIG,
+            subsystemName = name
+        )
     private val setVoltageRequest: VoltageOut = VoltageOut(0.0)
 
     fun setVoltage(voltage: Voltage): Command {
