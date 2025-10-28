@@ -12,7 +12,7 @@ const val LINEAR_KP = 5.0
 const val LINEAR_KI = 0.0
 const val LINEAR_KD = 0.0
 
-const val ANGULAR_KP = 5.0
+const val ANGULAR_KP = 10.0
 const val ANGULAR_KI = 0.0
 const val ANGULAR_KD = 0.0
 

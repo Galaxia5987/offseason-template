@@ -19,12 +19,7 @@ import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
-import com.ctre.phoenix6.controls.PositionTorqueCurrentFOC;
-import com.ctre.phoenix6.controls.PositionVoltage;
-import com.ctre.phoenix6.controls.TorqueCurrentFOC;
-import com.ctre.phoenix6.controls.VelocityTorqueCurrentFOC;
-import com.ctre.phoenix6.controls.VelocityVoltage;
-import com.ctre.phoenix6.controls.VoltageOut;
+import com.ctre.phoenix6.controls.*;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.ParentDevice;
 import com.ctre.phoenix6.hardware.TalonFX;
@@ -40,6 +35,7 @@ import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Voltage;
+import frc.robot.lib.LoggedNetworkGains;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.PhoenixOdometryThread;
 import frc.robot.subsystems.drive.TunerConstants;
@@ -63,13 +59,13 @@ public class ModuleIOTalonFX implements ModuleIO {
 
     // Voltage control requests
     private final VoltageOut voltageRequest = new VoltageOut(0);
-    private final PositionVoltage positionVoltageRequest = new PositionVoltage(0.0);
+    private final MotionMagicVoltage positionVoltageRequest = new MotionMagicVoltage(0.0);
     private final VelocityVoltage velocityVoltageRequest = new VelocityVoltage(0.0);
 
     // Torque-current control requests
     private final TorqueCurrentFOC torqueCurrentRequest = new TorqueCurrentFOC(0);
-    private final PositionTorqueCurrentFOC positionTorqueCurrentRequest =
-            new PositionTorqueCurrentFOC(0.0);
+    private final MotionMagicTorqueCurrentFOC positionTorqueCurrentRequest =
+            new MotionMagicTorqueCurrentFOC(0.0);
     private final VelocityTorqueCurrentFOC velocityTorqueCurrentRequest =
             new VelocityTorqueCurrentFOC(0.0);
 
@@ -190,6 +186,13 @@ public class ModuleIOTalonFX implements ModuleIO {
                 turnAppliedVolts,
                 turnCurrent);
         ParentDevice.optimizeBusUtilizationForAll(driveTalon, turnTalon);
+    }
+
+    @Override
+    public void updateGains(LoggedNetworkGains turnGains, LoggedNetworkGains driveGains) {
+        turnTalon.getConfigurator().apply(turnGains.toSlotConfig());
+        turnTalon.getConfigurator().apply(turnGains.toMotionMagicConfig());
+        driveTalon.getConfigurator().apply(driveGains.toSlotConfig());
     }
 
     @Override

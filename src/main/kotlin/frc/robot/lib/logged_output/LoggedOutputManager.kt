@@ -1,41 +1,54 @@
 package frc.robot.lib.logged_output
 
+import edu.wpi.first.math.controller.ProfiledPIDController
 import edu.wpi.first.units.Measure
 import edu.wpi.first.util.WPISerializable
 import edu.wpi.first.util.struct.StructSerializable
 import edu.wpi.first.wpilibj.DriverStation
+import edu.wpi.first.wpilibj.util.Color
 import edu.wpi.first.wpilibj2.command.SubsystemBase
+import frc.robot.lib.extensions.log
 import frc.robot.lib.extensions.toPrimitiveTypeJava
+import frc.robot.lib.ifNotNull
 import java.util.function.*
 import kotlin.reflect.KFunction
 import kotlin.reflect.KProperty0
 import kotlin.reflect.jvm.javaGetter
 import kotlin.reflect.jvm.javaMethod
-import org.littletonrobotics.junction.Logger
+import org.littletonrobotics.junction.Logger.recordOutput
 import org.littletonrobotics.junction.mechanism.LoggedMechanism2d
 
 object LoggedOutputManager : SubsystemBase() {
     private val callbacks = mutableListOf<Runnable>()
 
-    override fun periodic() {
-        callbacks.forEach { it.run() }
-    }
+    override fun periodic() = callbacks.forEach { it.run() }
 
     private fun makeKey(
         key: String,
+        path: String = "",
         name: String,
         declaringClass: String?
     ): String {
-        return key.ifBlank { "${declaringClass ?: "<unknown>"}//$name" }
+        return if (path.isBlank())
+            key.ifBlank { "${declaringClass ?: "<unknown>"}/$name" }
+        else "$path/${key.ifBlank { "/$name" }}"
     }
 
-    fun <T> registerField(key: String, property: KProperty0<T>) {
+    fun <T> registerField(
+        key: String,
+        property: KProperty0<T>,
+        path: String = ""
+    ) {
         val declaringClass = property.javaGetter?.declaringClass?.simpleName
-        val actualKey = makeKey(key, property.name, declaringClass)
+        val actualKey = makeKey(key, path, property.name, declaringClass)
         register(actualKey, property::get)
     }
 
-    fun <T> registerMethod(key: String, function: KFunction<T>) {
+    fun <T> registerMethod(
+        key: String,
+        function: KFunction<T>,
+        path: String = "",
+    ) {
         if (function.parameters.isNotEmpty()) {
             throw IllegalArgumentException(
                 "Only zero-arg functions are supported: $key"
@@ -44,145 +57,140 @@ object LoggedOutputManager : SubsystemBase() {
 
         val declaringClass =
             function.javaMethod?.declaringClass?.simpleName ?: "<top-level>"
-        val actualKey = makeKey(key, function.name, declaringClass)
+        val actualKey = makeKey(key, path, function.name, declaringClass)
         register(actualKey, function::call)
     }
 
     // Taken from advantageKit's `AutoLogOutputManager`,
     // https://github.com/rakrakon/AdvantageKit/blob/main/akit/src/main/java/org/littletonrobotics/junction/AutoLogOutputManager.java
+    private fun addRunnable(action: () -> Unit) {
+        callbacks.add(Runnable(action))
+    }
+
     @Suppress("UNCHECKED_CAST")
     private fun register(key: String, supplier: Supplier<*>) {
-        val type = supplier.get()::class.java.toPrimitiveTypeJava()!!
-
+        fun value() = supplier.get()
+        val type = value()::class.java.toPrimitiveTypeJava()!!
         if (!type.isArray) {
             // Single types
-            if (type == Boolean::class.javaPrimitiveType) {
-                callbacks.add(
-                    Runnable {
-                        val value = supplier.get()
-                        if (value != null)
-                            Logger.recordOutput(key, value as Boolean)
+            when {
+                type == Boolean::class.javaPrimitiveType ->
+                    addRunnable {
+                        value().ifNotNull { recordOutput(key, it as Boolean) }
                     }
-                )
-            } else if (type == Int::class.javaPrimitiveType) {
-                callbacks.add(
-                    Runnable {
-                        val value = supplier.get()
-                        if (value != null)
-                            Logger.recordOutput(key, value as Int)
+                type == Int::class.javaPrimitiveType ->
+                    addRunnable {
+                        value().ifNotNull { recordOutput(key, it as Int) }
                     }
-                )
-            } else if (type == Long::class.javaPrimitiveType) {
-                callbacks.add(
-                    Runnable {
-                        val value = supplier.get()
-                        if (value != null)
-                            Logger.recordOutput(key, value as Long)
+                type == Long::class.javaPrimitiveType ->
+                    addRunnable {
+                        value().ifNotNull { recordOutput(key, it as Long) }
                     }
-                )
-            } else if (type == Float::class.javaPrimitiveType) {
-                callbacks.add(
-                    Runnable {
-                        val value = supplier.get()
-                        if (value != null)
-                            Logger.recordOutput(key, value as Float)
+                type == Float::class.javaPrimitiveType ->
+                    addRunnable {
+                        value().ifNotNull { recordOutput(key, it as Float) }
                     }
-                )
-            } else if (type == Double::class.javaPrimitiveType) {
-                callbacks.add(
-                    Runnable {
-                        val value = supplier.get()
-                        if (value != null)
-                            Logger.recordOutput(key, value as Double)
+                type == Double::class.javaPrimitiveType ->
+                    addRunnable {
+                        value().ifNotNull { recordOutput(key, it as Double) }
                     }
-                )
-            } else if (type == String::class.java) {
-                callbacks.add(
-                    Runnable {
-                        val value = supplier.get()
-                        if (value != null)
-                            Logger.recordOutput(key, value as String?)
+                type == String::class.javaPrimitiveType ->
+                    addRunnable {
+                        value().ifNotNull { recordOutput(key, it as String?) }
                     }
-                )
-            } else if (type.isEnum) {
-                callbacks.add(
-                    Runnable {
-                        val value = supplier.get()
-                        if (
-                            value != null
-                        ) // Cannot cast to enum subclass, log the name directly
-                         Logger.recordOutput(key, (value as Enum<*>).name)
+                type == LoggedMechanism2d::class.java ->
+                    addRunnable {
+                        value().ifNotNull {
+                            recordOutput(key, value() as LoggedMechanism2d?)
+                        }
                     }
-                )
-            } else if (BooleanSupplier::class.java.isAssignableFrom(type)) {
-                callbacks.add(
-                    Runnable {
-                        val value = supplier.get()
-                        if (value != null)
-                            Logger.recordOutput(key, value as BooleanSupplier?)
-                    }
-                )
-            } else if (IntSupplier::class.java.isAssignableFrom(type)) {
-                callbacks.add(
-                    Runnable {
-                        val value = supplier.get()
-                        if (value != null)
-                            Logger.recordOutput(key, value as IntSupplier?)
-                    }
-                )
-            } else if (LongSupplier::class.java.isAssignableFrom(type)) {
-                callbacks.add(
-                    Runnable {
-                        val value = supplier.get()
-                        if (value != null)
-                            Logger.recordOutput(key, value as LongSupplier?)
-                    }
-                )
-            } else if (DoubleSupplier::class.java.isAssignableFrom(type)) {
-                callbacks.add(
-                    Runnable {
-                        val value = supplier.get()
-                        if (value != null)
-                            Logger.recordOutput(key, value as DoubleSupplier?)
-                    }
-                )
-            } else if (Measure::class.java.isAssignableFrom(type)) {
-                callbacks.add(
-                    Runnable {
-                        val value = supplier.get()
-                        if (value != null)
-                            Logger.recordOutput(key, value as Measure<*>?)
-                    }
-                )
-            } else if (type == LoggedMechanism2d::class.java) {
-                callbacks.add(
-                    Runnable {
-                        val value = supplier.get()
-                        if (value != null)
-                            Logger.recordOutput(
-                                key,
-                                value as LoggedMechanism2d?
+                type == Color::class.java ->
+                    addRunnable {
+                        value().ifNotNull {
+                            recordOutput(
+                                "$key/red",
+                                (value() as Color).red * 255
                             )
+                            recordOutput(
+                                "$key/blue",
+                                (value() as Color).blue * 255
+                            )
+                            recordOutput(
+                                "$key/green",
+                                (value() as Color).green * 255
+                            )
+                        }
                     }
-                )
-            } else if (type.isRecord) {
-                callbacks.add(
-                    Runnable {
-                        val value = supplier.get()
-                        if (value != null)
-                            Logger.recordOutput(key, value as Record)
+                type == Color::class.java ->
+                    addRunnable {
+                        value().ifNotNull {
+                            recordOutput(
+                                "$key/red",
+                                (value() as Color).red * 255
+                            )
+                            recordOutput(
+                                "$key/blue",
+                                (value() as Color).blue * 255
+                            )
+                            recordOutput(
+                                "$key/green",
+                                (value() as Color).green * 255
+                            )
+                        }
                     }
-                )
-            } else {
-                callbacks.add(
-                    Runnable {
-                        val value = supplier.get()
-                        if (value != null)
+                type.isEnum ->
+                    addRunnable {
+                        value().ifNotNull {
+                            recordOutput(key, (it as Enum<*>).name)
+                        }
+                    }
+                type.isRecord ->
+                    addRunnable {
+                        value().ifNotNull { recordOutput(key, it as Record) }
+                    }
+                type == ProfiledPIDController::class.java -> {
+                    addRunnable {
+                        value().ifNotNull {
+                            (it as ProfiledPIDController).log(key)
+                        }
+                    }
+                }
+                BooleanSupplier::class.java.isAssignableFrom(type) ->
+                    addRunnable {
+                        value().ifNotNull {
+                            recordOutput(key, it as BooleanSupplier?)
+                        }
+                    }
+                IntSupplier::class.java.isAssignableFrom(type) ->
+                    addRunnable {
+                        value().ifNotNull {
+                            recordOutput(key, it as IntSupplier?)
+                        }
+                    }
+                LongSupplier::class.java.isAssignableFrom(type) ->
+                    addRunnable {
+                        value().ifNotNull {
+                            recordOutput(key, it as LongSupplier?)
+                        }
+                    }
+                DoubleSupplier::class.java.isAssignableFrom(type) ->
+                    addRunnable {
+                        value().ifNotNull {
+                            recordOutput(key, it as DoubleSupplier?)
+                        }
+                    }
+                Measure::class.java.isAssignableFrom(type) ->
+                    addRunnable {
+                        value().ifNotNull {
+                            recordOutput(key, it as Measure<*>)
+                        }
+                    }
+                else -> {
+                    addRunnable {
+                        value().ifNotNull {
                             try {
-                                Logger.recordOutput(
-                                    key,
-                                    value as WPISerializable
-                                )
+
+                                recordOutput(key, value() as WPISerializable)
                             } catch (e: ClassCastException) {
                                 DriverStation.reportError(
                                     "[LoggedOutputManager] Auto serialization is not supported for type " +
@@ -190,100 +198,62 @@ object LoggedOutputManager : SubsystemBase() {
                                     false
                                 )
                             }
+                        }
                     }
-                )
+                }
             }
         } else if (!type.componentType.isArray) {
             // Array types
             val componentType = type.componentType
-            if (componentType == Byte::class.javaPrimitiveType) {
-                callbacks.add(
-                    Runnable {
-                        val value = supplier.get()
-                        if (value != null)
-                            Logger.recordOutput(key, value as ByteArray?)
-                    }
-                )
-            } else if (componentType == Boolean::class.javaPrimitiveType) {
-                callbacks.add(
-                    Runnable {
-                        val value = supplier.get()
-                        if (value != null)
-                            Logger.recordOutput(key, value as BooleanArray?)
-                    }
-                )
-            } else if (componentType == Int::class.javaPrimitiveType) {
-                callbacks.add(
-                    Runnable {
-                        val value = supplier.get()
-                        if (value != null)
-                            Logger.recordOutput(key, value as IntArray?)
-                    }
-                )
-            } else if (componentType == Long::class.javaPrimitiveType) {
-                callbacks.add(
-                    Runnable {
-                        val value = supplier.get()
-                        if (value != null)
-                            Logger.recordOutput(key, value as LongArray?)
-                    }
-                )
-            } else if (componentType == Float::class.javaPrimitiveType) {
-                callbacks.add(
-                    Runnable {
-                        val value = supplier.get()
-                        if (value != null)
-                            Logger.recordOutput(key, value as FloatArray?)
-                    }
-                )
-            } else if (componentType == Double::class.javaPrimitiveType) {
-                callbacks.add(
-                    Runnable {
-                        val value = supplier.get()
-                        if (value != null)
-                            Logger.recordOutput(key, value as DoubleArray?)
-                    }
-                )
-            } else if (componentType == String::class.java) {
-                callbacks.add(
-                    Runnable {
-                        val value = supplier.get()
-                        if (value != null)
-                            Logger.recordOutput(key, value as Array<String?>?)
-                    }
-                )
-            } else if (componentType.isEnum) {
-                callbacks.add(
-                    Runnable {
-                        val value = supplier.get()
-                        if (value != null) {
-                            // Cannot cast to enum subclass, log the names directly
-                            val enumValue = value as Array<Enum<*>>
-                            val names = arrayOfNulls<String>(enumValue.size)
-                            for (i in enumValue.indices) {
-                                names[i] = enumValue[i].name
-                            }
-                            Logger.recordOutput(key, names)
+            when {
+                componentType == Byte::class.javaPrimitiveType ->
+                    addRunnable {
+                        value().ifNotNull {
+                            recordOutput(key, it as ByteArray?)
                         }
                     }
-                )
-            } else if (componentType.isRecord) {
-                callbacks.add(
-                    Runnable {
-                        val value = supplier.get()
-                        if (value != null)
-                            Logger.recordOutput(key, *value as Array<Record?>)
+                componentType == Boolean::class.javaPrimitiveType ->
+                    addRunnable {
+                        value().ifNotNull { recordOutput(key, it as Boolean) }
                     }
-                )
-            } else {
-                callbacks.add(
-                    Runnable {
-                        val value = supplier.get()
-                        if (value != null) {
+                componentType == Int::class.javaPrimitiveType ->
+                    addRunnable {
+                        value().ifNotNull { recordOutput(key, it as Int) }
+                    }
+                componentType == Long::class.javaPrimitiveType ->
+                    addRunnable {
+                        value().ifNotNull { recordOutput(key, it as Long) }
+                    }
+                componentType == Float::class.javaPrimitiveType ->
+                    addRunnable {
+                        value().ifNotNull { recordOutput(key, it as Float) }
+                    }
+                componentType == Double::class.javaPrimitiveType ->
+                    addRunnable {
+                        value().ifNotNull { recordOutput(key, it as Double) }
+                    }
+                componentType == String::class.javaPrimitiveType ->
+                    addRunnable {
+                        value().ifNotNull { recordOutput(key, it as String?) }
+                    }
+                componentType.isEnum ->
+                    addRunnable {
+                        value().ifNotNull {
+                            recordOutput(key, (it as Enum<*>).name)
+                        }
+                    }
+                componentType.isRecord ->
+                    addRunnable {
+                        value().ifNotNull { recordOutput(key, it as Record) }
+                    }
+                else -> {
+                    addRunnable {
+                        value().ifNotNull {
                             try {
-                                Logger.recordOutput(
+
+                                recordOutput(
                                     key,
-                                    *value as Array<StructSerializable?>
+                                    *value() as Array<StructSerializable?>
                                 )
                             } catch (e: ClassCastException) {
                                 DriverStation.reportError(
@@ -294,128 +264,60 @@ object LoggedOutputManager : SubsystemBase() {
                             }
                         }
                     }
-                )
+                }
             }
         } else {
             // 2D array types
             val componentType = type.componentType.componentType
-            if (componentType == Byte::class.javaPrimitiveType) {
-                callbacks.add(
-                    Runnable {
-                        val value = supplier.get()
-                        if (value != null)
-                            Logger.recordOutput(
-                                key,
-                                value as Array<ByteArray?>?
-                            )
-                    }
-                )
-            } else if (componentType == Boolean::class.javaPrimitiveType) {
-                callbacks.add(
-                    Runnable {
-                        val value = supplier.get()
-                        if (value != null)
-                            Logger.recordOutput(
-                                key,
-                                value as Array<BooleanArray?>?
-                            )
-                    }
-                )
-            } else if (componentType == Int::class.javaPrimitiveType) {
-                callbacks.add(
-                    Runnable {
-                        val value = supplier.get()
-                        if (value != null)
-                            Logger.recordOutput(key, value as Array<IntArray?>?)
-                    }
-                )
-            } else if (componentType == Long::class.javaPrimitiveType) {
-                callbacks.add(
-                    Runnable {
-                        val value = supplier.get()
-                        if (value != null)
-                            Logger.recordOutput(
-                                key,
-                                value as Array<LongArray?>?
-                            )
-                    }
-                )
-            } else if (componentType == Float::class.javaPrimitiveType) {
-                callbacks.add(
-                    Runnable {
-                        val value = supplier.get()
-                        if (value != null)
-                            Logger.recordOutput(
-                                key,
-                                value as Array<FloatArray?>?
-                            )
-                    }
-                )
-            } else if (componentType == Double::class.javaPrimitiveType) {
-                callbacks.add(
-                    Runnable {
-                        val value = supplier.get()
-                        if (value != null)
-                            Logger.recordOutput(
-                                key,
-                                value as Array<DoubleArray?>?
-                            )
-                    }
-                )
-            } else if (componentType == String::class.java) {
-                callbacks.add(
-                    Runnable {
-                        val value = supplier.get()
-                        if (value != null)
-                            Logger.recordOutput(
-                                key,
-                                value as Array<Array<String?>?>?
-                            )
-                    }
-                )
-            } else if (componentType.isEnum) {
-                callbacks.add(
-                    Runnable {
-                        val value = supplier.get()
-                        if (value != null) {
-                            // Cannot cast to enum subclass, log the names directly
-                            val enumValue = value as Array<Array<Enum<*>>>
-                            val names: Array<Array<String?>?> =
-                                arrayOfNulls(enumValue.size)
-                            for (row in enumValue.indices) {
-                                val rowValue = enumValue[row]
-                                names[row] = arrayOfNulls(rowValue.size)
-                                for (column in rowValue.indices) {
-                                    names[row]?.set(
-                                        column,
-                                        rowValue[column].name
-                                    )
-                                }
-                            }
-                            Logger.recordOutput(key, names)
+            when {
+                componentType == Byte::class.javaPrimitiveType ->
+                    addRunnable {
+                        value().ifNotNull {
+                            recordOutput(key, it as ByteArray?)
                         }
                     }
-                )
-            } else if (componentType.isRecord) {
-                callbacks.add(
-                    Runnable {
-                        val value = supplier.get()
-                        if (value != null)
-                            Logger.recordOutput(
-                                key,
-                                value as Array<Array<Record>?>?
-                            )
+                componentType == Boolean::class.javaPrimitiveType ->
+                    addRunnable {
+                        value().ifNotNull { recordOutput(key, it as Boolean) }
                     }
-                )
-            } else {
-                callbacks.add(
-                    Runnable {
-                        val value = supplier.get()
-                        if (value != null) {
+                componentType == Int::class.javaPrimitiveType ->
+                    addRunnable {
+                        value().ifNotNull { recordOutput(key, it as Int) }
+                    }
+                componentType == Long::class.javaPrimitiveType ->
+                    addRunnable {
+                        value().ifNotNull { recordOutput(key, it as Long) }
+                    }
+                componentType == Float::class.javaPrimitiveType ->
+                    addRunnable {
+                        value().ifNotNull { recordOutput(key, it as Float) }
+                    }
+                componentType == Double::class.javaPrimitiveType ->
+                    addRunnable {
+                        value().ifNotNull { recordOutput(key, it as Double) }
+                    }
+                componentType == String::class.javaPrimitiveType ->
+                    addRunnable {
+                        value().ifNotNull { recordOutput(key, it as String?) }
+                    }
+                componentType.isEnum ->
+                    addRunnable {
+                        value().ifNotNull {
+                            recordOutput(key, (it as Enum<*>).name)
+                        }
+                    }
+                componentType.isRecord ->
+                    addRunnable {
+                        value().ifNotNull { recordOutput(key, it as Record) }
+                    }
+                else -> {
+                    addRunnable {
+                        value().ifNotNull {
                             try {
-                                Logger.recordOutput(
+
+                                recordOutput(
                                     key,
-                                    value as Array<Array<StructSerializable>?>?
+                                    it as Array<Array<StructSerializable>?>?
                                 )
                             } catch (e: ClassCastException) {
                                 DriverStation.reportError(
@@ -426,7 +328,7 @@ object LoggedOutputManager : SubsystemBase() {
                             }
                         }
                     }
-                )
+                }
             }
         }
     }
