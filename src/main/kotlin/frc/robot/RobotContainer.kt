@@ -7,6 +7,7 @@ import edu.wpi.first.math.geometry.Rotation2d
 import edu.wpi.first.wpilibj2.command.Command
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine
+import frc.robot.autonomous.path_center
 import frc.robot.lib.extensions.enableAutoLogOutputFor
 import frc.robot.lib.extensions.volts
 import frc.robot.subsystems.drive.DriveCommands
@@ -58,14 +59,21 @@ object RobotContainer {
         driverController.povLeft().onTrue(elevator.GoToL2())
         driverController.povRight().onTrue(elevator.GoToL3())
         driverController.povDown().onTrue(elevator.GoToL1())
-        driverController.leftBumper().whileTrue(gripper.output()).whileFalse(gripper.setVoltage(0.0.volts))
-        driverController.rightBumper().whileTrue(gripper.input()).whileFalse(gripper.setVoltage(0.0.volts))
+        driverController
+            .leftBumper()
+            .whileTrue(gripper.output())
+            .whileFalse(gripper.setVoltage(0.0.volts))
+        driverController
+            .rightBumper()
+            .whileTrue(gripper.input())
+            .whileFalse(gripper.setVoltage(0.0.volts))
 
         driverController.b().whileTrue(intaking())
         driverController.x().whileTrue(setIntTaking())
         driverController.y().whileTrue(gripper.intakeByGripperSensor())
         driverController.a().whileTrue(gripper.outtakeByGripperSensor())
 
+        IS_RED
     }
 
     fun getAutonomousCommand(): Command = autoChooser.get()
@@ -74,7 +82,10 @@ object RobotContainer {
         val namedCommands: Map<String, Command> = mapOf()
 
         NamedCommands.registerCommands(namedCommands)
-
+        autoChooser.addOption(
+            "path_center",
+            path_center()
+        )
         // Set up SysId routines
         autoChooser.addOption(
             "Drive Wheel Radius Characterization",

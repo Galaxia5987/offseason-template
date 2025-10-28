@@ -29,10 +29,10 @@ class Wrist : SubsystemBase() {
                 }
             Slot0 =
                 Slot0Configs().apply {
-                    kP=1.0
-                    kD=0.25
-//                    kP = 45.0
-//                    kD = 0.3
+                    kP = 1.0
+                    kD = 0.25
+                    //                    kP = 45.0
+                    //                    kD = 0.3
                     GravityType = GravityTypeValue.Arm_Cosine
                     StaticFeedforwardSign =
                         StaticFeedforwardSignValue.UseClosedLoopSign
@@ -62,12 +62,12 @@ class Wrist : SubsystemBase() {
     }
 
     init {
-        wristMotor.resetInternalEncoder()
+        wristMotor.reset()
     }
 
-    fun moveToInTaking(): Command{
+    fun moveToInTaking(): Command {
         return Commands.runOnce({
-            setPoint= WristPositions.InTaking.angle
+            setPoint = WristPositions.InTaking.angle
             wristMotor.setControl(
                 positionRequest.withPosition(WristPositions.InTaking.angle)
             )

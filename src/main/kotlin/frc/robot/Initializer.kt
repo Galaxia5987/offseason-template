@@ -12,10 +12,6 @@ import frc.robot.subsystems.drive.gyroIOs.GyroIOPigeon2
 import frc.robot.subsystems.drive.gyroIOs.GyroIOSim
 import frc.robot.subsystems.elevator.Elevator
 import frc.robot.subsystems.gripper.Gripper
-import frc.robot.subsystems.vision.Vision
-import frc.robot.subsystems.vision.VisionConstants
-import frc.robot.subsystems.vision.VisionIOPhotonVision
-import frc.robot.subsystems.vision.VisionIOPhotonVisionSim
 import frc.robot.subsystems.wrist.Wrist
 import org.ironmaple.simulation.SimulatedArena
 import org.ironmaple.simulation.drivesims.SwerveDriveSimulation
@@ -65,7 +61,7 @@ val drive =
         driveSimulation?.let { it::setSimulationWorldPose } ?: { _: Pose2d -> }
     )
 
-//private val visionIOs =
+// private val visionIOs =
 //    when (CURRENT_MODE) {
 //        Mode.REAL ->
 //            VisionConstants.OVNameToTransform.map {
@@ -82,7 +78,7 @@ val drive =
 //        Mode.REPLAY -> emptyList()
 //    }.toTypedArray()
 //
-//val vision = Vision(drive, *visionIOs)
+// val vision = Vision(drive, *visionIOs)
 val elevator = Elevator()
 val gripper = Gripper()
 val wrist = Wrist()

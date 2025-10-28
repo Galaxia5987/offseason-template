@@ -8,9 +8,7 @@ import frc.robot.subsystems.elevator.Corallevels
 import org.littletonrobotics.junction.AutoLogOutput
 import org.littletonrobotics.junction.networktables.LoggedNetworkBoolean
 
-
-@AutoLogOutput
-var state = Stats.IDEALING
+@AutoLogOutput var state = Stats.IDEALING
 val isIntTaking = Trigger { state == Stats.INTAKING }
 val isOutTaking = Trigger { state == Stats.OUTTAKING }
 
@@ -19,15 +17,16 @@ val isInL2 = Trigger { elevator.setPoint == Corallevels.LEVEL2.position }
 val isInL3 = Trigger { elevator.setPoint == Corallevels.LEVEL3.position }
 val isInl4 = Trigger { elevator.setPoint == Corallevels.LEVEL4.position }
 
-private val simulatedHasCoral = LoggedNetworkBoolean("/Tuning/Gripper/simulatedHasCoral", false)
+private val simulatedHasCoral =
+    LoggedNetworkBoolean("/Tuning/Gripper/simulatedHasCoral", false)
 @AutoLogOutput
 val hasCoral =
-    Trigger { gripper.sensorDistance < 0.1.meters }.or { simulatedHasCoral.get() && isInSimulation.asBoolean }
-
+    Trigger { gripper.sensorDistance < 0.1.meters }
+        .or { simulatedHasCoral.get() && isInSimulation.asBoolean }
 
 fun bindRobotCommands() {
     isIntTaking.apply {
-        and(  hasCoral).onTrue(startOutTaking())
+        and(hasCoral).onTrue(startOutTaking())
         and(hasCoral).onFalse(intaking())
     }
 

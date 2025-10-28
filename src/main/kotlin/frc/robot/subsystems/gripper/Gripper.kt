@@ -65,11 +65,16 @@ class Gripper : SubsystemBase() {
     }
 
     fun intakeByGripperSensor(): Command {
-        return input().andThen(Commands.waitUntil(hasCoral).andThen(stopIntakeOuttake()))
+        return input()
+            .andThen(Commands.waitUntil(hasCoral).andThen(stopIntakeOuttake()))
     }
 
     fun outtakeByGripperSensor(): Command {
-        return output().andThen(Commands.waitUntil(hasCoral.negate()).andThen(stopIntakeOuttake()))
+        return output()
+            .andThen(
+                Commands.waitUntil(hasCoral.negate())
+                    .andThen(stopIntakeOuttake())
+            )
     }
 
     fun stopIntakeOuttake(): Command {

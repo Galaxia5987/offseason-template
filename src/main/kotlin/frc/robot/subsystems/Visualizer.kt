@@ -10,9 +10,9 @@ import frc.robot.lib.getPose3d
 import frc.robot.lib.getRotation3d
 import frc.robot.lib.getTranslation3d
 import frc.robot.subsystems.drive.Drive
-import org.littletonrobotics.junction.AutoLogOutput
 import kotlin.math.cos
 import kotlin.math.sin
+import org.littletonrobotics.junction.AutoLogOutput
 
 private val swerveModulePose: Array<Translation2d> =
     Drive.getModuleTranslations()
@@ -41,7 +41,6 @@ private val WRIST_ANGLE_OFFSET = Degrees.of(90.0)
 
 class Visualizer {
     private val swerveDrive = frc.robot.drive
-
 
     private val elevator = frc.robot.elevator
     private val wrist = frc.robot.wrist
@@ -168,14 +167,8 @@ class Visualizer {
         val swervePosesTurn = getAllSwerveModulePoseTurn()
         val swervePosesDrive = getAllSwerveModulePoseDrive()
 
-        val intakePose =
-            getPose3d(
-                INITIAL_INTAKE_TRANSLATION
-            )
-        val intakeRollerPose =
-            getPose3d(
-                INITIAL_INTAKE_Roller_TRANSLATION
-            )
+        val intakePose = getPose3d(INITIAL_INTAKE_TRANSLATION)
+        val intakeRollerPose = getPose3d(INITIAL_INTAKE_Roller_TRANSLATION)
 
         val (firstStagePose, secondStagePose) = getElevatorPoses()
         val wristPose =
@@ -199,8 +192,8 @@ class Visualizer {
         val climberPose =
             getPose3d(
                 translation = INITIAL_CLIMBER_TRANSLATION,
-           //     rotation = getRotation3d(pitch = climb.angle.invoke())
-            )
+                //     rotation = getRotation3d(pitch = climb.angle.invoke())
+                )
 
         return arrayOf(
             swervePosesTurn[0],

@@ -15,6 +15,7 @@ package frc.robot.subsystems.drive;
 
 import static edu.wpi.first.units.Units.*;
 
+import choreo.trajectory.SwerveSample;
 import com.ctre.phoenix6.CANBus;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.config.ModuleConfig;
@@ -49,6 +50,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.ConstantsKt;
+import frc.robot.InitializerKt;
 import frc.robot.Mode;
 import frc.robot.lib.LocalADStarAK;
 import frc.robot.lib.LoggedNetworkGains;
@@ -510,4 +512,27 @@ public class Drive extends SubsystemBase implements Vision.VisionConsumer, SysId
             return null;
         };
     }
+
+    public void followTrajectory(SwerveSample sample) {
+        // Get the current pose of the robot
+        Pose2d pose = getPose();
+
+        // Generate the next speeds for the robot
+        ChassisSpeeds speeds = new ChassisSpeeds(
+                sample.vx + TunerConstants.xController.calculate(pose.getX(), sample.x),
+                sample.vy + TunerConstants.yController.calculate(pose.getY(), sample.y),
+                sample.omega + TunerConstants.headingController.calculate(pose.getRotation().getRadians(), sample.heading)
+        );
+
+        // Apply the generated speeds
+        boolean isFlipped =
+                DriverStation.getAlliance().isPresent()
+                        && DriverStation.getAlliance().get() == Alliance.Red;
+        InitializerKt.getDrive().runVelocity(ChassisSpeeds.fromFieldRelativeSpeeds(
+                speeds,
+                isFlipped
+                        ? getRotation().plus(new Rotation2d(Math.PI))
+                        : getRotation()));
+    }
+
 }

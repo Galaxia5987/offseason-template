@@ -20,7 +20,7 @@ val CURRENT_MODE: Mode
             }
         }
 
-val isInSimulation= Trigger{CURRENT_MODE== Mode.SIM}
+val isInSimulation = Trigger { CURRENT_MODE == Mode.SIM }
 
 const val ALT_ROBORIO_SERIAL = ""
 

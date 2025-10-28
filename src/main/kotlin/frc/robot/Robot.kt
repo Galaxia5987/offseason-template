@@ -87,7 +87,7 @@ object Robot : LoggedRobot() {
         Logger.start()
         RobotContainer // Initialize robot container.
 
-        visualizer= Visualizer()
+        visualizer = Visualizer()
 
         enableAutoLogOutputFor(this)
 
