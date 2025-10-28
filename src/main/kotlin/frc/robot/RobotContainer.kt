@@ -9,7 +9,11 @@ import edu.wpi.first.wpilibj2.command.Commands.runOnce
 import edu.wpi.first.wpilibj2.command.button.CommandPS5Controller
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine
 import frc.robot.lib.extensions.enableAutoLogOutputFor
+import frc.robot.lib.extensions.seconds
+import frc.robot.lib.extensions.volts
+import frc.robot.lib.sysid.sysId
 import frc.robot.subsystems.drive.DriveCommands
+import frc.robot.subsystems.gripper.outtakeBySensorWithWristPosition
 import org.ironmaple.simulation.SimulatedArena
 import org.littletonrobotics.junction.AutoLogOutput
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser
@@ -95,9 +99,23 @@ object RobotContainer {
             "Drive SysId (Dynamic Reverse)",
             drive.sysIdDynamic(SysIdRoutine.Direction.kReverse)
         )
+        autoChooser.addOption(
+            "Swerve Turn Characterization",
+            drive.sysId().withForwardRoutineConfig(4.volts.per(seconds), 6.volts, 5.seconds)
+                .withBackwardRoutineConfig(4.volts.per(seconds), 6.volts, 5.seconds).command()
+        )
     }
 
-    private fun bindRobotCommands() {}
+    private fun bindRobotCommands() {
+        driverController.square().onTrue(gripper.intakeByGripperSensor())
+        driverController.circle().onTrue(outtakeBySensorWithWristPosition())
+        //driverController.square().whileTrue(gripper.intake()).whileFalse(gripper.stop())
+        driverController.povUp().onTrue(goToL4()).onFalse(outtakeBySensorWithWristPosition())
+        driverController.povDown().onTrue(goToL1()).onFalse(outtakeBySensorWithWristPosition())
+        driverController.povLeft().onTrue(goToL2()).onFalse(outtakeBySensorWithWristPosition())
+        driverController.povRight().onTrue(goToL3()).onFalse(outtakeBySensorWithWristPosition())
+        driverController.L1().whileTrue(wrist.moveToCollectCoral())
+    }
 
     fun resetSimulationField() {
         if (CURRENT_MODE != Mode.SIM) return

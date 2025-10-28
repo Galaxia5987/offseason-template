@@ -499,7 +499,7 @@ public class Drive extends SubsystemBase implements Vision.VisionConsumer, SysId
     @Override
     public void setVoltage(@NotNull Voltage voltage) {
         for (int i = 0; i < 4; i++) {
-            modules[i].runCharacterization(voltage.in(Volts));
+            modules[i].runTurnCharacterization(voltage.in(Volts));
         }
     }
 

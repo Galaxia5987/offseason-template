@@ -55,7 +55,7 @@ class Wrist : SubsystemBase() {
     var setPoint: WristPositions = WristPositions.DOWN
 
     init {
-        wristMotor.resetInternalEncoder()
+        wristMotor.reset()
     }
 
     // TODO: Change setPosition `angle` parameter type to WristPosition

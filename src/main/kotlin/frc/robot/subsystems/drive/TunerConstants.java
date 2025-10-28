@@ -22,11 +22,11 @@ public class TunerConstants {
     // output type specified by SwerveModuleConstants.SteerMotorClosedLoopOutput
     public static final Slot0Configs turnGains =
             new Slot0Configs()
-                    .withKP(200)
+                    .withKP(0)
                     .withKI(0)
-                    .withKD(0.5)
-                    .withKS(0.1)
-                    .withKV(1.5)
+                    .withKD(0)
+                    .withKS(0)
+                    .withKV(0)
                     .withKA(0)
                     .withStaticFeedforwardSign(StaticFeedforwardSignValue.UseClosedLoopSign);
 
@@ -80,7 +80,7 @@ public class TunerConstants {
     // Configs for the Pigeon 2; leave this null to skip applying Pigeon 2 configs
     private static final Pigeon2Configuration pigeonConfigs = null;
 
-    public static final String kCANBusName = "swerveDrive";
+    public static final String kCANBusName = "rio";
 
     // CAN bus that the devices are located on;
     // All swerve devices must share the same CAN bus
