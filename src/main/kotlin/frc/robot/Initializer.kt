@@ -2,21 +2,17 @@ package frc.robot
 
 import edu.wpi.first.math.geometry.Pose2d
 import edu.wpi.first.math.geometry.Rotation2d
-import frc.robot.subsystems.drive.Drive
+import frc.robot.subsystems.drive.*
 import frc.robot.subsystems.drive.ModuleIOs.ModuleIO
 import frc.robot.subsystems.drive.ModuleIOs.ModuleIOSim
 import frc.robot.subsystems.drive.ModuleIOs.ModuleIOTalonFX
-import frc.robot.subsystems.drive.TunerConstants
 import frc.robot.subsystems.drive.gyroIOs.GyroIO
 import frc.robot.subsystems.drive.gyroIOs.GyroIOPigeon2
 import frc.robot.subsystems.drive.gyroIOs.GyroIOSim
-import frc.robot.subsystems.elevator.Elevator
-import frc.robot.subsystems.gripper.Gripper
 import frc.robot.subsystems.vision.Vision
 import frc.robot.subsystems.vision.VisionConstants
 import frc.robot.subsystems.vision.VisionIOPhotonVision
 import frc.robot.subsystems.vision.VisionIOPhotonVisionSim
-import frc.robot.subsystems.wrist.Wrist
 import org.ironmaple.simulation.SimulatedArena
 import org.ironmaple.simulation.drivesims.SwerveDriveSimulation
 
@@ -65,24 +61,21 @@ val drive =
         driveSimulation?.let { it::setSimulationWorldPose } ?: { _: Pose2d -> }
     )
 
-//private val visionIOs =
-//    when (CURRENT_MODE) {
-//        Mode.REAL ->
-//            VisionConstants.OVNameToTransform.map {
-//                VisionIOPhotonVision(it.key, it.value)
-//            }
-//        Mode.SIM ->
-//            VisionConstants.OVNameToTransform.map {
-//                VisionIOPhotonVisionSim(
-//                    it.key,
-//                    it.value,
-//                    driveSimulation!!::getSimulatedDriveTrainPose
-//                )
-//            }
-//        Mode.REPLAY -> emptyList()
-//    }.toTypedArray()
-//
-//val vision = Vision(drive, *visionIOs)
-val elevator = Elevator()
-val gripper = Gripper()
-val wrist = Wrist()
+private val visionIOs =
+    when (CURRENT_MODE) {
+        Mode.REAL ->
+            VisionConstants.OVNameToTransform.map {
+                VisionIOPhotonVision(it.key) { it.value }
+            }
+        Mode.SIM ->
+            VisionConstants.OVNameToTransform.map {
+                VisionIOPhotonVisionSim(
+                    it.key,
+                    { it.value },
+                    driveSimulation!!::getSimulatedDriveTrainPose
+                )
+            }
+        Mode.REPLAY -> emptyList()
+    }.toTypedArray()
+
+val vision = Vision(drive, *visionIOs)

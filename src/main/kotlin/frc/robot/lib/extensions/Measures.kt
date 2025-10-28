@@ -84,6 +84,23 @@ val volts
     get() = Units.Volts
 val kg2m
     get() = Units.KilogramSquareMeters
+val rps
+    get() = Units.RotationsPerSecond
+
+val rps_squared
+    get() = Units.RotationsPerSecond.per(sec)
+
+val rad_ps
+    get() = Units.RadiansPerSecond
+val rad_ps_ps
+    get() = Units.RadiansPerSecondPerSecond
+val mps
+    get() = Units.MetersPerSecond
+
+val mps_ps
+    get() = Units.MetersPerSecondPerSecond
+val deg_ps_ps
+    get() = Units.DegreesPerSecondPerSecond
 
 fun LinearVelocity.toAngular(
     diameter: Distance,
@@ -174,10 +191,24 @@ val Number.rot_ps: AngularVelocity
     get() = toUnit(Units.RotationsPerSecond::of)
 val Number.rotationsPerSecond: AngularVelocity
     get() = toUnit(Units.RotationsPerSecond::of)
+val Number.rps: AngularVelocity
+    get() = toUnit(Units.RotationsPerSecond::of)
 val Number.rad_ps: AngularVelocity
     get() = toUnit(Units.RadiansPerSecond::of)
 val Number.radiansPerSecond: AngularVelocity
     get() = toUnit(Units.RadiansPerSecond::of)
+
+// Linear acceleration
+val Number.mps_ps: LinearAcceleration
+    get() = toUnit(Units.MetersPerSecondPerSecond::of)
+
+// Angular acceleration
+val Number.deg_ps_ps: AngularAcceleration
+    get() = toUnit(Units.DegreesPerSecondPerSecond::of)
+
+//
+val Number.rps_squared: AngularAcceleration
+    get() = toUnit(Units.RotationsPerSecond::of).per(Units.Second)
 
 // Other
 val Number.sec: Time
@@ -209,4 +240,16 @@ val Number.kilogramSquareMeters: MomentOfInertia
     get() = toUnit(Units.KilogramSquareMeters::of)
 
 operator fun MomentOfInertia.get(unit: MomentOfInertiaUnit): Double =
+    this.`in`(unit)
+
+operator fun AngularVelocity.get(unit: AngularVelocityUnit): Double =
+    this.`in`(unit)
+
+operator fun LinearAcceleration.get(unit: LinearAccelerationUnit): Double =
+    this.`in`(unit)
+
+operator fun AngularAcceleration.get(unit: AngularAccelerationUnit): Double =
+    this.`in`(unit)
+
+operator fun LinearVelocity.get(unit: LinearVelocityUnit): Double =
     this.`in`(unit)

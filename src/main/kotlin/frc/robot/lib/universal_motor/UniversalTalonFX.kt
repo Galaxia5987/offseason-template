@@ -35,6 +35,7 @@ class UniversalTalonFX(
     momentOfInertia: MomentOfInertia = 0.003.kg2m,
     gearRatio: Double = 1.0,
     linearSystemWheelDiameter: Distance = 0.m,
+    absoluteEncoderOffset: Angle = 0.deg
 ) {
     private val motorIO: MotorIO =
         if (CURRENT_MODE == Mode.REAL)
@@ -43,7 +44,8 @@ class UniversalTalonFX(
                 canbus,
                 config,
                 gearRatio,
-                linearSystemWheelDiameter
+                linearSystemWheelDiameter,
+                absoluteEncoderOffset
             )
         else {
             MotorIOSim(
@@ -62,9 +64,7 @@ class UniversalTalonFX(
      */
     fun setControl(control: ControlRequest) = motorIO.setRequest(control)
 
-    fun resetInternalEncoder(angle: Angle = 0.0.deg) {
-        motorIO.resetInternalEncoder(angle)
-    }
+    fun reset(angle: Angle = 0.deg) = motorIO.resetInternalEncoder(angle)
 
     fun updateInputs() = motorIO.updateInputs()
 }
