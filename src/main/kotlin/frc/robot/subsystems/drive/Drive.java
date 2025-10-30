@@ -65,6 +65,8 @@ import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.Consumer;
 import kotlin.Unit;
 import kotlin.jvm.functions.Function1;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.ironmaple.simulation.drivesims.COTS;
 import org.ironmaple.simulation.drivesims.configs.DriveTrainSimulationConfig;
 import org.ironmaple.simulation.drivesims.configs.SwerveModuleSimulationConfig;
@@ -129,6 +131,7 @@ public class Drive extends SubsystemBase implements Vision.VisionConsumer, SysId
                                     WHEEL_COF));
 
     static final Lock odometryLock = new ReentrantLock();
+    private static final Log log = LogFactory.getLog(Drive.class);
     private final GyroIO gyroIO;
     public Angle[] SwerveTurnAngle =
             new Angle[] {Radians.zero(), Radians.zero(), Radians.zero(), Radians.zero()};
@@ -461,6 +464,7 @@ public class Drive extends SubsystemBase implements Vision.VisionConsumer, SysId
 
     /** Resets the current odometry pose. */
     public void resetOdometry(Pose2d pose) {
+        Logger.recordOutput("Testing/resetPose",pose);
         resetSimulationPoseCallBack.accept(pose);
         poseEstimator.resetPosition(rawGyroRotation, getModulePositions(), pose);
     }
