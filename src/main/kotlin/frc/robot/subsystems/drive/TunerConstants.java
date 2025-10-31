@@ -22,12 +22,12 @@ public class TunerConstants {
     // output type specified by SwerveModuleConstants.SteerMotorClosedLoopOutput
     public static final Slot0Configs turnGains =
             new Slot0Configs()
-                    .withKP(0)
+                    .withKP(1)
                     .withKI(0)
                     .withKD(0)
-                    .withKS(0)
-                    .withKV(0)
-                    .withKA(0)
+                    .withKS(0.1442)
+                    .withKV(0.30393)
+                    .withKA(0.021182)
                     .withStaticFeedforwardSign(StaticFeedforwardSignValue.UseClosedLoopSign);
 
     public static final MotionMagicConfigs motionMagicSteerGains =
@@ -38,7 +38,12 @@ public class TunerConstants {
     // When using closed-loop control, the drive motor uses the control
     // output type specified by SwerveModuleConstants.DriveMotorClosedLoopOutput
     public static final Slot0Configs driveGains =
-            new Slot0Configs().withKP(1.4).withKI(0).withKD(0).withKS(0.21265).withKV(0.89309);
+            new Slot0Configs()
+                    .withKP(0)
+                    .withKI(0)
+                    .withKD(0)
+                    .withKS(0)
+                    .withKV(0);
 
     // The closed-loop output type to use for the steer motors;
     // This affects the PID/FF gains for the steer motors
@@ -146,7 +151,7 @@ public class TunerConstants {
 
     private static final double[] absoluteEncoderOffsets =
             new double[] {
-                -2.3239808936467465, -0.8958447801252144, 0.22856313739496054, -1.3913205746122765
+                    0.14572817484913592, -1.3130875544301088, -2.6384469551633027, -1.6275536159466653
             };
 
     // Front Left
