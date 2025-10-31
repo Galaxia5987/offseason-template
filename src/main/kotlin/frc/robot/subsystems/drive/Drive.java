@@ -528,15 +528,9 @@ public class Drive extends SubsystemBase implements Vision.VisionConsumer, SysId
                 sample.omega + TunerConstants.headingController.calculate(pose.getRotation().getRadians(), sample.heading)
         );
 
-        // Apply the generated speeds
-        boolean isFlipped =
-                DriverStation.getAlliance().isPresent()
-                        && DriverStation.getAlliance().get() == Alliance.Red;
         InitializerKt.getDrive().runVelocity(ChassisSpeeds.fromFieldRelativeSpeeds(
                 speeds,
-                isFlipped
-                        ? getRotation().plus(new Rotation2d(Math.PI))
-                        : getRotation()));
+                        getRotation()));
     }
 
 }

@@ -21,20 +21,21 @@ val autoFactory: AutoFactory = AutoFactory(
     { drive.pose },
     { pose -> drive.resetOdometry(pose) },
     { sample: SwerveSample -> drive.followTrajectory(sample) },
-    false,
+    true,
     drive
 )
 
-fun path_center(): Command{
-
-    return autoFactory.trajectoryCmd("Path_center")
+fun path_center(): Command {
+    return Commands.sequence(
+        autoFactory.resetOdometry("Path_center"), autoFactory.trajectoryCmd("Path_center")
+    )
 }
 
-fun path_right(): Command{
+fun path_right(): Command {
     return autoFactory.trajectoryCmd("Path_right")
 }
 
-fun path_left(): Command{
+fun path_left(): Command {
     //return Commands.run({drive.resetOdometry(Pose2d())})
     return autoFactory.trajectoryCmd("Path_left")
 }
@@ -43,7 +44,7 @@ fun path_left(): Command{
 //    return autoFactory.trajectoryCmd("default")
 //}
 
-public fun default(): Command{
+public fun default(): Command {
     return Commands.sequence(
         Commands.waitTime(2.0.seconds),
         autoFactory.resetOdometry("default"),
