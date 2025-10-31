@@ -56,15 +56,25 @@ object RobotContainer {
     }
 
     private fun configureButtonBindings() {
+        driverController.square().onTrue(gripper.intakeByGripperSensor())
+        driverController.circle().onTrue(outtakeBySensorWithWristPosition())
+        //driverController.square().whileTrue(gripper.intake()).whileFalse(gripper.stop())
+        driverController.povUp().onTrue(goToL4()).onFalse(outtakeBySensorWithWristPosition())
+        driverController.povDown().onTrue(goToL1()).onFalse(outtakeBySensorWithWristPosition())
+        driverController.povLeft().onTrue(goToL2()).onFalse(outtakeBySensorWithWristPosition())
+        driverController.povRight().onTrue(goToL3()).onFalse(outtakeBySensorWithWristPosition())
+        driverController.L1().whileTrue(wrist.moveToCollectCoral().alongWith(elevator.goToL0()))
         // reset swerve
-        driverController
-            .options()
-            .onTrue(
-                drive.runOnce { drive.resetGyro() }.ignoringDisable(true),
-            )
+
+//        driverController
+//            .options()
+//            .onTrue(
+//                drive.runOnce { drive.resetGyro() }.ignoringDisable(true),
+//            )
 
         // Switch to X pattern when X button is pressed
-        driverController.square().onTrue(runOnce(drive::stopWithX, drive))
+//        driverController.square().onTrue(runOnce(drive::stopWithX, drive))
+
     }
 
     fun getAutonomousCommand(): Command = autoChooser.get()
@@ -107,14 +117,6 @@ object RobotContainer {
     }
 
     private fun bindRobotCommands() {
-        driverController.square().onTrue(gripper.intakeByGripperSensor())
-        driverController.circle().onTrue(outtakeBySensorWithWristPosition())
-        //driverController.square().whileTrue(gripper.intake()).whileFalse(gripper.stop())
-        driverController.povUp().onTrue(goToL4()).onFalse(outtakeBySensorWithWristPosition())
-        driverController.povDown().onTrue(goToL1()).onFalse(outtakeBySensorWithWristPosition())
-        driverController.povLeft().onTrue(goToL2()).onFalse(outtakeBySensorWithWristPosition())
-        driverController.povRight().onTrue(goToL3()).onFalse(outtakeBySensorWithWristPosition())
-        driverController.L1().whileTrue(wrist.moveToCollectCoral())
     }
 
     fun resetSimulationField() {

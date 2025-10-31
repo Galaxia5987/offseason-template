@@ -85,7 +85,7 @@ class Elevator : SubsystemBase() {
         })
     }
 
-    fun GoToL0(): Command {
+    fun goToL0(): Command {
         return setPosition(Corallevels.LEVEL0.position)
     }
 
