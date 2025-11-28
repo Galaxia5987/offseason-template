@@ -464,7 +464,7 @@ public class Drive extends SubsystemBase implements Vision.VisionConsumer, SysId
 
     /** Resets the current odometry pose. */
     public void resetOdometry(Pose2d pose) {
-        Logger.recordOutput("Testing/resetPose",pose);
+        Logger.recordOutput("Testing/resetPose", pose);
         resetSimulationPoseCallBack.accept(pose);
         poseEstimator.resetPosition(rawGyroRotation, getModulePositions(), pose);
     }
@@ -522,15 +522,15 @@ public class Drive extends SubsystemBase implements Vision.VisionConsumer, SysId
         Pose2d pose = getPose();
 
         // Generate the next speeds for the robot
-        ChassisSpeeds speeds = new ChassisSpeeds(
-                sample.vx + TunerConstants.xController.calculate(pose.getX(), sample.x),
-                sample.vy + TunerConstants.yController.calculate(pose.getY(), sample.y),
-                sample.omega + TunerConstants.headingController.calculate(pose.getRotation().getRadians(), sample.heading)
-        );
+        ChassisSpeeds speeds =
+                new ChassisSpeeds(
+                        sample.vx + TunerConstants.xController.calculate(pose.getX(), sample.x),
+                        sample.vy + TunerConstants.yController.calculate(pose.getY(), sample.y),
+                        sample.omega
+                                + TunerConstants.headingController.calculate(
+                                        pose.getRotation().getRadians(), sample.heading));
 
-        InitializerKt.getDrive().runVelocity(ChassisSpeeds.fromFieldRelativeSpeeds(
-                speeds,
-                        getRotation()));
+        InitializerKt.getDrive()
+                .runVelocity(ChassisSpeeds.fromFieldRelativeSpeeds(speeds, getRotation()));
     }
-
 }

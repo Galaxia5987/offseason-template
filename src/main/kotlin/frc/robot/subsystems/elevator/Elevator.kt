@@ -67,15 +67,15 @@ class Elevator : SubsystemBase() {
 
     fun setPosition(position: Distance): Command {
         return Commands.runOnce({
-            setPoint = position
-            mainMotor.setControl(
-                positionVoltage.withPosition(
-                    position.toAngle(SPORCKET_DIAMETERS, GEAR_RATIO)
+                setPoint = position
+                mainMotor.setControl(
+                    positionVoltage.withPosition(
+                        position.toAngle(SPORCKET_DIAMETERS, GEAR_RATIO)
+                    )
                 )
-            )
-        })
+            })
             .andThen(Commands.waitTime(0.2.seconds))
-            .andThen(Commands.waitUntil{mainMotor.inputs.current < 3.0.amps})
+            .andThen(Commands.waitUntil { mainMotor.inputs.current < 3.0.amps })
     }
 
     val voltageRequest = VoltageOut(0.0)

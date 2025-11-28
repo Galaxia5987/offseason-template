@@ -7,8 +7,8 @@ import edu.wpi.first.math.geometry.Rotation2d
 import edu.wpi.first.wpilibj2.command.Command
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine
-import frc.robot.autonomous.path_center
 import frc.robot.autonomous.default
+import frc.robot.autonomous.path_center
 import frc.robot.autonomous.path_left
 import frc.robot.autonomous.path_right
 import frc.robot.lib.extensions.enableAutoLogOutputFor
@@ -85,24 +85,12 @@ object RobotContainer {
         val namedCommands: Map<String, Command> = mapOf()
 
         NamedCommands.registerCommands(namedCommands)
-        autoChooser.addOption(
-            "path_center",
-            path_center()
-        )
-        autoChooser.addOption(
-            "path_default",
-            default()
-        )
+        autoChooser.addDefaultOption("path_center", path_center())
+        autoChooser.addOption("path_default", default())
 
-        autoChooser.addOption(
-            "path_right",
-            path_right()
-        )
+        autoChooser.addOption("path_right", path_right())
 
-        autoChooser.addOption(
-            "path_left",
-            path_left()
-        )
+        autoChooser.addOption("path_left", path_left())
         // Set up SysId routines
         autoChooser.addOption(
             "Drive Wheel Radius Characterization",
