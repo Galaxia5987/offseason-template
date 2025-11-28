@@ -11,13 +11,11 @@ import edu.wpi.first.wpilibj.DriverStation
 import edu.wpi.first.wpilibj.PowerDistribution
 import edu.wpi.first.wpilibj2.command.Command
 import edu.wpi.first.wpilibj2.command.CommandScheduler
-import frc.robot.Mode.REAL
-import frc.robot.Mode.REPLAY
-import frc.robot.Mode.SIM
+import frc.robot.Mode.*
 import frc.robot.lib.extensions.enableAutoLogOutputFor
 import frc.robot.lib.logged_output.generated.registerAllLoggedOutputs
+import frc.robot.subsystems.Visualizer
 import org.ironmaple.simulation.SimulatedArena
-import org.littletonrobotics.junction.AutoLogOutputManager
 import org.littletonrobotics.junction.LogFileUtil
 import org.littletonrobotics.junction.LoggedRobot
 import org.littletonrobotics.junction.Logger
@@ -35,6 +33,7 @@ import org.littletonrobotics.junction.wpilog.WPILOGWriter
  */
 object Robot : LoggedRobot() {
     private lateinit var autonomousCommand: Command
+    private val visualizer: Visualizer
     /**
      * This function is run when the robot is first started up and should be
      * used for any initialization code.
@@ -46,7 +45,6 @@ object Robot : LoggedRobot() {
             tResourceType.kResourceType_Language,
             tInstances.kLanguage_Kotlin
         )
-        arrayOf(vision, drive).forEach { AutoLogOutputManager.addObject(it) }
 
         // Initialize logger
         listOf(
@@ -88,6 +86,8 @@ object Robot : LoggedRobot() {
         }
         Logger.start()
         RobotContainer // Initialize robot container.
+
+        visualizer = Visualizer()
 
         enableAutoLogOutputFor(this)
 

@@ -1,6 +1,7 @@
 package frc.robot
 
 import edu.wpi.first.wpilibj.DriverStation
+import edu.wpi.first.wpilibj2.command.button.Trigger
 import org.littletonrobotics.junction.LoggedRobot
 import org.team5987.annotation.LoggedOutput
 
@@ -18,6 +19,8 @@ val CURRENT_MODE: Mode
                 Mode.SIM
             }
         }
+
+val isInSimulation = Trigger { CURRENT_MODE == Mode.SIM }
 
 const val ALT_ROBORIO_SERIAL = ""
 

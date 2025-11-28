@@ -15,6 +15,7 @@ package frc.robot.subsystems.drive;
 
 import static edu.wpi.first.units.Units.*;
 
+import choreo.trajectory.SwerveSample;
 import com.ctre.phoenix6.CANBus;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.config.ModuleConfig;
@@ -49,6 +50,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.ConstantsKt;
+import frc.robot.InitializerKt;
 import frc.robot.Mode;
 import frc.robot.lib.LocalADStarAK;
 import frc.robot.lib.LoggedNetworkGains;
@@ -63,6 +65,8 @@ import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.Consumer;
 import kotlin.Unit;
 import kotlin.jvm.functions.Function1;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.ironmaple.simulation.drivesims.COTS;
 import org.ironmaple.simulation.drivesims.configs.DriveTrainSimulationConfig;
 import org.ironmaple.simulation.drivesims.configs.SwerveModuleSimulationConfig;
@@ -127,6 +131,7 @@ public class Drive extends SubsystemBase implements Vision.VisionConsumer, SysId
                                     WHEEL_COF));
 
     static final Lock odometryLock = new ReentrantLock();
+    private static final Log log = LogFactory.getLog(Drive.class);
     private final GyroIO gyroIO;
     public Angle[] SwerveTurnAngle =
             new Angle[] {Radians.zero(), Radians.zero(), Radians.zero(), Radians.zero()};
@@ -459,6 +464,7 @@ public class Drive extends SubsystemBase implements Vision.VisionConsumer, SysId
 
     /** Resets the current odometry pose. */
     public void resetOdometry(Pose2d pose) {
+        Logger.recordOutput("Testing/resetPose",pose);
         resetSimulationPoseCallBack.accept(pose);
         poseEstimator.resetPosition(rawGyroRotation, getModulePositions(), pose);
     }
@@ -510,4 +516,21 @@ public class Drive extends SubsystemBase implements Vision.VisionConsumer, SysId
             return null;
         };
     }
+
+    public void followTrajectory(SwerveSample sample) {
+        // Get the current pose of the robot
+        Pose2d pose = getPose();
+
+        // Generate the next speeds for the robot
+        ChassisSpeeds speeds = new ChassisSpeeds(
+                sample.vx + TunerConstants.xController.calculate(pose.getX(), sample.x),
+                sample.vy + TunerConstants.yController.calculate(pose.getY(), sample.y),
+                sample.omega + TunerConstants.headingController.calculate(pose.getRotation().getRadians(), sample.heading)
+        );
+
+        InitializerKt.getDrive().runVelocity(ChassisSpeeds.fromFieldRelativeSpeeds(
+                speeds,
+                        getRotation()));
+    }
+
 }

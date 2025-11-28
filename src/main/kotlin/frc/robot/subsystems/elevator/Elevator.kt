@@ -60,7 +60,7 @@ class Elevator : SubsystemBase() {
             gearRatio = GEAR_RATIO,
             linearSystemWheelDiameter = SPORCKET_DIAMETERS
         )
-
+    var height = { -> setPoint }
     val followerRequest = Follower(13, false)
     var setPoint = 0.m
     val positionVoltage = PositionVoltage(0.0)

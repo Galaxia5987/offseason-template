@@ -5,26 +5,28 @@ import com.pathplanner.lib.auto.NamedCommands
 import edu.wpi.first.math.geometry.Pose2d
 import edu.wpi.first.math.geometry.Rotation2d
 import edu.wpi.first.wpilibj2.command.Command
-import edu.wpi.first.wpilibj2.command.Commands.runOnce
-import edu.wpi.first.wpilibj2.command.button.CommandPS5Controller
+import edu.wpi.first.wpilibj2.command.button.CommandXboxController
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine
+import frc.robot.autonomous.path_center
+import frc.robot.autonomous.default
+import frc.robot.autonomous.path_left
+import frc.robot.autonomous.path_right
 import frc.robot.lib.extensions.enableAutoLogOutputFor
-import frc.robot.lib.extensions.seconds
 import frc.robot.lib.extensions.volts
-import frc.robot.lib.sysid.sysId
 import frc.robot.subsystems.drive.DriveCommands
-import frc.robot.subsystems.gripper.outtakeBySensorWithWristPosition
 import org.ironmaple.simulation.SimulatedArena
 import org.littletonrobotics.junction.AutoLogOutput
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser
 
 object RobotContainer {
 
-    private val driverController = CommandPS5Controller(0)
+    private val driverController = CommandXboxController(0)
+
     private val autoChooser: LoggedDashboardChooser<Command>
 
     init {
         drive // Ensure Drive is initialized
+
         autoChooser =
             LoggedDashboardChooser(
                 "Auto Choices",
@@ -49,32 +51,32 @@ object RobotContainer {
     private fun configureDefaultCommands() {
         drive.defaultCommand =
             DriveCommands.joystickDrive(
-                { driverController.leftY },
-                { driverController.leftX },
+                { -driverController.leftY },
+                { -driverController.leftX },
                 { -driverController.rightX * 0.8 }
             )
     }
 
     private fun configureButtonBindings() {
-        driverController.square().onTrue(gripper.intakeByGripperSensor())
-        driverController.circle().onTrue(outtakeBySensorWithWristPosition())
-        //driverController.square().whileTrue(gripper.intake()).whileFalse(gripper.stop())
-        driverController.povUp().onTrue(goToL4()).onFalse(outtakeBySensorWithWristPosition())
-        driverController.povDown().onTrue(goToL1()).onFalse(outtakeBySensorWithWristPosition())
-        driverController.povLeft().onTrue(goToL2()).onFalse(outtakeBySensorWithWristPosition())
-        driverController.povRight().onTrue(goToL3()).onFalse(outtakeBySensorWithWristPosition())
-        driverController.L1().whileTrue(wrist.moveToCollectCoral().alongWith(elevator.goToL0()))
-        // reset swerve
+        driverController.povUp().onTrue(elevator.GoToL4())
+        driverController.povLeft().onTrue(elevator.GoToL2())
+        driverController.povRight().onTrue(elevator.GoToL3())
+        driverController.povDown().onTrue(elevator.GoToL1())
+        driverController
+            .leftBumper()
+            .whileTrue(gripper.output())
+            .whileFalse(gripper.setVoltage(0.0.volts))
+        driverController
+            .rightBumper()
+            .whileTrue(gripper.input())
+            .whileFalse(gripper.setVoltage(0.0.volts))
 
-//        driverController
-//            .options()
-//            .onTrue(
-//                drive.runOnce { drive.resetGyro() }.ignoringDisable(true),
-//            )
+        driverController.b().whileTrue(intaking())
+        driverController.x().whileTrue(setIntTaking())
+        driverController.y().whileTrue(gripper.intakeByGripperSensor())
+        driverController.a().whileTrue(gripper.outtakeByGripperSensor())
 
-        // Switch to X pattern when X button is pressed
-//        driverController.square().onTrue(runOnce(drive::stopWithX, drive))
-
+        IS_RED
     }
 
     fun getAutonomousCommand(): Command = autoChooser.get()
@@ -83,7 +85,24 @@ object RobotContainer {
         val namedCommands: Map<String, Command> = mapOf()
 
         NamedCommands.registerCommands(namedCommands)
+        autoChooser.addOption(
+            "path_center",
+            path_center()
+        )
+        autoChooser.addOption(
+            "path_default",
+            default()
+        )
 
+        autoChooser.addOption(
+            "path_right",
+            path_right()
+        )
+
+        autoChooser.addOption(
+            "path_left",
+            path_left()
+        )
         // Set up SysId routines
         autoChooser.addOption(
             "Drive Wheel Radius Characterization",
@@ -109,14 +128,6 @@ object RobotContainer {
             "Drive SysId (Dynamic Reverse)",
             drive.sysIdDynamic(SysIdRoutine.Direction.kReverse)
         )
-        autoChooser.addOption(
-            "Swerve Turn Characterization",
-            drive.sysId().withForwardRoutineConfig(4.volts.per(seconds), 6.volts, 5.seconds)
-                .withBackwardRoutineConfig(4.volts.per(seconds), 6.volts, 5.seconds).command()
-        )
-    }
-
-    private fun bindRobotCommands() {
     }
 
     fun resetSimulationField() {
