@@ -7,8 +7,6 @@ import edu.wpi.first.wpilibj2.command.Commands
 import frc.robot.drive
 import frc.robot.lib.extensions.seconds
 
-// Apply the generated speeds
-
 val autoFactory: AutoFactory =
     AutoFactory(
         { drive.pose },
@@ -30,15 +28,10 @@ fun path_right(): Command {
 }
 
 fun path_left(): Command {
-    // return Commands.run({drive.resetOdometry(Pose2d())})
     return autoFactory.trajectoryCmd("Path_left")
 }
 
-// fun default(): Command{
-//    return autoFactory.trajectoryCmd("default")
-// }
-
-public fun default(): Command {
+fun default(): Command {
     return Commands.sequence(
         Commands.waitTime(2.0.seconds),
         autoFactory.resetOdometry("default"),
