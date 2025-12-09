@@ -1,4 +1,5 @@
 package frc.robot.auto
+
 import choreo.auto.AutoFactory
 import choreo.trajectory.SwerveSample
 import edu.wpi.first.wpilibj2.command.Command
@@ -14,8 +15,6 @@ val autoFactory: AutoFactory =
         false,
         drive
     )
-
-
 
 fun path_center(): Command {
     return Commands.sequence(

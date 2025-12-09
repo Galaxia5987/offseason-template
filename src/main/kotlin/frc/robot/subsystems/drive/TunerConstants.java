@@ -251,7 +251,6 @@ public class TunerConstants {
     public static final PIDController yController = new PIDController(10.0, 0.0, 0.0);
     public static final PIDController headingController = new PIDController(7.5, 0.0, 0.0);
 
-
     /**
      * Creates a CommandSwerveDrivetrain instance. This should only be called once in your robot
      * program,.

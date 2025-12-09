@@ -513,20 +513,20 @@ public class Drive extends SubsystemBase implements Vision.VisionConsumer, SysId
         };
     }
 
-public void followTrajectory(SwerveSample sample) {
-    // Get the current pose of the robot
-    Pose2d pose = getPose();
+    public void followTrajectory(SwerveSample sample) {
+        // Get the current pose of the robot
+        Pose2d pose = getPose();
 
-    // Generate the next speeds for the robot
-    ChassisSpeeds speeds =
-            new ChassisSpeeds(
-                    sample.vx + TunerConstants.xController.calculate(pose.getX(), sample.x),
-                    sample.vy + TunerConstants.yController.calculate(pose.getY(), sample.y),
-                    sample.omega
-                            + TunerConstants.headingController.calculate(
-                            pose.getRotation().getRadians(), sample.heading));
+        // Generate the next speeds for the robot
+        ChassisSpeeds speeds =
+                new ChassisSpeeds(
+                        sample.vx + TunerConstants.xController.calculate(pose.getX(), sample.x),
+                        sample.vy + TunerConstants.yController.calculate(pose.getY(), sample.y),
+                        sample.omega
+                                + TunerConstants.headingController.calculate(
+                                        pose.getRotation().getRadians(), sample.heading));
 
-    InitializerKt.getDrive()
-            .runVelocity(ChassisSpeeds.fromFieldRelativeSpeeds(speeds, getRotation()));
-}
+        InitializerKt.getDrive()
+                .runVelocity(ChassisSpeeds.fromFieldRelativeSpeeds(speeds, getRotation()));
+    }
 }
