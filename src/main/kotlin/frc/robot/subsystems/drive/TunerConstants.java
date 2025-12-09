@@ -9,6 +9,7 @@ import com.ctre.phoenix6.signals.*;
 import com.ctre.phoenix6.swerve.*;
 import com.ctre.phoenix6.swerve.SwerveModuleConstants.*;
 import edu.wpi.first.math.Matrix;
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.units.measure.*;
@@ -245,6 +246,10 @@ public class TunerConstants {
                             kInvertRightSide,
                             kBackRightSteerMotorInverted,
                             kBackRightEncoderInverted);
+
+    public static final PIDController xController = new PIDController(10.0, 0.0, 0.0);
+    public static final PIDController yController = new PIDController(10.0, 0.0, 0.0);
+    public static final PIDController headingController = new PIDController(7.5, 0.0, 0.0);
 
     /**
      * Creates a CommandSwerveDrivetrain instance. This should only be called once in your robot

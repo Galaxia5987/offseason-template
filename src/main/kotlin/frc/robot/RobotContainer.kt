@@ -8,6 +8,10 @@ import edu.wpi.first.wpilibj2.command.Command
 import edu.wpi.first.wpilibj2.command.Commands.runOnce
 import edu.wpi.first.wpilibj2.command.button.CommandPS5Controller
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine
+import frc.robot.auto.default
+import frc.robot.auto.path_center
+import frc.robot.auto.path_left
+import frc.robot.auto.path_right
 import frc.robot.lib.extensions.enableAutoLogOutputFor
 import frc.robot.subsystems.drive.DriveCommands
 import org.ironmaple.simulation.SimulatedArena
@@ -69,6 +73,13 @@ object RobotContainer {
         val namedCommands: Map<String, Command> = mapOf()
 
         NamedCommands.registerCommands(namedCommands)
+
+        autoChooser.addDefaultOption("path_center", path_center())
+        autoChooser.addOption("path_default", default())
+
+        autoChooser.addOption("path_right", path_right())
+
+        autoChooser.addOption("path_left", path_left())
 
         // Set up SysId routines
         autoChooser.addOption(
